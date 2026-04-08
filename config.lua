@@ -95,6 +95,14 @@ Config.UseWolfknightRadar = true -- Enable/disable Wolfknight radar integration
 Config.WolfknightNotifyTime = 5000 -- Duration (ms) for plate reader notifications
 Config.PlateScanForDriversLicense = true -- Check driver's license on plate scan
 
+-- Base Licenses Configuration
+-- These are the default licenses shown on citizen profiles (e.g., driver, weapon)
+-- You can add, remove, or rename licenses here
+Config.BaseLicenses = {
+    { key = 'driver', label = 'Driver License' },
+    { key = 'weapon', label = 'Weapon License' },
+}
+
 -- Fingerprint Settings
 Config.FingerprintAutoFilled = false -- Auto-populate fingerprints on citizen profiles (if false, officers must manually add fingerprints)
 

@@ -215,6 +215,15 @@ RegisterNUICallback('deleteCustomLicense', function(data, cb)
     cb(result or { success = false, message = 'Failed to delete license' })
 end)
 
+RegisterNUICallback('getBaseLicenses', function(_, cb)
+    if not MDTOpen then
+        cb({})
+        return
+    end
+    local result = ps.callback(resourceName .. ':server:getBaseLicenses')
+    cb(result or {})
+end)
+
 -- SETTINGS: Colors -------------------------------------------
 
 RegisterNUICallback('getColorConfig', function(_, cb)

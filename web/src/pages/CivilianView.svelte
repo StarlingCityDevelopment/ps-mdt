@@ -20,7 +20,7 @@
 		linkedReports?: any[];
 		ownedVehicles?: any[];
 		weapons?: any[];
-		licenses?: { driver: boolean; weapon: boolean };
+		licenses?: Record<string, boolean>;
 		customLicenses?: any[];
 	}
 
@@ -34,6 +34,11 @@
 		category: string;
 	}
 
+	interface BaseLicense {
+		key: string;
+		label: string;
+	}
+
 	let { authService }: { authService: AuthService } = $props();
 
 	let activeTab = $state<"profile" | "legislation">("profile");
@@ -42,6 +47,7 @@
 	let loadingProfile = $state(true);
 	let loadingCharges = $state(true);
 	let searchQuery = $state("");
+	let baseLicenses: BaseLicense[] = $state([]);
 
 	let playerName = $derived(profile ? `${profile.firstName} ${profile.lastName}` : "Loading...");
 
@@ -67,6 +73,8 @@
 
 	onMount(async () => {
 		await Promise.all([loadProfile(), loadCharges()]);
+		const baseLicensesResult = await fetchNui<BaseLicense[]>(NUI_EVENTS.SETTINGS.GET_BASE_LICENSES, {}, []);
+		baseLicenses = Array.isArray(baseLicensesResult) ? baseLicensesResult : [];
 	});
 
 	async function loadProfile() {
@@ -82,7 +90,7 @@
 						gender: "Male", dob: "1990-01-01", phone: "555-0100",
 						arrests: 0, activeWarrants: [], linkedReports: [],
 						ownedVehicles: [], weapons: [],
-						licenses: { driver: true, weapon: false }, customLicenses: []
+						licenses: {}, customLicenses: []
 					}
 				},
 			);
@@ -181,14 +189,12 @@
 
 						<div class="info-section">
 							<h3 class="section-title">Licenses</h3>
-							<div class="info-row">
-								<span class="info-label">Driver</span>
-								<span class="info-value license" class:active={profile.licenses?.driver}>{profile.licenses?.driver ? 'Active' : 'None'}</span>
-							</div>
-							<div class="info-row">
-								<span class="info-label">Weapon</span>
-								<span class="info-value license" class:active={profile.licenses?.weapon}>{profile.licenses?.weapon ? 'Active' : 'None'}</span>
-							</div>
+							{#each baseLicenses as bl}
+								<div class="info-row">
+									<span class="info-label">{bl.label}</span>
+									<span class="info-value license" class:active={profile.licenses?.[bl.key]}>{profile.licenses?.[bl.key] ? 'Active' : 'None'}</span>
+								</div>
+							{/each}
 							{#if profile.customLicenses && profile.customLicenses.length > 0}
 								{#each profile.customLicenses as lic}
 									<div class="info-row">

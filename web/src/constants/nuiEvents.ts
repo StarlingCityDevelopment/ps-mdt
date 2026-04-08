@@ -233,6 +233,7 @@ export const NUI_EVENTS = {
 		DELETE_CUSTOM_LICENSE: "deleteCustomLicense",
 		GET_COLOR_CONFIG: "getColorConfig",
 		SAVE_COLOR_CONFIG: "saveColorConfig",
+		GET_BASE_LICENSES: "getBaseLicenses",
 	},
 	IA: {
 		GET_IA_COMPLAINTS: "getIAComplaints",

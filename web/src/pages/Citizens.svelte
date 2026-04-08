@@ -34,6 +34,11 @@
 		active: boolean;
 	}
 
+	interface BaseLicense {
+		key: string;
+		label: string;
+	}
+
 	interface CitizenProfile {
 		citizenid: string;
 		firstName: string;
@@ -50,10 +55,7 @@
 		flags: string[];
 		image?: string;
 		notes?: string;
-		licenses?: {
-			driver?: boolean;
-			weapon?: boolean;
-		};
+		licenses?: Record<string, boolean>;
 		customLicenses?: CustomLicenseStatus[];
 		activeBolos?: Array<{ id: number; reportId: string; type: string; notes?: string }>;
 		activeWarrants?: Array<{ reportid: number; expirydate: string }>;
@@ -97,6 +99,7 @@
 	let { tabService, jobType = 'leo', authService }: { tabService: ReturnType<typeof createTabService>; jobType?: JobType; authService?: AuthService } =
 		$props();
 
+	let baseLicenses: BaseLicense[] = $state([]);
 	let canManageLicenses = $derived(authService?.hasPermission('citizens_edit_licenses') ?? !isEMS);
 
 	const isEMS = $derived(jobType === 'ems');
@@ -138,9 +141,10 @@
 		try {
 			const result = await fetchNui(NUI_EVENTS.CITIZEN.GET_CITIZENS);
 			citizens = Array.isArray(result) ? result : [];
+			const baseLicensesResult = await fetchNui<BaseLicense[]>(NUI_EVENTS.SETTINGS.GET_BASE_LICENSES, {}, []);
+			baseLicenses = Array.isArray(baseLicensesResult) ? baseLicensesResult : [];
 		} catch (error) {
 			globalNotifications.error("Failed to fetch citizens");
-			citizens = [];
 		}
 		loading = false;
 	}
@@ -520,11 +524,10 @@
 	let activeLicenses = $derived.by((): LicenseEntry[] => {
 		if (!selectedProfile) return [];
 		const result: LicenseEntry[] = [];
-		if (selectedProfile.licenses?.driver) {
-			result.push({ key: "driver", name: "Driver's License", type: "state", active: true });
-		}
-		if (selectedProfile.licenses?.weapon) {
-			result.push({ key: "weapon", name: "Weapon License", type: "state", active: true });
+		for (const bl of baseLicenses) {
+			if (selectedProfile.licenses?.[bl.key as keyof typeof selectedProfile.licenses]) {
+				result.push({ key: bl.key, name: bl.label, type: "state", active: true });
+			}
 		}
 		for (const cl of selectedProfile.customLicenses || []) {
 			if (cl.active) {
@@ -548,8 +551,9 @@
 	let issuableLicenses = $derived.by((): IssuableLicense[] => {
 		if (!selectedProfile) return [];
 		const result: IssuableLicense[] = [];
-		result.push({ key: "driver", name: "Driver's License", type: "state", active: selectedProfile.licenses?.driver || false });
-		result.push({ key: "weapon", name: "Weapon License", type: "state", active: selectedProfile.licenses?.weapon || false });
+		for (const bl of baseLicenses) {
+			result.push({ key: bl.key, name: bl.label, type: "state", active: (selectedProfile.licenses as any)?.[bl.key] || false });
+		}
 		for (const cl of selectedProfile.customLicenses || []) {
 			result.push({ key: `custom-${cl.id}`, name: cl.name, type: "custom", active: cl.active, customId: cl.id });
 		}
@@ -559,7 +563,7 @@
 	async function toggleIssuableLicense(license: IssuableLicense) {
 		const newState = !license.active;
 		if (license.type === "state") {
-			await toggleLicense(license.key as "driver" | "weapon", newState);
+			await toggleLicense(license.key, newState);
 		} else if (license.customId) {
 			await toggleCustomLicense(license.customId, newState);
 		}

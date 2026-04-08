@@ -6,6 +6,9 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
 	plugins: [svelte(), tailwindcss()],
 	base: "./",
+	build: {
+		outDir: "../dist",
+	},
 	resolve: {
 		alias: {
 			"@/": "/src/",

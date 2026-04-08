@@ -767,6 +767,10 @@ ps.registerCallback(resourceName .. ':server:deleteCustomLicense', function(sour
     return { success = true }
 end)
 
+ps.registerCallback(resourceName .. ':server:getBaseLicenses', function(source)
+    return Config.BaseLicenses or {}
+end)
+
 ps.registerCallback(resourceName .. ':server:deleteTag', function(source, payload)
     local src = source
     if not CheckAuth(src) then return { success = false, message = 'Unauthorized' } end

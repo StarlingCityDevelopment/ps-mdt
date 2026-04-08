@@ -586,10 +586,13 @@ ps.registerCallback(resourceName .. ':server:getCitizenProfile', function(source
             linkedReports = linkedReports,
             ownedVehicles = vehicles,
             propertiesList = properties,
-            licenses = {
-                driver = licences.driver or false,
-                weapon = licences.weapon or false,
-            },
+            licenses = (function()
+                local lic = {}
+                for _, licConfig in ipairs(Config.BaseLicenses or {}) do
+                    lic[licConfig.key] = licences[licConfig.key] or false
+                end
+                return lic
+            end)(),
             customLicenses = (function()
                 local customRows = MySQL.query.await([[
                     SELECT cl.id, cl.name, cl.description,
@@ -623,6 +626,17 @@ ps.registerCallback(resourceName .. ':server:updateCitizenLicense', function(sou
     local enabled = payload.enabled == true
     if not citizenId or not licenseType then
         return { success = false, message = 'Missing citizen id or license' }
+    end
+
+    local validLicense = false
+    for _, licConfig in ipairs(Config.BaseLicenses or {}) do
+        if licConfig.key == licenseType then
+            validLicense = true
+            break
+        end
+    end
+    if not validLicense then
+        return { success = false, message = 'Invalid license type' }
     end
 
     local row = MySQL.single.await('SELECT metadata FROM players WHERE citizenid = ? LIMIT 1', { citizenId })
@@ -1103,7 +1117,13 @@ ps.registerCallback(resourceName .. ':server:getMyProfile', function(source)
             linkedReports = linkedReports,
             ownedVehicles = vehicles,
             weapons = weapons,
-            licenses = { driver = licences.driver or false, weapon = licences.weapon or false },
+            licenses = (function()
+                local lic = {}
+                for _, licConfig in ipairs(Config.BaseLicenses or {}) do
+                    lic[licConfig.key] = licences[licConfig.key] or false
+                end
+                return lic
+            end)(),
             customLicenses = clList,
         }
     }
