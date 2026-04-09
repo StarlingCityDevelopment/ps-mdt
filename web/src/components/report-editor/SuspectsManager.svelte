@@ -2,6 +2,7 @@
 	import type { Suspect } from "../../interfaces/IReportEditor";
 	import PersonnelSection from "./PersonnelSection.svelte";
 	import PersonnelCard from "./PersonnelCard.svelte";
+	import { t } from "../../stores/localeStore";
 
 	interface Props {
 		suspects: Suspect[];
@@ -38,12 +39,12 @@
 	}
 </script>
 
-<PersonnelSection title="Suspects" {onAdd}>
+<PersonnelSection title={$t("common.suspects") || "Suspects"} {onAdd}>
 	{#each suspects as suspect}
 		{#if !suspect.profileImage}
 			<div class="image-warning">
 				<svg class="warning-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-				<span class="warning-text">No mugshot on file for <strong>{suspect.fullName}</strong>.</span>
+				<span class="warning-text">{$t("common.noMugshotOnFile") || "No mugshot on file for"} <strong>{suspect.fullName}</strong>.</span>
 				<div class="warning-actions">
 					{#if onUploadPhoto}
 						<button
@@ -51,10 +52,10 @@
 							onclick={() => onUploadPhoto(suspect)}
 							disabled={!suspect.citizenid}
 							type="button"
-							title="Upload a photo"
+							title={$t("common.uploadPhoto") || "Upload a photo"}
 						>
 							<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-							Upload
+							{$t("common.upload") || "Upload"}
 						</button>
 					{/if}
 					{#if onTakeMugshot}
@@ -63,10 +64,10 @@
 							onclick={() => onTakeMugshot(suspect)}
 							disabled={!suspect.citizenid}
 							type="button"
-							title="Take mugshot (suspect must be online)"
+							title={$t("common.takeMugshotHint") || "Take mugshot (suspect must be online)"}
 						>
 							<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
-							Take Mugshot
+							{$t("common.takeMugshot") || "Take Mugshot"}
 						</button>
 					{/if}
 				</div>
@@ -75,7 +76,7 @@
 		{#if !suspect.fingerprint}
 			<div class="image-warning fingerprint-warning">
 				<svg class="warning-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-				<span class="warning-text">No fingerprint on file for <strong>{suspect.fullName}</strong>.</span>
+				<span class="warning-text">{$t("common.noFingerprintOnFile") || "No fingerprint on file for"} <strong>{suspect.fullName}</strong>.</span>
 				<div class="warning-actions">
 					{#if onAddFingerprint}
 						<button
@@ -83,10 +84,10 @@
 							onclick={() => onAddFingerprint(suspect)}
 							disabled={!suspect.citizenid}
 							type="button"
-							title="Add fingerprint to suspect's record"
+							title={$t("common.addFingerprintHint") || "Add fingerprint to suspect's record"}
 						>
 							<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839-1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4"/></svg>
-							Add Fingerprint
+							{$t("common.addFingerprint") || "Add Fingerprint"}
 						</button>
 					{/if}
 				</div>
@@ -107,9 +108,9 @@
 						onclick={() => onIssueWarrant(suspect)}
 						disabled={!suspect.citizenid}
 						type="button"
-						aria-label="Issue warrant"
+						aria-label={$t("common.issueWarrant") || "Issue warrant"}
 					>
-						Issue Warrant
+						{$t("common.issueWarrant") || "Issue Warrant"}
 					</button>
 					{#if onIssueBenchWarrant}
 						<button
@@ -117,9 +118,9 @@
 							onclick={() => onIssueBenchWarrant(suspect)}
 							disabled={!suspect.citizenid}
 							type="button"
-							aria-label="Issue bench warrant"
+							aria-label={$t("common.issueBenchWarrant") || "Issue bench warrant"}
 						>
-							Issue Bench Warrant
+							{$t("common.issueBenchWarrant") || "Issue Bench Warrant"}
 						</button>
 					{/if}
 					{#if onIssueBolo}
@@ -128,9 +129,9 @@
 							onclick={() => onIssueBolo(suspect)}
 							disabled={!suspect.citizenid}
 							type="button"
-							aria-label="Issue BOLO"
+							aria-label={$t("common.issueBolo") || "Issue BOLO"}
 						>
-							Issue BOLO
+							{$t("common.issueBolo") || "Issue BOLO"}
 						</button>
 					{/if}
 				</div>

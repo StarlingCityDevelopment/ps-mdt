@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte";
+	import { t } from "../../stores/localeStore";
 	import { fetchNui } from "../../utils/fetchNui";
 	import { isEnvBrowser } from "../../utils/misc";
 	import { NUI_EVENTS } from "../../constants/nuiEvents";
@@ -102,7 +103,7 @@
 		const name = newTagName.trim();
 		if (!name) return;
 		if (name.length > 25) {
-			showStatus("Tag name must be 25 characters or less", "error");
+			showStatus($t("management.tagNameLimit"), "error");
 			return;
 		}
 
@@ -120,15 +121,15 @@
 				{ success: false },
 			);
 			if (result?.success) {
-				showStatus("Tag created");
+				showStatus($t("management.tagCreated"));
 				newTagName = "";
 				await loadTags();
 			} else {
-				showStatus(result?.message || "Failed to create tag", "error");
+				showStatus(result?.message || $t("management.failedToCreateTag"), "error");
 			}
 		} catch (error) {
 			console.error("Failed to create tag:", error);
-			showStatus("Failed to create tag", "error");
+			showStatus($t("management.failedToCreateTag"), "error");
 		} finally {
 			isSubmitting = false;
 		}
@@ -139,7 +140,7 @@
 		const name = editName.trim();
 		if (!name) return;
 		if (name.length > 25) {
-			showStatus("Tag name must be 25 characters or less", "error");
+			showStatus($t("management.tagNameLimit"), "error");
 			return;
 		}
 
@@ -157,15 +158,15 @@
 				{ success: false },
 			);
 			if (result?.success) {
-				showStatus("Tag updated");
+				showStatus($t("management.tagUpdated"));
 				editingTag = null;
 				await loadTags();
 			} else {
-				showStatus(result?.message || "Failed to update tag", "error");
+				showStatus(result?.message || $t("management.failedToUpdateTag"), "error");
 			}
 		} catch (error) {
 			console.error("Failed to update tag:", error);
-			showStatus("Failed to update tag", "error");
+			showStatus($t("management.failedToUpdateTag"), "error");
 		} finally {
 			isSubmitting = false;
 		}
@@ -184,15 +185,15 @@
 				{ success: false },
 			);
 			if (result?.success) {
-				showStatus("Tag deleted");
+				showStatus($t("management.tagDeleted"));
 				if (editingTag?.id === tag.id) editingTag = null;
 				await loadTags();
 			} else {
-				showStatus(result?.message || "Failed to delete tag", "error");
+				showStatus(result?.message || $t("management.failedToDeleteTag"), "error");
 			}
 		} catch (error) {
 			console.error("Failed to delete tag:", error);
-			showStatus("Failed to delete tag", "error");
+			showStatus($t("management.failedToDeleteTag"), "error");
 		}
 	}
 
@@ -246,7 +247,7 @@
 			<input
 				class="tag-name-input"
 				type="text"
-				placeholder="New tag name..."
+				placeholder={$t("management.newTagName")}
 				bind:value={newTagName}
 				maxlength="25"
 				onkeydown={(e) => e.key === "Enter" && handleCreate()}
@@ -279,7 +280,7 @@
 				onclick={handleCreate}
 				disabled={!newTagName.trim() || isSubmitting}
 			>
-				{isSubmitting ? "..." : "+ Add"}
+				{isSubmitting ? $t("common.loading") : $t("common.add")}
 			</button>
 		</div>
 	</div>
@@ -289,30 +290,30 @@
 		<input
 			class="search-input"
 			type="text"
-			placeholder="Search tags..."
+			placeholder={$t("management.searchTags")}
 			bind:value={searchQuery}
 		/>
 		<div class="filter-pills">
-			<button class="filter-pill" class:active={filterType === "all"} onclick={() => (filterType = "all")}>All</button>
-			<button class="filter-pill" class:active={filterType === "officer"} onclick={() => (filterType = "officer")}>{isEMS ? 'Personnel' : 'Officer'}</button>
-			<button class="filter-pill" class:active={filterType === "report"} onclick={() => (filterType = "report")}>Report</button>
-			<button class="filter-pill" class:active={filterType === "both"} onclick={() => (filterType = "both")}>Both</button>
+			<button class="filter-pill" class:active={filterType === "all"} onclick={() => (filterType = "all")}>{$t("common.all")}</button>
+			<button class="filter-pill" class:active={filterType === "officer"} onclick={() => (filterType = "officer")}>{isEMS ? $t("common.personnel") : $t("common.officer")}</button>
+			<button class="filter-pill" class:active={filterType === "report"} onclick={() => (filterType = "report")}>{$t("common.report")}</button>
+			<button class="filter-pill" class:active={filterType === "both"} onclick={() => (filterType = "both")}>{$t("common.both")}</button>
 		</div>
 		{#if !isEMS}
 			<div class="filter-pills">
-				<button class="filter-pill" class:active={filterJobType === "all"} onclick={() => (filterJobType = "all")}>All</button>
-				<button class="filter-pill" class:active={filterJobType === "leo"} onclick={() => (filterJobType = "leo")}>LEO</button>
-				<button class="filter-pill" class:active={filterJobType === "ems"} onclick={() => (filterJobType = "ems")}>EMS</button>
+				<button class="filter-pill" class:active={filterJobType === "all"} onclick={() => (filterJobType = "all")}>{$t("common.all")}</button>
+				<button class="filter-pill" class:active={filterJobType === "leo"} onclick={() => (filterJobType = "leo")}>{$t("common.leo")}</button>
+				<button class="filter-pill" class:active={filterJobType === "ems"} onclick={() => (filterJobType = "ems")}>{$t("common.ems")}</button>
 			</div>
 		{/if}
-		<span class="tag-count">{filteredTags.length} tag{filteredTags.length !== 1 ? "s" : ""}</span>
+		<span class="tag-count">{filteredTags.length} {filteredTags.length !== 1 ? $t("management.tags") : $t("management.tag")}</span>
 	</div>
 
 	<!-- Tags list -->
 	{#if isLoading}
 		<div class="empty-state">
 			<div class="loading-spinner"></div>
-			<p>Loading tags...</p>
+			<p>{$t("management.loadingTags")}</p>
 		</div>
 	{:else}
 		<div class="tags-list">
@@ -356,8 +357,8 @@
 									{/each}
 								</div>
 								<div class="edit-actions">
-									<button class="btn-save" onclick={handleUpdate} disabled={!editName.trim() || isSubmitting}>Save</button>
-									<button class="btn-cancel" onclick={cancelEdit}>Cancel</button>
+									<button class="btn-save" onclick={handleUpdate} disabled={!editName.trim() || isSubmitting}>{$t("common.save")}</button>
+									<button class="btn-cancel" onclick={cancelEdit}>{$t("common.cancel")}</button>
 								</div>
 							</div>
 						</div>
@@ -370,7 +371,7 @@
 							<span class="tag-type-badge job-{tag.job_type || 'all'}">{getJobTypeLabel(tag.job_type || 'all')}</span>
 						</div>
 						{#if tag.usage_count !== undefined}
-							<span class="tag-usage" title="Times used">{tag.usage_count} uses</span>
+							<span class="tag-usage" title={$t("management.timesUsed")}>{tag.usage_count} {$t("management.uses")}</span>
 						{/if}
 						<div class="tag-actions">
 							<button class="action-btn edit-btn" onclick={() => startEdit(tag)} title="Edit">
@@ -385,9 +386,9 @@
 			{:else}
 				<div class="empty-state">
 					{#if searchQuery || filterType !== "all"}
-						No tags match your filter.
+						{$t("management.noTagsMatchFilter")}
 					{:else}
-						No tags created yet. Add one above.
+						{$t("management.noTagsCreated")}
 					{/if}
 				</div>
 			{/each}

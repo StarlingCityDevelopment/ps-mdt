@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { t } from "../stores/localeStore";
+
 	export let tags: string[];
 	export let availableTags: string[];
 	export let onAddTag: (tag: string) => void;
@@ -25,17 +27,19 @@
 	}
 </script>
 
-<section class="tag-manager" aria-label="Report tags">
+<section class="tag-manager" aria-label={$t("tags.report_tags")}>
 	<div class="tag-header">
-		<h3 class="tag-title">Tags</h3>
+		<h3 class="tag-title">{$t("common.tags")}</h3>
 		<div class="tag-input-group">
-			<label for="new-tag-input" class="sr-only">Add new tag</label>
+			<label for="new-tag-input" class="sr-only"
+				>{$t("common.addNewTag")}</label
+			>
 			<input
 				id="new-tag-input"
 				type="text"
 				bind:value={newTag}
 				on:keydown={handleKeydown}
-				placeholder="Add tag..."
+				placeholder={$t("common.addTag")}
 				class="tag-input"
 				aria-describedby="tag-instructions"
 			/>
@@ -44,20 +48,19 @@
 				on:click={addTag}
 				disabled={!newTag.trim()}
 				class="add-tag-btn"
-				aria-label="Add tag"
+				aria-label={$t("common.addTag")}
 			>
-				Add
+				{$t("common.add")}
 			</button>
 		</div>
 	</div>
 
 	<div id="tag-instructions" class="sr-only">
-		Press Enter or click Add button to add a new tag. Click the X button to
-		remove tags.
+		{$t("common.tagInstructions")}
 	</div>
 
 	{#if tags.length > 0}
-		<div class="tags-container" role="list" aria-label="Current tags">
+		<div class="tags-container" role="list" aria-label={$t("tags.current_tags")}>
 			{#each tags as tag}
 				<div class="tag" role="listitem">
 					<span class="tag-text">{tag}</span>
@@ -65,7 +68,7 @@
 						type="button"
 						on:click={() => removeTag(tag)}
 						class="remove-tag-btn"
-						aria-label="Remove {tag} tag"
+						aria-label={$t("tags.remove_tag") + " " + tag}
 					>
 						×
 					</button>
@@ -73,16 +76,16 @@
 			{/each}
 		</div>
 	{:else}
-		<p class="no-tags">No tags added</p>
+		<p class="no-tags">{$t("common.noTags")}</p>
 	{/if}
 
 	{#if availableTags.length > 0}
 		<div class="suggested-tags">
-			<h4 class="suggested-title">Suggested Tags</h4>
+			<h4 class="suggested-title">{$t("common.suggestedTags")}</h4>
 			<div
 				class="suggested-container"
 				role="list"
-				aria-label="Suggested tags"
+				aria-label={$t("tags.suggested_tags")}
 			>
 				{#each availableTags as tag}
 					<button
@@ -90,7 +93,7 @@
 						on:click={() => onAddTag(tag)}
 						class="suggested-tag"
 						disabled={tags.includes(tag)}
-						aria-label="Add suggested tag: {tag}"
+						aria-label={$t("tags.add_suggested_tag") + ": " + tag}
 					>
 						{tag}
 					</button>

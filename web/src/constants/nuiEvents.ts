@@ -213,6 +213,7 @@ export const NUI_EVENTS = {
 		CREATE_TAG: "createTag",
 		UPDATE_TAG: "updateTag",
 		DELETE_TAG: "deleteTag",
+		GET_LOCALES: "getLocales",
 	},
 	AWARDS: {
 		GET_AWARDS_DATA: "getAwardsData",
@@ -332,6 +333,7 @@ export const ALL_NUI_EVENTS = [
 	...Object.values(NUI_EVENTS.COLLAB),
 	...Object.values(NUI_EVENTS.DOJ),
 	...Object.values(NUI_EVENTS.SOP),
+	"getLocales",
 	"copyToClipboard",
 	"submitComplaint",
 	"closeComplaint",

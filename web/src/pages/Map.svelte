@@ -12,6 +12,7 @@
 	import { isEnvBrowser } from "../utils/misc";
 	import { NUI_EVENTS } from "../constants/nuiEvents";
 	import { globalNotifications } from "../services/notificationService.svelte";
+	import { t } from "../stores/localeStore";
 
 	let mapContainer: HTMLDivElement | null = null;
 	let map: L.Map | null = null;
@@ -253,41 +254,41 @@
 <div class="map-page">
 	<div class="map-wrapper">
 		<div class="map-controls">
-			<span class="controls-header">Tracking</span>
+			<span class="controls-header">{$t('map.tracking')}</span>
 
 			<div class="controls-group">
 				<label class="control-toggle">
 					<input type="checkbox" bind:checked={showOfficers} />
-					<span class="toggle-label">Officers</span>
+					<span class="toggle-label">{$t('common.officers')}</span>
 				</label>
 				<label class="control-toggle">
 					<input type="checkbox" bind:checked={showVehicles} />
-					<span class="toggle-label">Vehicles</span>
+					<span class="toggle-label">{$t('common.vehicles')}</span>
 				</label>
 				<label class="control-toggle">
 					<input type="checkbox" bind:checked={showBodycams} />
-					<span class="toggle-label">Bodycams</span>
+					<span class="toggle-label">{$t('common.bodycams')}</span>
 				</label>
 			</div>
 
 			<div class="controls-divider"></div>
 
 			<div class="controls-group">
-				<span class="controls-label">Style</span>
+				<span class="controls-label">{$t('map.style')}</span>
 				<div class="segment">
 					<button
 						class:active={iconStyle === "dot"}
 						onclick={() => (iconStyle = "dot")}
 						type="button"
 					>
-						Dots
+						{$t('map.dots')}
 					</button>
 					<button
 						class:active={iconStyle === "badge"}
 						onclick={() => (iconStyle = "badge")}
 						type="button"
 					>
-						Badges
+						{$t('map.badges')}
 					</button>
 				</div>
 			</div>
@@ -295,9 +296,9 @@
 			<div class="controls-divider"></div>
 
 			<div class="legend">
-				<span class="legend-item officer">Officer</span>
-				<span class="legend-item vehicle">Vehicle</span>
-				<span class="legend-item bodycam">Bodycam</span>
+				<span class="legend-item officer">{$t('common.officer')}</span>
+				<span class="legend-item vehicle">{$t('common.vehicle')}</span>
+				<span class="legend-item bodycam">{$t('common.bodycam')}</span>
 			</div>
 		</div>
 		<div

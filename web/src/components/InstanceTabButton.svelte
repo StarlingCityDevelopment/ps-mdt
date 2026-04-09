@@ -1,7 +1,8 @@
 <script lang="ts">
-	import type { ComponentId, MDTTab } from "../constants";
+	import type { ComponentId } from "../constants";
 	import { MDT_TABS } from "../constants";
 	import type { TabInstance } from "../services/tabService.svelte.ts";
+	import { t } from "../stores/localeStore";
 
 	interface Props {
 		instance: TabInstance;
@@ -42,7 +43,7 @@
 		class="instance-tab"
 		class:active={instance.isActive}
 		onclick={handleInstanceClick}
-		aria-label="Switch to {instance.currentTab}"
+		aria-label={$t("common.switch_to") + " " + instance.currentTab}
 	>
 		<span class="tab-icon material-icons">{tabIcon}</span>
 		<span class="tab-name">{instance.currentTab}</span>
@@ -51,7 +52,7 @@
 				class="close-btn"
 				onclick={handleCloseClick}
 				onkeydown={handleCloseKeydown}
-				aria-label="Close {instance.currentTab}"
+				aria-label={$t("common.close") + " " + instance.currentTab}
 				role="button"
 				tabindex="0"
 			>

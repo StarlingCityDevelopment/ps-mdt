@@ -3,6 +3,7 @@
 	import { fetchNui } from "../../utils/fetchNui";
 	import { isEnvBrowser } from "../../utils/misc";
 	import { NUI_EVENTS } from "../../constants/nuiEvents";
+	import { t } from "../../stores/localeStore";
 
 	interface Props {
 		vehicles: ReportVehicle[];
@@ -73,9 +74,9 @@
 
 <div class="metadata-section">
 	<div class="section-header">
-		<span class="section-label">VEHICLES INVOLVED</span>
+		<span class="section-label">{$t("common.vehiclesInvolved") || "VEHICLES INVOLVED"}</span>
 		<button class="add-btn" onclick={toggleSearch} type="button">
-			{showSearch ? "× Close" : "+ Add"}
+			{showSearch ? "× " + ($t("common.close") || "Close") : "+ " + ($t("common.add") || "Add")}
 		</button>
 	</div>
 
@@ -83,13 +84,13 @@
 		<div class="search-area">
 			<input
 				type="text"
-				placeholder="Search by plate, owner name..."
+				placeholder={$t("common.searchByPlateOrOwner") || "Search by plate, owner name..."}
 				value={searchQuery}
 				oninput={handleSearchInput}
 				class="search-input"
 			/>
 			{#if isSearching}
-				<div class="search-status">Searching...</div>
+				<div class="search-status">{$t("common.searching") || "Searching..."}</div>
 			{:else if searchResults.length > 0}
 				<div class="search-results">
 					{#each searchResults as result}
@@ -103,13 +104,13 @@
 							<span class="result-label">{result.vehicle_label}</span>
 							<span class="result-owner">{result.owner_name}</span>
 							{#if isAlreadyAdded(result.plate)}
-								<span class="result-added">Added</span>
+								<span class="result-added">{$t("common.added") || "Added"}</span>
 							{/if}
 						</button>
 					{/each}
 				</div>
 			{:else if searchQuery.trim().length > 0}
-				<div class="search-status">No vehicles found</div>
+				<div class="search-status">{$t("common.noVehiclesFound") || "No vehicles found"}</div>
 			{/if}
 		</div>
 	{/if}
@@ -121,13 +122,13 @@
 					<span class="vehicle-plate">{vehicle.plate}</span>
 					<span class="vehicle-secondary">{vehicle.vehicle_label}</span>
 				</div>
-				<button class="remove-btn" onclick={() => onRemove(vehicle.plate)} type="button" aria-label="Remove vehicle">
+				<button class="remove-btn" onclick={() => onRemove(vehicle.plate)} type="button" aria-label={$t("vehicles.remove_vehicle")}>
 					<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
 						<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
 					</svg>
 				</button>
 			</div>
-			<span class="vehicle-owner">Owner: {vehicle.owner_name}</span>
+			<span class="vehicle-owner">{$t("common.owner") || "Owner"}: {vehicle.owner_name}</span>
 			{#if onIssueBolo}
 				<div class="vehicle-actions">
 					<button
@@ -135,9 +136,9 @@
 						onclick={() => onIssueBolo(vehicle)}
 						disabled={!vehicle.plate}
 						type="button"
-						aria-label="Issue BOLO for vehicle {vehicle.plate}"
+						aria-label={($t("common.issueBoloForVehicle") || "Issue BOLO for vehicle") + " " + vehicle.plate}
 					>
-						Issue BOLO
+						{$t("common.issueBolo") || "Issue BOLO"}
 					</button>
 				</div>
 			{/if}

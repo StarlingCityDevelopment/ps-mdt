@@ -200,7 +200,7 @@
 		{:else if activeComponent === "charges"}
 			<Charges {authService} />
 		{:else if activeComponent === "awards"}
-			<Awards {tabService} jobType={authService.jobType} />
+			<Awards jobType={authService.jobType} />
 		{:else if activeComponent === "roster"}
 			<Roster {authService} {tabService} />
 		{:else if activeComponent === "map"}
@@ -230,13 +230,13 @@
 		{:else if activeComponent === "settings"}
 			<Settings />
 		{:else if activeComponent === "court_cases"}
-			<CourtCases {tabService} {authService} />
+			<CourtCases />
 		{:else if activeComponent === "warrant_review"}
-			<WarrantReview {tabService} {authService} />
+			<WarrantReview {authService} />
 		{:else if activeComponent === "court_orders"}
-			<CourtOrders {tabService} {authService} />
+			<CourtOrders />
 		{:else if activeComponent === "legal_documents"}
-			<LegalDocuments {tabService} {authService} />
+			<LegalDocuments />
 		{:else if isPlaceholderComponent(activeComponent)}
 			<PlaceholderContent componentId={activeComponent} />
 		{:else}

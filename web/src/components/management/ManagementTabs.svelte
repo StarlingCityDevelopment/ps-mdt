@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from "../../stores/localeStore";
 	import { MANAGEMENT_TABS } from "@/constants/management";
 
 	type View = "Activity" | "Bulletins" | "Permissions";
@@ -17,7 +18,7 @@
 			onclick={() => onViewChange(tab)}
 			class:selected={currentView === tab}
 		>
-			{tab}
+			{$t("management." + tab.toLowerCase()) || tab}
 		</button>
 	{/each}
 </div>

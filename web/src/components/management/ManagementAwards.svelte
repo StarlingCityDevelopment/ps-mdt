@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte";
+	import { t } from "../../stores/localeStore";
 	import { fetchNui } from "../../utils/fetchNui";
 	import { isEnvBrowser } from "../../utils/misc";
 	import { NUI_EVENTS } from "../../constants/nuiEvents";
@@ -76,7 +77,7 @@
 		const desc = formDesc.trim();
 		const category = formCategory.trim();
 		if (!name || !desc || !category || formGoalAmount < 1) {
-			showStatus("Fill in all fields", "error");
+			showStatus($t("management.fillInAllFields"), "error");
 			return;
 		}
 
@@ -102,14 +103,14 @@
 				NUI_EVENTS.AWARDS.SAVE_AWARD, payload, { success: false }
 			);
 			if (result?.success) {
-				showStatus(editingId ? "Award updated" : "Award created");
+				showStatus(editingId ? $t("management.awardUpdated") : $t("management.awardCreated"));
 				resetForm();
 				await loadAwards();
 			} else {
-				showStatus(result?.message || "Failed to save", "error");
+				showStatus(result?.message || $t("management.failedToSave"), "error");
 			}
 		} catch {
-			showStatus("Failed to save award", "error");
+			showStatus($t("management.failedToSaveAward"), "error");
 		} finally {
 			isSubmitting = false;
 		}
@@ -127,14 +128,14 @@
 				NUI_EVENTS.AWARDS.DELETE_AWARD, { id: award.id }, { success: false }
 			);
 			if (result?.success) {
-				showStatus("Award deleted");
+				showStatus($t("management.awardDeleted"));
 				if (editingId === award.id) resetForm();
 				await loadAwards();
 			} else {
-				showStatus("Failed to delete", "error");
+				showStatus($t("management.failedToDelete"), "error");
 			}
 		} catch {
-			showStatus("Failed to delete award", "error");
+			showStatus($t("management.failedToDeleteAward"), "error");
 		}
 	}
 
@@ -180,17 +181,17 @@
 
 	<div class="form-section">
 		<div class="form-row">
-			<input class="form-input name-input" type="text" placeholder="Award name..." bind:value={formName} maxlength="50" />
-			<input class="form-input" type="text" placeholder="Category..." bind:value={formCategory} maxlength="25" />
+			<input class="form-input name-input" type="text" placeholder={$t("management.awardName")} bind:value={formName} maxlength="50" />
+			<input class="form-input" type="text" placeholder={$t("management.category")} bind:value={formCategory} maxlength="25" />
 			<select class="form-select" bind:value={formGoalType}>
 				{#each GOAL_TYPES as gt}
-					<option value={gt.value}>{gt.label}</option>
+					<option value={gt.value}>{$t("management." + gt.value) || gt.label}</option>
 				{/each}
 			</select>
-			<input class="form-input goal-input" type="number" min="1" bind:value={formGoalAmount} placeholder="Goal" />
+			<input class="form-input goal-input" type="number" min="1" bind:value={formGoalAmount} placeholder={$t("management.goal")} />
 		</div>
 		<div class="form-row">
-			<input class="form-input desc-input" type="text" placeholder="Description..." bind:value={formDesc} maxlength="100" />
+			<input class="form-input desc-input" type="text" placeholder={$t("management.description")} bind:value={formDesc} maxlength="100" />
 			<div class="icon-picker">
 				{#each ICONS as icon}
 					<button
@@ -205,11 +206,11 @@
 			</div>
 			<div class="form-actions">
 				{#if editingId}
-					<button class="btn-save" onclick={handleSave} disabled={isSubmitting}>Update</button>
-					<button class="btn-cancel" onclick={resetForm}>Cancel</button>
+					<button class="btn-save" onclick={handleSave} disabled={isSubmitting}>{$t("common.update")}</button>
+					<button class="btn-cancel" onclick={resetForm}>{$t("common.cancel")}</button>
 				{:else}
 					<button class="btn-create" onclick={handleSave} disabled={!formName.trim() || !formDesc.trim() || !formCategory.trim() || isSubmitting}>
-						{isSubmitting ? "..." : "+ Add"}
+						{isSubmitting ? $t("common.loading") : $t("common.add")}
 					</button>
 				{/if}
 			</div>
@@ -219,7 +220,7 @@
 	{#if isLoading}
 		<div class="empty-state">
 			<div class="loading-spinner"></div>
-			<p>Loading awards...</p>
+			<p>{$t("management.loadingAwards")}</p>
 		</div>
 	{:else}
 		<div class="awards-list">
@@ -233,16 +234,16 @@
 					<span class="row-category">{award.category}</span>
 					<span class="row-goal">{getGoalTypeLabel(award.goalType)}: {award.goalAmount.toLocaleString()}</span>
 					<div class="row-actions">
-						<button class="action-btn edit-btn" onclick={() => startEdit(award)} title="Edit">
+						<button class="action-btn edit-btn" onclick={() => startEdit(award)} title={$t("common.edit")}>
 							<span class="material-icons">edit</span>
 						</button>
-						<button class="action-btn delete-btn" onclick={() => handleDelete(award)} title="Delete">
+						<button class="action-btn delete-btn" onclick={() => handleDelete(award)} title={$t("common.delete")}>
 							<span class="material-icons">delete</span>
 						</button>
 					</div>
 				</div>
 			{:else}
-				<div class="empty-state">No awards configured. Add one above.</div>
+				<div class="empty-state">{$t("management.noAwardsConfigured")}</div>
 			{/each}
 		</div>
 	{/if}

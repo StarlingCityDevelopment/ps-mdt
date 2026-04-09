@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { TagInfo } from "../../services/tagService.svelte";
+	import { t } from "../../stores/localeStore";
 
 	interface Props {
 		tags: string[];
@@ -10,7 +11,6 @@
 	}
 
 	let { tags, availableTags, onAddTag, onRemoveTag, getTagColor }: Props = $props();
-
 	let showTagDropdown = $state(false);
 
 	// Filter out already-selected tags
@@ -45,17 +45,17 @@
 
 <div class="metadata-section">
 	<div class="section-title">
-		<span class="section-label">TAGS</span>
+		<span class="section-label">{$t("common.tags") || "TAGS"}</span>
 		<div class="dropdown-container">
 			<button
 				class="add-btn"
 				onclick={openTagDropdown}
-				title="Add Tag"
-				aria-label="Add Tag"
-			>+ Add</button>
+				title={$t("common.addTag") || "Add Tag"}
+				aria-label={$t("common.addTag") || "Add Tag"}
+			>+ {$t("common.add") || "Add"}</button>
 			{#if showTagDropdown}
 				<div class="dropdown">
-					<div class="dropdown-header">Available Tags</div>
+					<div class="dropdown-header">{$t("common.availableTags") || "Available Tags"}</div>
 					{#each filteredTags as tag}
 						<button
 							class="dropdown-item"
@@ -66,7 +66,7 @@
 						</button>
 					{/each}
 					{#if filteredTags.length === 0}
-						<div class="dropdown-empty">No more tags available</div>
+						<div class="dropdown-empty">{$t("common.noMoreTagsAvailable") || "No more tags available"}</div>
 					{/if}
 				</div>
 			{/if}

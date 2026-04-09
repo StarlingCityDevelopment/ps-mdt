@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { t } from "../../stores/localeStore";
+
 	interface Props {
 		label: string;
 		isSelected: boolean;

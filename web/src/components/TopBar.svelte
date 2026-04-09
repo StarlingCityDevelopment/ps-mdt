@@ -1,7 +1,5 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import { fetchNui } from "../utils/fetchNui";
-	import { NUI_EVENTS } from "../constants/nuiEvents";
 	import {
 		DEFAULT_TIME,
 		DEFAULT_DATE,
@@ -10,8 +8,6 @@
 		TIMING,
 		APP_INFO,
 	} from "../constants";
-
-	let info = $derived(APP_INFO[authService.jobType] || APP_INFO.leo);
 	import type { AuthService } from "../services/authService.svelte";
 
 	interface Props {
@@ -20,6 +16,8 @@
 	}
 
 	let { authService, onOpacityStyleChange }: Props = $props();
+
+	let info = $derived(APP_INFO[authService.jobType] || APP_INFO.leo);
 
 	let currentTime = $state(DEFAULT_TIME);
 	let currentDate = $state(DEFAULT_DATE);

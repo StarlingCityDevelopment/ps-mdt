@@ -6,6 +6,7 @@
 	import { globalNotifications } from "../services/notificationService.svelte";
 	import { openReportInEditor } from "../stores/reportsStore";
 	import type { createTabService } from "../services/tabService.svelte";
+	import { t } from "../stores/localeStore";
 	import Pagination from "../components/Pagination.svelte";
 
 	let { tabService }: { tabService: ReturnType<typeof createTabService> } = $props();
@@ -311,28 +312,28 @@
 							{/if}
 						</div>
 						<div class="info-card-body">
-							<span class="info-card-label">Owner</span>
+							<span class="info-card-label">{$t('vehicles.owner')}</span>
 							<span class="info-card-value">{selectedVehicle.owner}</span>
 						</div>
 					</div>
-					<div class="info-item"><span class="info-label">Plate</span><span class="info-value mono">{selectedVehicle.plate}</span></div>
-					<div class="info-item"><span class="info-label">Model</span><span class="info-value">{selectedVehicle.label}</span></div>
-					<div class="info-item"><span class="info-label">Class</span><span class="info-value">{selectedVehicle.class}</span></div>
-					<div class="info-item"><span class="info-label">Type</span><span class="info-value">{selectedVehicle.type}</span></div>
-					<div class="info-item"><span class="info-label">Brand</span><span class="info-value">{selectedVehicle.brand || 'Unknown'}</span></div>
-					<div class="info-item"><span class="info-label">Reports</span><span class="info-value">{selectedVehicle.seenIn || 0}</span></div>
-					<div class="info-item"><span class="info-label">Points</span><span class="info-value" class:accent-red={(selectedVehicle.points ?? 0) > 0}>{selectedVehicle.points ?? 0}</span></div>
+					<div class="info-item"><span class="info-label">{$t('vehicles.plate')}</span><span class="info-value mono">{selectedVehicle.plate}</span></div>
+					<div class="info-item"><span class="info-label">{$t('citizens.vehicle')}</span><span class="info-value">{selectedVehicle.label}</span></div>
+					<div class="info-item"><span class="info-label">{$t('vehicles.class')}</span><span class="info-value">{selectedVehicle.class}</span></div>
+					<div class="info-item"><span class="info-label">{$t('common.type')}</span><span class="info-value">{selectedVehicle.type}</span></div>
+					<div class="info-item"><span class="info-label">{$t('vehicles.brand')}</span><span class="info-value">{selectedVehicle.brand || $t('common.unknown')}</span></div>
+					<div class="info-item"><span class="info-label">{$t('reports_page.report_id')}</span><span class="info-value">{selectedVehicle.seenIn || 0}</span></div>
+					<div class="info-item"><span class="info-label">{$t('vehicles.points')}</span><span class="info-value" class:accent-red={(selectedVehicle.points ?? 0) > 0}>{selectedVehicle.points ?? 0}</span></div>
 					<div class="info-item">
-						<span class="info-label">State</span>
+						<span class="info-label">{$t('vehicles.state')}</span>
 						<span class="info-value" class:state-active={selectedVehicle.core_state === 0} class:state-garaged={selectedVehicle.core_state === 1} class:state-impounded-state={selectedVehicle.core_state === 2}>
-							{selectedVehicle.core_state === 0 ? 'Out' : selectedVehicle.core_state === 1 ? 'Garaged' : selectedVehicle.core_state === 2 ? 'Impounded' : 'Unknown'}
+							{selectedVehicle.core_state === 0 ? $t('vehicles.active') : selectedVehicle.core_state === 1 ? $t('vehicles.garaged') : selectedVehicle.core_state === 2 ? $t('vehicles.impounded') : $t('common.unknown')}
 						</span>
 					</div>
 				</div>
 
 				{#if selectedVehicle.flags && selectedVehicle.flags.length}
 					<div class="section">
-						<div class="section-title">Flags</div>
+						<div class="section-title">{$t('vehicles.flags')}</div>
 						<div class="flags-row">
 							{#each selectedVehicle.flags as flag}
 								<span class={getFlagClass(flag)}>{flag}</span>
@@ -343,13 +344,13 @@
 
 				{#if selectedVehicle.information}
 					<div class="section">
-						<div class="section-title">Information</div>
+						<div class="section-title">{$t('vehicles.information')}</div>
 						<p class="section-text">{selectedVehicle.information}</p>
 					</div>
 				{/if}
 
 				<div class="section">
-					<div class="section-title">DMV Updates</div>
+					<div class="section-title">{$t('vehicles.dmv_updates')}</div>
 					<div class="dmv-form">
 						<div class="form-row">
 							<label class="form-field">
@@ -371,7 +372,7 @@
 							</label>
 						</div>
 						<button class="save-btn" onclick={saveVehicle} disabled={vehicleSaving} type="button">
-							{vehicleSaving ? "Saving..." : "Save DMV"}
+							{vehicleSaving ? $t('common.saving') : $t('vehicles.save_dmv')}
 						</button>
 					</div>
 				</div>
@@ -424,36 +425,36 @@
 		<div class="topbar">
 			<div class="search-box">
 				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-				<input type="text" bind:value={searchQuery} placeholder="Search vehicles by owner, plate, class..." />
+				<input type="text" bind:value={searchQuery} placeholder={$t('vehicles.search_placeholder')} />
 			</div>
 			<button class="refresh-btn" onclick={refreshVehicles} disabled={loading}>
-				{loading ? "Loading..." : "Refresh"}
+				{loading ? $t('common.loading') : $t('common.refresh')}
 			</button>
 		</div>
 
 		<div class="filter-tabs">
-			<button class="filter-tab" class:active={statusFilter === "all"} onclick={() => { statusFilter = "all"; vehiclePage = 1; }}>All</button>
-			<button class="filter-tab" class:active={statusFilter === "active"} onclick={() => { statusFilter = "active"; vehiclePage = 1; }}>Active</button>
-			<button class="filter-tab" class:active={statusFilter === "garaged"} onclick={() => { statusFilter = "garaged"; vehiclePage = 1; }}>Garaged</button>
-			<button class="filter-tab" class:active={statusFilter === "impounded"} onclick={() => { statusFilter = "impounded"; vehiclePage = 1; }}>Impounded</button>
-			<button class="filter-tab" class:active={statusFilter === "stolen"} onclick={() => { statusFilter = "stolen"; vehiclePage = 1; }}>Stolen</button>
+			<button class="filter-tab" class:active={statusFilter === "all"} onclick={() => { statusFilter = "all"; vehiclePage = 1; }}>{$t('vehicles.all')}</button>
+			<button class="filter-tab" class:active={statusFilter === "active"} onclick={() => { statusFilter = "active"; vehiclePage = 1; }}>{$t('vehicles.active')}</button>
+			<button class="filter-tab" class:active={statusFilter === "garaged"} onclick={() => { statusFilter = "garaged"; vehiclePage = 1; }}>{$t('vehicles.garaged')}</button>
+			<button class="filter-tab" class:active={statusFilter === "impounded"} onclick={() => { statusFilter = "impounded"; vehiclePage = 1; }}>{$t('vehicles.impounded')}</button>
+			<button class="filter-tab" class:active={statusFilter === "stolen"} onclick={() => { statusFilter = "stolen"; vehiclePage = 1; }}>{$t('vehicles.stolen')}</button>
 		</div>
 
 		<div class="list-panel">
 			<div class="list-header">
-				<span class="col-name">Vehicle</span>
-				<span class="col-plate">Plate</span>
-				<span class="col-owner">Owner</span>
-				<span class="col-class">Class</span>
-				<span class="col-points">Points</span>
-				<span class="col-status">Status</span>
-				<span class="col-flags">Flags</span>
+				<span class="col-name">{$t('citizens.vehicle')}</span>
+				<span class="col-plate">{$t('vehicles.plate')}</span>
+				<span class="col-owner">{$t('vehicles.owner')}</span>
+				<span class="col-class">{$t('vehicles.class')}</span>
+				<span class="col-points">{$t('vehicles.points')}</span>
+				<span class="col-status">{$t('common.status')}</span>
+				<span class="col-flags">{$t('vehicles.flags')}</span>
 			</div>
 			<div class="list-body">
 				{#if loading}
-					<div class="empty-state">Loading vehicles...</div>
+					<div class="empty-state">{$t('common.loading_vehicles')}</div>
 				{:else if filteredVehicles.length === 0}
-					<div class="empty-state">{searchQuery ? "No vehicles match your search." : "No vehicles found."}</div>
+					<div class="empty-state">{searchQuery ? $t('vehicles.no_vehicles_match') : $t('common.no_vehicles')}</div>
 				{:else}
 					{#each filteredVehicles as vehicle}
 						<button class="vehicle-row" onclick={() => viewVehicle(vehicle.plate)}>

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { EVIDENCE_TYPES } from "../constants";
 	import type { Report, Evidence } from "../interfaces/IReportEditor";
+	import { t } from "../stores/localeStore";
 
 	export let report: Report;
 	export let onAddEvidence: (evidence: Partial<Evidence>) => void;
@@ -65,9 +66,9 @@
 	$: formValid = newEvidence.title && newEvidence.type;
 </script>
 
-<section class="evidence-manager" aria-label="Evidence management">
+	<section class="evidence-manager" aria-label={$t("evidence_page.evidence_management")}>
 	<div class="evidence-header">
-		<h3 class="section-title">Evidence ({report.evidence.length})</h3>
+		<h3 class="section-title">{$t("common.evidence")} ({report.evidence.length})</h3>
 		<button
 			type="button"
 			on:click={toggleEvidenceForm}
@@ -75,7 +76,7 @@
 			aria-expanded={showEvidenceForm}
 			aria-controls="evidence-form"
 		>
-			{showEvidenceForm ? "Cancel" : "Add Evidence"}
+			{showEvidenceForm ? $t("common.cancel") : $t("common.addEvidence")}
 		</button>
 	</div>
 
@@ -85,12 +86,12 @@
 			class="evidence-form"
 			on:submit|preventDefault={saveEvidence}
 			role="region"
-			aria-label={editingEvidence ? "Edit evidence" : "Add new evidence"}
+			aria-label={editingEvidence ? $t("common.editEvidence") : $t("common.addNewEvidence")}
 		>
 			<div class="form-row">
 				<div class="form-field">
 					<label for="evidence-title" class="form-label"
-						>Title *</label
+						>{$t("common.title")} *</label
 					>
 					<input
 						id="evidence-title"
@@ -101,12 +102,12 @@
 						aria-describedby="evidence-title-help"
 					/>
 					<div id="evidence-title-help" class="sr-only">
-						Enter a descriptive title for the evidence
+						{$t("common.evidenceTitleHelp")}
 					</div>
 				</div>
 
 				<div class="form-field">
-					<label for="evidence-type" class="form-label">Type *</label>
+					<label for="evidence-type" class="form-label">{$t("common.type")} *</label>
 					<select
 						id="evidence-type"
 						bind:value={newEvidence.type}
@@ -114,13 +115,13 @@
 						required
 						aria-describedby="evidence-type-help"
 					>
-						<option value="">Select type...</option>
+						<option value="">{$t("common.selectType")}</option>
 						{#each EVIDENCE_TYPES as type}
 							<option value={type}>{type}</option>
 						{/each}
 					</select>
 					<div id="evidence-type-help" class="sr-only">
-						Select the type of evidence
+						{$t("common.evidenceTypeHelp")}
 					</div>
 				</div>
 			</div>
@@ -128,7 +129,7 @@
 			<div class="form-row">
 				<div class="form-field">
 					<label for="evidence-serial" class="form-label"
-						>Serial Number</label
+						>{$t("common.serialNumber")}</label
 					>
 					<input
 						id="evidence-serial"
@@ -138,13 +139,13 @@
 						aria-describedby="evidence-serial-help"
 					/>
 					<div id="evidence-serial-help" class="sr-only">
-						Enter serial number if applicable
+						{$t("common.serialNumberHelp")}
 					</div>
 				</div>
 			</div>
 
 			<div class="form-field">
-				<label for="evidence-notes" class="form-label">Notes</label>
+				<label for="evidence-notes" class="form-label">{$t("common.notes")}</label>
 				<textarea
 					id="evidence-notes"
 					bind:value={newEvidence.notes}
@@ -153,7 +154,7 @@
 					aria-describedby="evidence-notes-help"
 				></textarea>
 				<div id="evidence-notes-help" class="sr-only">
-					Additional notes about the evidence
+					{$t("common.evidenceNotesHelp")}
 				</div>
 			</div>
 
@@ -164,26 +165,26 @@
 					class="save-btn"
 					aria-describedby="save-btn-help"
 				>
-					{editingEvidence ? "Update Evidence" : "Add Evidence"}
+					{editingEvidence ? $t("common.updateEvidence") : $t("common.addEvidence")}
 				</button>
 				<button
 					type="button"
 					on:click={toggleEvidenceForm}
 					class="cancel-btn"
 				>
-					Cancel
+					{$t("common.cancel")}
 				</button>
 			</div>
 			<div id="save-btn-help" class="sr-only">
 				{formValid
-					? "Form is valid and ready to submit"
-					: "Please fill in required fields"}
+					? $t("common.formValidReady")
+					: $t("common.fillRequiredFields")}
 			</div>
 		</form>
 	{/if}
 
 	{#if report.evidence.length > 0}
-		<div class="evidence-list" role="list" aria-label="Evidence items">
+		<div class="evidence-list" role="list" aria-label={$t("evidence_page.evidence_items")}>
 			{#each report.evidence as evidence}
 				<article class="evidence-item" role="listitem">
 					<div class="evidence-content">
@@ -196,7 +197,7 @@
 
 						{#if evidence.serial}
 							<div class="evidence-detail">
-								<span class="detail-label">Serial:</span>
+								<span class="detail-label">{$t("common.serial")}:</span>
 								<span class="detail-value"
 									>{evidence.serial}</span
 								>
@@ -205,7 +206,7 @@
 
 						{#if evidence.notes}
 							<div class="evidence-detail">
-								<span class="detail-label">Notes:</span>
+								<span class="detail-label">{$t("common.notes")}:</span>
 								<span class="detail-value"
 									>{evidence.notes}</span
 								>
@@ -216,7 +217,7 @@
 							<div
 								class="evidence-images"
 								role="group"
-								aria-label="Evidence images"
+								aria-label={$t("evidence_page.evidence_images")}
 							>
 								<h5 class="images-title">
 									Images ({evidence.images.length})
@@ -238,8 +239,7 @@
 														imageIndex,
 													)}
 												class="remove-image-btn"
-												aria-label="Remove image {imageIndex +
-													1}"
+												aria-label={$t("common.remove_image") + " " + (imageIndex + 1)}
 											>
 												×
 											</button>
@@ -255,7 +255,7 @@
 							type="button"
 							on:click={() => editEvidence(evidence)}
 							class="edit-btn"
-							aria-label="Edit evidence: {evidence.title}"
+							aria-label={$t("common.edit_evidence") + ": " + evidence.title}
 						>
 							Edit
 						</button>
@@ -263,7 +263,7 @@
 							type="button"
 							on:click={() => removeEvidence(evidence.id)}
 							class="remove-btn"
-							aria-label="Remove evidence: {evidence.title}"
+							aria-label={$t("common.remove_evidence") + ": " + evidence.title}
 						>
 							Remove
 						</button>

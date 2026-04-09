@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte";
+	import { t } from "../../stores/localeStore";
 	import { createManagementService } from "@/services/managementService.svelte";
 	import { TAB_VISIBILITY_KEYS } from "@/constants/management";
 	import { NAV_GROUPS, getTabsForJob, MDT_TABS } from "@/constants";
@@ -86,7 +87,7 @@
 	{/if}
 
 	<div class="visibility-header">
-		<span class="header-label">Tab Visibility</span>
+		<span class="header-label">{$t("management.tabVisibility")}</span>
 		{#if mgmt.jobLabel}
 			<span class="job-tag">{mgmt.jobLabel}</span>
 		{/if}
@@ -95,11 +96,11 @@
 	{#if mgmt.isLoading}
 		<div class="empty-state">
 			<div class="loading-spinner"></div>
-			<p>Loading roles...</p>
+			<p>{$t("management.loadingRoles")}</p>
 		</div>
 	{:else if mgmt.roles.length === 0}
 		<div class="empty-state">
-			<p>No roles available</p>
+			<p>{$t("management.noRolesAvailable")}</p>
 		</div>
 	{:else}
 		<div class="visibility-body">
@@ -112,7 +113,7 @@
 					>
 						<span class="role-name">{role.label}</span>
 						{#if role.isBoss}
-							<span class="boss-tag">All</span>
+							<span class="boss-tag">{$t("common.all")}</span>
 						{/if}
 					</button>
 				{/each}
@@ -123,7 +124,7 @@
 					<div class="role-title-row">
 						<span class="role-title">{currentRole.label}</span>
 						{#if currentRole.isBoss}
-							<span class="boss-note">Boss roles always see all tabs</span>
+							<span class="boss-note">{$t("management.bossRolesAllTabs")}</span>
 						{/if}
 					</div>
 
@@ -141,7 +142,7 @@
 											class:all-hidden={!groupAllVisible(group.id)}
 											onclick={() => toggleGroup(group.id)}
 										>
-											{groupAllVisible(group.id) ? "Hide All" : "Show All"}
+											{groupAllVisible(group.id) ? $t("common.hideAll") : $t("common.showAll")}
 										</button>
 									{/if}
 								</div>

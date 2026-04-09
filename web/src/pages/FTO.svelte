@@ -9,8 +9,9 @@
 	import PersonSearchModal from "../components/report-editor/PersonSearchModal.svelte";
 	import type { createTabService } from "../services/tabService.svelte";
 	import type { AuthService } from "../services/authService.svelte";
+	import { t } from "../stores/localeStore";
 
-	let { tabService, authService }: { tabService?: ReturnType<typeof createTabService>; authService?: AuthService } = $props();
+	let { authService }: { tabService?: ReturnType<typeof createTabService>; authService?: AuthService } = $props();
 
 	interface FTOPhase {
 		id: number;
@@ -389,7 +390,7 @@
 		<div class="topbar">
 			<button class="back-btn" onclick={goBack}>
 				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-				Back to FTO List
+				{$t('fto.back_to_fto_list')}
 			</button>
 			<span class="topbar-case-number">{selectedDetail.assignment.fto_number}</span>
 			<span class="pill {getStatusPillClass(selectedDetail.assignment.status)}">{formatLabel(selectedDetail.assignment.status)}</span>
@@ -401,40 +402,40 @@
 				<div class="detail-main">
 					<div class="section">
 						<div class="section-header">
-							<div class="section-title" style="margin-bottom:0;">Assignment Details</div>
+							<div class="section-title" style="margin-bottom:0;">{$t('fto.assignment_details')}</div>
 							{#if canManage}
 								<div class="inline-controls">
-									<button class="action-btn danger" onclick={handleDelete}>Delete</button>
+									<button class="action-btn danger" onclick={handleDelete}>{$t('common.delete')}</button>
 								</div>
 							{/if}
 						</div>
 						<div class="field-row">
 							<div class="field-group">
-								<span class="field-label">Trainee</span>
+								<span class="field-label">{$t('fto.trainee')}</span>
 								<span class="field-value">{selectedDetail.assignment.trainee_name || '-'}</span>
 							</div>
 							<div class="field-group">
-								<span class="field-label">Trainer (FTO)</span>
+								<span class="field-label">{$t('fto.trainer_fto')}</span>
 								<span class="field-value">{selectedDetail.assignment.trainer_name || '-'}</span>
 							</div>
 							<div class="field-group">
-								<span class="field-label">Status</span>
+								<span class="field-label">{$t('common.status')}</span>
 								<span class="pill {getStatusPillClass(selectedDetail.assignment.status)}">{formatLabel(selectedDetail.assignment.status)}</span>
 							</div>
 							<div class="field-group">
-								<span class="field-label">Start Date</span>
+								<span class="field-label">{$t('fto.start_date')}</span>
 								<span class="field-value">{formatDateValue(selectedDetail.assignment.start_date)}</span>
 							</div>
 							{#if selectedDetail.assignment.end_date}
 								<div class="field-group">
-									<span class="field-label">End Date</span>
+									<span class="field-label">{$t('fto.end_date')}</span>
 									<span class="field-value">{formatDateValue(selectedDetail.assignment.end_date)}</span>
 								</div>
 							{/if}
 						</div>
 						{#if selectedDetail.assignment.notes}
 							<div class="field-group" style="margin-top:6px;">
-								<span class="field-label">Notes</span>
+								<span class="field-label">{$t('common.notes')}</span>
 								<p class="summary-text">{selectedDetail.assignment.notes}</p>
 							</div>
 						{/if}
@@ -442,7 +443,7 @@
 
 					<!-- Phase Progress -->
 					<div class="section">
-						<div class="section-title">Phase Progress</div>
+						<div class="section-title">{$t('fto.phase_progress')}</div>
 						<div class="phase-info">
 							<span class="phase-label">{selectedDetail.assignment.current_phase}</span>
 							<span class="phase-count">{phaseProgress.current} / {phaseProgress.total}</span>
@@ -455,11 +456,11 @@
 					<!-- DOR History -->
 					<div class="section">
 						<div class="section-header">
-							<div class="section-title" style="margin-bottom:0;">Daily Observation Reports ({selectedDetail.dors.length})</div>
+							<div class="section-title" style="margin-bottom:0;">{$t('fto.daily_observation_reports')} ({selectedDetail.dors.length})</div>
 							{#if canManage && !showDorForm}
 								<button class="action-btn" onclick={initDorForm}>
 									<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-									New DOR
+									{$t('fto.new_dor')}
 								</button>
 							{/if}
 						</div>
@@ -467,7 +468,7 @@
 						{#if showDorForm}
 							<div class="dor-form">
 								<div class="form-group">
-									<span class="form-label">Shift Date</span>
+									<span class="form-label">{$t('fto.shift_date')}</span>
 									<input type="date" class="form-input" bind:value={dorShiftDate} />
 								</div>
 
@@ -490,19 +491,19 @@
 								</div>
 
 								<div class="dor-overall">
-									<span class="field-label">Overall Rating (Auto)</span>
+									<span class="field-label">{$t('fto.overall_rating_auto')}</span>
 									<span class="dor-overall-value">{dorOverallRating}</span>
 								</div>
 
 								<div class="form-group">
-									<span class="form-label">Notes</span>
-									<textarea class="form-textarea" rows="3" bind:value={dorNotes} placeholder="Observation notes..."></textarea>
+									<span class="form-label">{$t('common.notes')}</span>
+									<textarea class="form-textarea" rows="3" bind:value={dorNotes} placeholder={$t('fto.observation_notes')}></textarea>
 								</div>
 
 								<div class="form-actions">
-									<button class="action-btn" onclick={() => { showDorForm = false; }}>Cancel</button>
+									<button class="action-btn" onclick={() => { showDorForm = false; }}>{$t('common.cancel')}</button>
 									<button class="primary-btn" onclick={handleCreateDor} disabled={dorSubmitting || !dorShiftDate}>
-										{dorSubmitting ? 'Submitting...' : 'Submit DOR'}
+										{dorSubmitting ? $t('fto.submitting') : $t('fto.submit_dor')}
 									</button>
 								</div>
 							</div>
@@ -536,7 +537,7 @@
 								{/each}
 							</div>
 						{:else}
-							<p class="muted-text">No DORs recorded yet.</p>
+							<p class="muted-text">{$t('fto.no_dors')}</p>
 						{/if}
 					</div>
 				</div>
@@ -544,17 +545,17 @@
 				<!-- Right Column: Sidebar -->
 				<div class="detail-side">
 					<div class="section">
-						<div class="section-title">Summary</div>
+						<div class="section-title">{$t('common.summary')}</div>
 						<div class="field-group">
-							<span class="field-label">DOR Count</span>
+							<span class="field-label">{$t('fto.dor_count')}</span>
 							<span class="field-value">{selectedDetail.assignment.dor_count}</span>
 						</div>
 						<div class="field-group">
-							<span class="field-label">Latest Rating</span>
+							<span class="field-label">{$t('fto.latest_rating')}</span>
 							<span class="field-value">{selectedDetail.assignment.latest_rating ?? '-'}</span>
 						</div>
 						<div class="field-group">
-							<span class="field-label">Created</span>
+							<span class="field-label">{$t('fto.created')}</span>
 							<span class="field-value">{formatDateTimeValue(selectedDetail.assignment.created_at)}</span>
 						</div>
 					</div>
@@ -566,60 +567,60 @@
 		<div class="topbar">
 			<button class="back-btn" onclick={() => { showCreateForm = false; resetCreateForm(); }}>
 				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-				Back to FTO List
+				{$t('fto.back_to_fto_list')}
 			</button>
 		</div>
 
 		<div class="create-form">
-			<h3>New FTO Assignment</h3>
+			<h3>{$t('fto.new_fto_assignment')}</h3>
 
 			<div class="form-group">
-				<span class="form-label">Trainee</span>
+				<span class="form-label">{$t('fto.trainee')}</span>
 				<button
 					class="officer-search-trigger"
 					class:placeholder={!newTraineeName}
 					onclick={() => (showTraineeSearch = true)}
 				>
-					{newTraineeName || 'Click to search for a trainee...'}
+					{newTraineeName || $t('fto.search_trainee')}
 				</button>
 			</div>
 
 			<div class="form-group">
-				<span class="form-label">Trainer (FTO)</span>
+				<span class="form-label">{$t('fto.trainer_fto')}</span>
 				<button
 					class="officer-search-trigger"
 					class:placeholder={!newTrainerName}
 					onclick={() => (showTrainerSearch = true)}
 				>
-					{newTrainerName || 'Click to search for a trainer...'}
+					{newTrainerName || $t('fto.search_trainer')}
 				</button>
 			</div>
 
 			<div class="form-row">
 				<div class="form-group">
-					<span class="form-label">Starting Phase</span>
+					<span class="form-label">{$t('fto.starting_phase')}</span>
 					<select class="form-select" bind:value={newPhaseId}>
-						<option value={undefined}>-- Select Phase --</option>
+						<option value={undefined}>-- {$t('fto.select_phase')} --</option>
 						{#each phases as phase}
 							<option value={phase.id}>{phase.name}</option>
 						{/each}
 					</select>
 				</div>
 				<div class="form-group">
-					<span class="form-label">Start Date</span>
+					<span class="form-label">{$t('fto.start_date')}</span>
 					<input type="date" class="form-input" bind:value={newStartDate} />
 				</div>
 			</div>
 
 			<div class="form-group">
-				<span class="form-label">Notes</span>
-				<textarea class="form-textarea" rows="3" bind:value={newNotes} placeholder="Additional notes..."></textarea>
+				<span class="form-label">{$t('common.notes')}</span>
+				<textarea class="form-textarea" rows="3" bind:value={newNotes} placeholder={$t('fto.additional_notes')}></textarea>
 			</div>
 
 			<div class="form-actions">
-				<button class="action-btn" onclick={() => { showCreateForm = false; resetCreateForm(); }}>Cancel</button>
+				<button class="action-btn" onclick={() => { showCreateForm = false; resetCreateForm(); }}>{$t('common.cancel')}</button>
 				<button class="primary-btn" onclick={handleCreate} disabled={isSubmitting || !newTraineeCitizenId || !newTrainerCitizenId}>
-					{isSubmitting ? 'Submitting...' : 'Create Assignment'}
+					{isSubmitting ? $t('fto.submitting') : $t('fto.create_assignment')}
 				</button>
 			</div>
 		</div>
@@ -633,7 +634,7 @@
 						class:active={statusFilter === opt}
 						onclick={() => { statusFilter = opt; }}
 					>
-						{opt === 'all' ? 'All' : formatLabel(opt)}
+						{opt === 'all' ? $t('common.all') : formatLabel(opt)}
 					</button>
 				{/each}
 			</div>
@@ -642,18 +643,18 @@
 		<div class="topbar">
 			<div class="search-box">
 				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-				<input type="text" placeholder="Search by trainee or trainer name..." bind:value={searchQuery} />
+				<input type="text" placeholder={$t('fto.search_trainee_trainer')} bind:value={searchQuery} />
 			</div>
 			<div style="flex:1;"></div>
 			{#if canManage}
 				<button class="primary-btn" onclick={() => { showCreateForm = true; }}>
 					<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-					New Assignment
+					{$t('fto.new_assignment')}
 				</button>
 			{/if}
 			<button class="back-btn" onclick={loadAssignments} disabled={loading}>
 				<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-				Refresh
+				{$t('common.refresh')}
 			</button>
 		</div>
 
@@ -661,24 +662,24 @@
 			{#if loading && assignments.length === 0}
 				<div class="center-state">
 					<div class="loading-spinner"></div>
-					<p>Loading FTO assignments...</p>
+					<p>{$t('fto.loading_fto')}</p>
 				</div>
 			{:else if paginatedAssignments.length === 0}
 				<div class="center-state">
 					<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-					<h3>No FTO Assignments Found</h3>
-					<p>{searchQuery ? "No assignments match your search criteria." : "No FTO assignments have been created yet."}</p>
+					<h3>{$t('fto.no_fto_found')}</h3>
+					<p>{searchQuery ? $t('common.no_results') : $t('fto.no_assignments')}</p>
 				</div>
 			{:else}
 				<div class="table-header">
 					<span>#</span>
-					<span>Trainee</span>
-					<span>Trainer</span>
-					<span>Phase</span>
-					<span>Status</span>
-					<span>Start Date</span>
-					<span>DORs</span>
-					<span>Rating</span>
+					<span>{$t('fto.trainee')}</span>
+					<span>{$t('fto.trainer')}</span>
+					<span>{$t('fto.phase')}</span>
+					<span>{$t('common.status')}</span>
+					<span>{$t('fto.start_date')}</span>
+					<span>{$t('fto.dors')}</span>
+					<span>{$t('fto.rating')}</span>
 				</div>
 				<div class="table-body">
 					{#each paginatedAssignments as item}
@@ -711,7 +712,6 @@
 <PersonSearchModal
 	show={showTraineeSearch}
 	title="Search Trainee"
-	searchQuery={personSearchQuery}
 	searchResults={searchService.state.results}
 	onClose={() => {
 		showTraineeSearch = false;
@@ -724,7 +724,6 @@
 <PersonSearchModal
 	show={showTrainerSearch}
 	title="Search Trainer (FTO)"
-	searchQuery={personSearchQuery}
 	searchResults={searchService.state.results}
 	onClose={() => {
 		showTrainerSearch = false;

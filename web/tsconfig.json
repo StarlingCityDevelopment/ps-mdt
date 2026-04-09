@@ -1,7 +1,10 @@
 {
 	"extends": "@tsconfig/svelte/tsconfig.json",
 	"compilerOptions": {
-		"types": ["./../../ps_lib/ui/dist/ps_lib.d.ts", "@citizenfx/client"],
+		"types": [
+			"./../../ps_lib/ui/dist/ps_lib.d.ts",
+			"@citizenfx/client"
+		],
 		"target": "ESNext",
 		"useDefineForClassFields": true,
 		"module": "ESNext",
@@ -18,9 +21,15 @@
 		"moduleDetection": "force",
 		"baseUrl": "./",
 		"paths": {
-			"@/*": ["./src/*"],
-			"$lib/*": ["./src/lib/*"],
-			"src/*": ["./src/*"]
+			"@/*": [
+				"./src/*"
+			],
+			"$lib/*": [
+				"./src/lib/*"
+			],
+			"src/*": [
+				"./src/*"
+			]
 		}
 	},
 	"include": [

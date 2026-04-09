@@ -9,6 +9,7 @@
 	import { createDashboardService } from "../services/dashboardService.svelte";
 	import { createDispatchService } from "../services/dispatchService.svelte";
 	import ReportItem from "../components/dashboard/ReportItem.svelte";
+	import { t } from "../stores/localeStore";
 	import type { PlayerData } from "@/interfaces/IPlayerData";
 	interface ActiveBolo {
 		id: number;
@@ -134,15 +135,15 @@
 		const now = Date.now();
 		let diffInMs = now - time;
 
-		if (diffInMs < 0) return "in the future";
+		if (diffInMs < 0) return $t('dashboard.in_future');
 
 		const units = [
-			{ label: "year", ms: 1000 * 60 * 60 * 24 * 365 },
-			{ label: "month", ms: 1000 * 60 * 60 * 24 * 30 },
-			{ label: "week", ms: 1000 * 60 * 60 * 24 * 7 },
-			{ label: "day", ms: 1000 * 60 * 60 * 24 },
-			{ label: "hour", ms: 1000 * 60 * 60 },
-			{ label: "minute", ms: 1000 * 60 },
+			{ label: $t('dashboard.years'), ms: 1000 * 60 * 60 * 24 * 365 },
+			{ label: $t('dashboard.months'), ms: 1000 * 60 * 60 * 24 * 30 },
+			{ label: $t('dashboard.weeks'), ms: 1000 * 60 * 60 * 24 * 7 },
+			{ label: $t('dashboard.days'), ms: 1000 * 60 * 60 * 24 },
+			{ label: $t('dashboard.hours'), ms: 1000 * 60 * 60 },
+			{ label: $t('dashboard.minutes'), ms: 1000 * 60 },
 		];
 
 		const parts = [];
@@ -155,9 +156,9 @@
 			}
 		}
 
-		if (parts.length === 0) return "just now";
+		if (parts.length === 0) return $t('dashboard.just_now');
 
-		return parts.join(", ") + " ago";
+		return parts.join(", ") + " " + $t('dashboard.ago');
 	}
 
 	async function attachYourselfToDispatch(dispatchId: string) {
@@ -226,7 +227,7 @@
 				</div>
 				<div class="stat-content">
 					<span class="stat-value">{dashboardService.reportsInfo.totalThisWeek} <span class="stat-change" class:positive={dashboardService.reportsInfo.changeFromLastWeek > 0} class:negative={dashboardService.reportsInfo.changeFromLastWeek < 0}>{#if dashboardService.reportsInfo.changeFromLastWeek > 0}+{/if}{dashboardService.reportsInfo.changeFromLastWeek}</span></span>
-					<span class="stat-label">Reports this week</span>
+					<span class="stat-label">{$t('dashboard.reports_this_week')}</span>
 				</div>
 			</div>
 			<div class="stat-divider"></div>
@@ -235,8 +236,8 @@
 					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
 				</div>
 				<div class="stat-content">
-					<span class="stat-value">{dashboardService.activeUnits.count} <span class="stat-badge">On Duty</span></span>
-					<span class="stat-label">Active units</span>
+					<span class="stat-value">{dashboardService.activeUnits.count} <span class="stat-badge">{$t('dashboard.on_duty')}</span></span>
+					<span class="stat-label">{$t('dashboard.active_units')}</span>
 				</div>
 			</div>
 
@@ -258,13 +259,13 @@
 										class:active={index === dashboardService.currentBulletinIndex}
 										style="opacity: {getCarouselDotOpacity(index)}"
 										onclick={() => dashboardService.goToBulletin(index)}
-										aria-label="Go to bulletin {index + 1}"
+										aria-label={$t("dashboard.go_to_bulletin") + " " + (index + 1)}
 									></button>
 								{/each}
 							</div>
 						{/if}
 					{:else}
-						<span class="bulletin-empty">No active bulletins</span>
+						<span class="bulletin-empty">{$t('common.no_data')}</span>
 					{/if}
 				</div>
 			</div>
@@ -290,12 +291,12 @@
 		<div class="column">
 			<div class="panel">
 				<div class="panel-header">
-					<span class="panel-title">Warrants</span>
+					<span class="panel-title">{$t('dashboard.warrants')}</span>
 					<span class="panel-count">{dashboardService.activeWarrants.length}</span>
 				</div>
 				<div class="panel-body">
 					{#if dashboardService.activeWarrants.length === 0}
-						<div class="empty-state">No active warrants</div>
+						<div class="empty-state">{$t('dashboard.no_active_warrants')}</div>
 					{:else}
 						{#each pagedWarrants as warrant}
 							<button class="list-item" onclick={() => openWarrant(warrant.reportid)}>
@@ -305,9 +306,9 @@
 										#{warrant.reportid} · Exp. {new Date(warrant.expirydate).toLocaleDateString()}
 									</span>
 									<div class="pill-row">
-										{#if warrant.felonies > 0}<span class="pill pill-red">{warrant.felonies} Felony</span>{/if}
-										{#if warrant.misdemeanors > 0}<span class="pill pill-orange">{warrant.misdemeanors} Misd.</span>{/if}
-										{#if warrant.infractions > 0}<span class="pill pill-green">{warrant.infractions} Infr.</span>{/if}
+										{#if warrant.felonies > 0}<span class="pill pill-red">{warrant.felonies} {$t('dashboard.felony')}</span>{/if}
+										{#if warrant.misdemeanors > 0}<span class="pill pill-orange">{warrant.misdemeanors} {$t('dashboard.misd')}</span>{/if}
+										{#if warrant.infractions > 0}<span class="pill pill-green">{warrant.infractions} {$t('dashboard.infr')}</span>{/if}
 									</div>
 								</div>
 								<svg class="item-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
@@ -330,12 +331,12 @@
 
 			<div class="panel">
 				<div class="panel-header">
-					<span class="panel-title">BOLOs</span>
+					<span class="panel-title">{$t('dashboard.bolos')}</span>
 					<span class="panel-count">{(dashboardService.activeBolos || []).length}</span>
 				</div>
 				<div class="panel-body">
 					{#if (dashboardService.activeBolos || []).length === 0}
-						<div class="empty-state">No active BOLOs</div>
+						<div class="empty-state">{$t('dashboard.no_active_bolos')}</div>
 					{:else}
 						{#each pagedBolos as bolo}
 							<button class="list-item" onclick={() => viewBolo(bolo.id)}>
@@ -372,12 +373,12 @@
 		<div class="column">
 			<div class="panel">
 				<div class="panel-header">
-					<span class="panel-title">Recent Reports</span>
+					<span class="panel-title">{$t('dashboard.recent_reports')}</span>
 					<span class="panel-count">{dashboardService.recentReports.length}</span>
 				</div>
 				<div class="panel-body">
 					{#if dashboardService.recentReports.length === 0}
-						<div class="empty-state">No recent reports</div>
+						<div class="empty-state">{$t('dashboard.no_recent_reports')}</div>
 					{:else}
 						{#each dashboardService.recentReports as report}
 							<ReportItem
@@ -390,7 +391,7 @@
 					{/if}
 				</div>
 				{#if dashboardService.recentReportsHasMore}
-					<button class="load-more-btn" onclick={loadMoreReports}>Load more</button>
+					<button class="load-more-btn" onclick={loadMoreReports}>{$t('dashboard.load_more')}</button>
 				{/if}
 			</div>
 		</div>
@@ -400,12 +401,12 @@
 			{#if isDOJ}
 				<div class="panel">
 					<div class="panel-header">
-						<span class="panel-title">Pending Warrant Reviews</span>
+						<span class="panel-title">{$t('dashboard.pending_warrant_reviews')}</span>
 						<span class="panel-count">{dojWarrantReviews.length}</span>
 					</div>
 					<div class="panel-body">
 						{#if dojWarrantReviews.length === 0}
-							<div class="empty-state">No pending warrants</div>
+							<div class="empty-state">{$t('dashboard.no_pending_warrants')}</div>
 						{:else}
 							{#each dojWarrantReviews as wr}
 								<button class="list-item-btn" onclick={() => tabService.openTab('warrant_review')}>
@@ -418,12 +419,12 @@
 				</div>
 				<div class="panel">
 					<div class="panel-header">
-						<span class="panel-title">Court Cases</span>
+						<span class="panel-title">{$t('dashboard.court_cases')}</span>
 						<span class="panel-count">{dojCourtCases.length}</span>
 					</div>
 					<div class="panel-body">
 						{#if dojCourtCases.length === 0}
-							<div class="empty-state">No court cases</div>
+							<div class="empty-state">{$t('dashboard.no_court_cases')}</div>
 						{:else}
 							{#each dojCourtCases as cc}
 								<button class="list-item-btn" onclick={() => tabService.openTab('court_cases')}>
@@ -436,12 +437,12 @@
 				</div>
 				<div class="panel">
 					<div class="panel-header">
-						<span class="panel-title">Court Orders</span>
+						<span class="panel-title">{$t('dashboard.court_orders')}</span>
 						<span class="panel-count">{dojCourtOrders.length}</span>
 					</div>
 					<div class="panel-body">
 						{#if dojCourtOrders.length === 0}
-							<div class="empty-state">No court orders</div>
+							<div class="empty-state">{$t('dashboard.no_court_orders')}</div>
 						{:else}
 							{#each dojCourtOrders as co}
 								<button class="list-item-btn" onclick={() => tabService.openTab('court_orders')}>
@@ -455,7 +456,7 @@
 			{:else}
 				<div class="panel">
 					<div class="panel-header">
-						<span class="panel-title">Dispatches</span>
+						<span class="panel-title">{$t('dashboard.dispatches')}</span>
 						<span class="panel-count">{(dashboardService.recentDispatches && Array.isArray(dashboardService.recentDispatches) ? dashboardService.recentDispatches : []).length}</span>
 					</div>
 					<div class="panel-body">
@@ -485,13 +486,13 @@
 															? detachYourselfFromDispatch(dispatch.id)
 															: attachYourselfToDispatch(dispatch.id)}
 												>
-													{dispatchService.isUserAttachedToDispatch(dispatch, playerData) ? "Detach" : "Attach"}
+													{dispatchService.isUserAttachedToDispatch(dispatch, playerData) ? $t('dashboard.detach') : $t('dashboard.attach')}
 												</button>
 												<button
 													class="d-action-btn"
 													onclick={() => dispatchService.routeToDispatch(dispatch)}
 												>
-													Route
+													{$t('dashboard.route')}
 												</button>
 											</div>
 										</div>

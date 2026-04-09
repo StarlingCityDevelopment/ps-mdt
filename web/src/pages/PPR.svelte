@@ -9,6 +9,7 @@
 	import PersonSearchModal from "../components/report-editor/PersonSearchModal.svelte";
 	import type { createTabService } from "../services/tabService.svelte";
 	import type { AuthService } from "../services/authService.svelte";
+	import { t } from "../stores/localeStore";
 
 	let { tabService, authService }: { tabService?: ReturnType<typeof createTabService>; authService?: AuthService } = $props();
 
@@ -352,7 +353,7 @@
 		<div class="topbar">
 			<button class="back-btn" onclick={goBack}>
 				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-				Back to PPR List
+				{$t('ppr.back_to_ppr_list')}
 			</button>
 			<span class="topbar-case-number">{selectedEntry.entry.ppr_number}</span>
 			<span class="pill {getCategoryPillClass(selectedEntry.entry.category)}">{formatLabel(selectedEntry.entry.category)}</span>
@@ -364,14 +365,14 @@
 				<div class="detail-main">
 					<div class="section">
 						<div class="section-header">
-							<div class="section-title" style="margin-bottom:0;">Incident Details</div>
+							<div class="section-title" style="margin-bottom:0;">{$t('ppr.incident_details')}</div>
 							{#if canManage}
 								<div class="inline-controls">
 									{#if editMode}
-										<button class="action-btn" onclick={handleUpdateEntry}>Save</button>
-										<button class="action-btn" onclick={() => { editMode = false; }}>Cancel</button>
+										<button class="action-btn" onclick={handleUpdateEntry}>{$t('common.save')}</button>
+										<button class="action-btn" onclick={() => { editMode = false; }}>{$t('common.cancel')}</button>
 									{:else}
-										<button class="action-btn" onclick={() => { editMode = true; }}>Edit</button>
+										<button class="action-btn" onclick={() => { editMode = true; }}>{$t('common.edit')}</button>
 									{/if}
 								</div>
 							{/if}
@@ -379,50 +380,50 @@
 						{#if editMode && canManage}
 							<div class="field-row">
 								<div class="field-group">
-									<span class="field-label">Title</span>
-									<input type="text" class="form-input" bind:value={editTitle} placeholder="Title" />
+									<span class="field-label">{$t('common.title')}</span>
+									<input type="text" class="form-input" bind:value={editTitle} placeholder={$t('common.title')} />
 								</div>
 								<div class="field-group">
-									<span class="field-label">Category</span>
+									<span class="field-label">{$t('ppr.category')}</span>
 									<select class="form-select" bind:value={editCategory}>
-										<option value="positive">Positive</option>
-										<option value="coaching">Coaching</option>
-										<option value="disciplinary">Disciplinary</option>
+										<option value="positive">{$t('ppr.positive')}</option>
+										<option value="coaching">{$t('ppr.coaching')}</option>
+										<option value="disciplinary">{$t('ppr.disciplinary')}</option>
 									</select>
 								</div>
 								<div class="field-group">
-									<span class="field-label">Incident Date</span>
+									<span class="field-label">{$t('ppr.incident_date')}</span>
 									<input type="date" class="form-input" bind:value={editIncidentDate} />
 								</div>
 								<div class="field-group">
-									<span class="field-label">Location</span>
-									<input type="text" class="form-input" bind:value={editIncidentLocation} placeholder="Location" />
+									<span class="field-label">{$t('common.location')}</span>
+									<input type="text" class="form-input" bind:value={editIncidentLocation} placeholder={$t('common.location')} />
 								</div>
 							</div>
 							<div class="field-group" style="margin-top:8px;">
-								<span class="field-label">Description</span>
-								<textarea class="form-textarea" rows="4" bind:value={editDescription} placeholder="Description"></textarea>
+								<span class="field-label">{$t('common.description')}</span>
+								<textarea class="form-textarea" rows="4" bind:value={editDescription} placeholder={$t('common.description')}></textarea>
 							</div>
 						{:else}
 							<div class="field-row">
 								<div class="field-group">
-									<span class="field-label">Officer</span>
+									<span class="field-label">{$t('common.officer')}</span>
 									<span class="field-value">{selectedEntry.entry.officer_name || '-'}</span>
 								</div>
 								<div class="field-group">
-									<span class="field-label">Author</span>
+									<span class="field-label">{$t('ppr.author')}</span>
 									<span class="field-value">{selectedEntry.entry.author_name || '-'}</span>
 								</div>
 								<div class="field-group">
-									<span class="field-label">Category</span>
+									<span class="field-label">{$t('ppr.category')}</span>
 									<span class="pill {getCategoryPillClass(selectedEntry.entry.category)}">{formatLabel(selectedEntry.entry.category)}</span>
 								</div>
 								<div class="field-group">
-									<span class="field-label">Incident Date</span>
+									<span class="field-label">{$t('ppr.incident_date')}</span>
 									<span class="field-value">{selectedEntry.entry.incident_date || '-'}</span>
 								</div>
 								<div class="field-group">
-									<span class="field-label">Location</span>
+									<span class="field-label">{$t('common.location')}</span>
 									<span class="field-value">{selectedEntry.entry.incident_location || '-'}</span>
 								</div>
 							</div>
@@ -431,26 +432,26 @@
 
 					{#if !editMode}
 						<div class="section">
-							<div class="section-title">Title & Description</div>
+							<div class="section-title">{$t('ppr.title_description')}</div>
 							<p class="summary-text" style="font-weight:600;color:rgba(255,255,255,0.75);margin-bottom:4px;">{selectedEntry.entry.title}</p>
-							<p class="summary-text">{selectedEntry.entry.description || 'No description provided.'}</p>
+							<p class="summary-text">{selectedEntry.entry.description || $t('ppr.no_description')}</p>
 						</div>
 					{/if}
 
 					{#if selectedEntry.entry.linked_report_id || selectedEntry.entry.linked_case_id}
 						<div class="section">
-							<div class="section-title">Linked Records</div>
+							<div class="section-title">{$t('ppr.linked_records')}</div>
 							<div class="field-row">
 								{#if selectedEntry.entry.linked_report_id}
 									<div class="field-group">
-										<span class="field-label">Linked Report</span>
-										<span class="field-value">Report #{selectedEntry.entry.linked_report_id}</span>
+										<span class="field-label">{$t('ppr.linked_report')}</span>
+										<span class="field-value">{$t('ppr.report')} #{selectedEntry.entry.linked_report_id}</span>
 									</div>
 								{/if}
 								{#if selectedEntry.entry.linked_case_id}
 									<div class="field-group">
-										<span class="field-label">Linked Case</span>
-										<span class="field-value">Case #{selectedEntry.entry.linked_case_id}</span>
+										<span class="field-label">{$t('ppr.linked_case')}</span>
+										<span class="field-value">{$t('ppr.case')} #{selectedEntry.entry.linked_case_id}</span>
 									</div>
 								{/if}
 							</div>
@@ -462,28 +463,28 @@
 				<div class="detail-side">
 					{#if canManage}
 						<div class="section">
-							<div class="section-title">Actions</div>
+							<div class="section-title">{$t('common.actions')}</div>
 							<div class="inline-controls">
 								{#if !editMode}
-									<button class="action-btn" onclick={() => { editMode = true; }}>Edit</button>
+									<button class="action-btn" onclick={() => { editMode = true; }}>{$t('common.edit')}</button>
 								{/if}
-								<button class="action-btn danger" onclick={handleDeleteEntry}>Delete</button>
+								<button class="action-btn danger" onclick={handleDeleteEntry}>{$t('common.delete')}</button>
 							</div>
 						</div>
 					{/if}
 
 					<div class="section">
-						<div class="section-title">Notes</div>
+						<div class="section-title">{$t('ppr.notes')}</div>
 						{#if canManage}
 							<div class="note-input-row">
 								<textarea
 									class="form-textarea"
 									rows="2"
-									placeholder="Add a note..."
+									placeholder={$t('ppr.add_note')}
 									bind:value={noteContent}
 								></textarea>
 								<button class="action-btn" onclick={handleAddNote} disabled={noteSubmitting || !noteContent.trim()}>
-									{noteSubmitting ? 'Adding...' : 'Add Note'}
+									{noteSubmitting ? $t('ppr.adding') : $t('ppr.add_note_btn')}
 								</button>
 							</div>
 						{/if}
@@ -505,7 +506,7 @@
 								{/each}
 							</div>
 						{:else}
-							<p class="muted-text">No notes yet.</p>
+							<p class="muted-text">{$t('ppr.no_notes')}</p>
 						{/if}
 					</div>
 				</div>
@@ -516,69 +517,69 @@
 		<div class="topbar">
 			<button class="back-btn" onclick={() => { showCreateForm = false; resetCreateForm(); }}>
 				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-				Back to PPR List
+				{$t('ppr.back_to_ppr_list')}
 			</button>
 		</div>
 
 		<div class="create-form">
-			<h3>New Performance Review</h3>
+			<h3>{$t('ppr.new_performance_review')}</h3>
 
 			<div class="form-group">
-				<span class="form-label">Officer</span>
+				<span class="form-label">{$t('common.officer')}</span>
 				<button
 					class="officer-search-trigger"
 					class:placeholder={!newOfficerName}
 					onclick={() => (showOfficerSearch = true)}
 				>
-					{newOfficerName || 'Click to search for an officer...'}
+					{newOfficerName || $t('ppr.search_officer')}
 				</button>
 			</div>
 
 			<div class="form-row">
 				<div class="form-group">
-					<span class="form-label">Category</span>
+					<span class="form-label">{$t('ppr.category')}</span>
 					<select class="form-select" bind:value={newCategory}>
-						<option value="positive">Positive</option>
-						<option value="coaching">Coaching</option>
-						<option value="disciplinary">Disciplinary</option>
+						<option value="positive">{$t('ppr.positive')}</option>
+						<option value="coaching">{$t('ppr.coaching')}</option>
+						<option value="disciplinary">{$t('ppr.disciplinary')}</option>
 					</select>
 				</div>
 				<div class="form-group">
-					<span class="form-label">Incident Date</span>
+					<span class="form-label">{$t('ppr.incident_date')}</span>
 					<input type="date" class="form-input" bind:value={newIncidentDate} />
 				</div>
 			</div>
 
 			<div class="form-group">
-				<span class="form-label">Title</span>
-				<input type="text" class="form-input" bind:value={newTitle} placeholder="Enter title..." />
+				<span class="form-label">{$t('common.title')}</span>
+				<input type="text" class="form-input" bind:value={newTitle} placeholder={$t('ppr.enter_title')} />
 			</div>
 
 			<div class="form-group">
-				<span class="form-label">Description</span>
-				<textarea class="form-textarea" rows="4" bind:value={newDescription} placeholder="Enter description..."></textarea>
+				<span class="form-label">{$t('common.description')}</span>
+				<textarea class="form-textarea" rows="4" bind:value={newDescription} placeholder={$t('ppr.enter_description')}></textarea>
 			</div>
 
 			<div class="form-group">
-				<span class="form-label">Incident Location</span>
-				<input type="text" class="form-input" bind:value={newIncidentLocation} placeholder="Enter location..." />
+				<span class="form-label">{$t('ppr.incident_location')}</span>
+				<input type="text" class="form-input" bind:value={newIncidentLocation} placeholder={$t('ppr.enter_location')} />
 			</div>
 
 			<div class="form-row">
 				<div class="form-group">
-					<span class="form-label">Linked Report # (optional)</span>
-					<input type="number" class="form-input" bind:value={newLinkedReportId} placeholder="Report ID" />
+					<span class="form-label">{$t('ppr.linked_report_optional')}</span>
+					<input type="number" class="form-input" bind:value={newLinkedReportId} placeholder={$t('ppr.report_id')} />
 				</div>
 				<div class="form-group">
-					<span class="form-label">Linked Case # (optional)</span>
-					<input type="number" class="form-input" bind:value={newLinkedCaseId} placeholder="Case ID" />
+					<span class="form-label">{$t('ppr.linked_case_optional')}</span>
+					<input type="number" class="form-input" bind:value={newLinkedCaseId} placeholder={$t('ppr.case_id')} />
 				</div>
 			</div>
 
 			<div class="form-actions">
-				<button class="action-btn" onclick={() => { showCreateForm = false; resetCreateForm(); }}>Cancel</button>
+				<button class="action-btn" onclick={() => { showCreateForm = false; resetCreateForm(); }}>{$t('common.cancel')}</button>
 				<button class="primary-btn" onclick={handleCreatePPR} disabled={isSubmitting || !newTitle.trim() || !newOfficerCitizenId}>
-					{isSubmitting ? 'Submitting...' : 'Submit'}
+					{isSubmitting ? $t('ppr.submitting') : $t('ppr.submit')}
 				</button>
 			</div>
 		</div>
@@ -592,7 +593,7 @@
 						class:active={categoryFilter === opt}
 						onclick={() => { categoryFilter = opt; }}
 					>
-						{opt === 'all' ? 'All' : formatLabel(opt)}
+						{opt === 'all' ? $t('common.all') : formatLabel(opt)}
 					</button>
 				{/each}
 			</div>
@@ -601,18 +602,18 @@
 		<div class="topbar">
 			<div class="search-box">
 				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-				<input type="text" placeholder="Search PPR entries..." bind:value={searchQuery} />
+				<input type="text" placeholder={$t('ppr.search_ppr')} bind:value={searchQuery} />
 			</div>
 			<div style="flex:1;"></div>
 			{#if canManage}
 				<button class="primary-btn" onclick={() => { showCreateForm = true; }}>
 					<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-					New PPR
+					{$t('ppr.new_ppr')}
 				</button>
 			{/if}
 			<button class="back-btn" onclick={loadEntries} disabled={loading}>
 				<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-				Refresh
+				{$t('common.refresh')}
 			</button>
 		</div>
 
@@ -620,22 +621,22 @@
 			{#if loading && entries.length === 0}
 				<div class="center-state">
 					<div class="loading-spinner"></div>
-					<p>Loading PPR entries...</p>
+					<p>{$t('ppr.loading_ppr')}</p>
 				</div>
 			{:else if paginatedEntries.length === 0}
 				<div class="center-state">
 					<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-					<h3>No PPR Entries Found</h3>
-					<p>{searchQuery ? "No entries match your search criteria." : "No performance reviews have been created yet."}</p>
+					<h3>{$t('ppr.no_ppr_found')}</h3>
+					<p>{searchQuery ? $t('common.no_results') : $t('ppr.no_reviews')}</p>
 				</div>
 			{:else}
 				<div class="table-header">
 					<span>#</span>
-					<span>Officer</span>
-					<span>Category</span>
-					<span>Title</span>
-					<span>Author</span>
-					<span>Date</span>
+					<span>{$t('common.officer')}</span>
+					<span>{$t('ppr.category')}</span>
+					<span>{$t('common.title')}</span>
+					<span>{$t('ppr.author')}</span>
+					<span>{$t('common.date')}</span>
 				</div>
 				<div class="table-body">
 					{#each paginatedEntries as item}

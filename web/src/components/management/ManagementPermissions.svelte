@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte";
+	import { t } from "../../stores/localeStore";
 	import { createManagementService } from "@/services/managementService.svelte";
 	import { PERMISSION_CATEGORIES } from "@/constants/management";
 	import type { JobType } from "@/interfaces/IUser";
@@ -81,7 +82,7 @@
 	{/if}
 
 	<div class="permissions-header">
-		<span class="header-label">Permissions</span>
+		<span class="header-label">{$t("management.permissions")}</span>
 		{#if mgmt.jobLabel}
 			<span class="job-tag">{mgmt.jobLabel}</span>
 		{/if}
@@ -90,11 +91,11 @@
 	{#if mgmt.isLoading}
 		<div class="empty-state">
 			<div class="loading-spinner"></div>
-			<p>Loading permissions...</p>
+			<p>{$t("management.loadingPermissions")}</p>
 		</div>
 	{:else if mgmt.roles.length === 0}
 		<div class="empty-state">
-			<p>No roles available</p>
+			<p>{$t("management.noRolesAvailable")}</p>
 		</div>
 	{:else}
 		<div class="permissions-body">
@@ -107,7 +108,7 @@
 					>
 						<span class="role-name">{role.label}</span>
 						{#if role.isBoss}
-							<span class="boss-tag">All</span>
+							<span class="boss-tag">{$t("common.all")}</span>
 						{/if}
 					</button>
 				{/each}
@@ -118,7 +119,7 @@
 					<div class="role-title-row">
 						<span class="role-title">{currentRole.label}</span>
 						{#if currentRole.isBoss}
-							<span class="boss-note">Boss roles have all permissions enabled</span>
+							<span class="boss-note">{$t("management.bossRolesAllPermissions")}</span>
 						{/if}
 					</div>
 
@@ -137,7 +138,7 @@
 												class:all-on={categoryAllEnabled(category.key)}
 												onclick={() => toggleCategory(category.key)}
 											>
-												{categoryAllEnabled(category.key) ? "Disable All" : "Enable All"}
+												{categoryAllEnabled(category.key) ? $t("common.disableAll") : $t("common.enableAll")}
 											</button>
 										</div>
 									{/if}
@@ -172,7 +173,7 @@
 								onclick={() => mgmt.saveAllRoles()}
 								disabled={mgmt.isSaving}
 							>
-								{mgmt.isSaving ? "Saving..." : "Save Permissions"}
+								{mgmt.isSaving ? $t("common.saving") : $t("management.savePermissions")}
 							</button>
 						</div>
 					{/if}

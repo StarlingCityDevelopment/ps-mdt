@@ -2,7 +2,7 @@
 	import { onMount } from "svelte";
 	import { fetchNui } from "../utils/fetchNui";
 	import { NUI_EVENTS } from "../constants/nuiEvents";
-	import type { AuthService } from "../services/authService.svelte";
+	import { t } from "../stores/localeStore";
 
 	interface CivilianProfile {
 		citizenid: string;
@@ -38,8 +38,6 @@
 		key: string;
 		label: string;
 	}
-
-	let { authService }: { authService: AuthService } = $props();
 
 	let activeTab = $state<"profile" | "legislation">("profile");
 	let profile = $state<CivilianProfile | null>(null);
@@ -136,14 +134,14 @@
 		<div class="civ-header-left">
 			<span class="material-icons civ-icon">person</span>
 			<span class="civ-title">{playerName}</span>
-			<span class="civ-badge">Civilian Access</span>
+			<span class="civ-badge">{$t('civilian.civilian_access')}</span>
 		</div>
 		<div class="civ-tabs">
 			<button class="civ-tab" class:active={activeTab === "profile"} onclick={() => activeTab = "profile"}>
-				<span class="material-icons tab-icon">badge</span> My Profile
+				<span class="material-icons tab-icon">badge</span> {$t('civilian.my_profile')}
 			</button>
 			<button class="civ-tab" class:active={activeTab === "legislation"} onclick={() => activeTab = "legislation"}>
-				<span class="material-icons tab-icon">gavel</span> Legislation
+				<span class="material-icons tab-icon">gavel</span> {$t('civilian.legislation')}
 			</button>
 		</div>
 		<button class="close-btn" onclick={closeTerminal}>
@@ -156,12 +154,12 @@
 			{#if loadingProfile}
 				<div class="loading-state">
 					<div class="spinner"></div>
-					<span>Loading profile...</span>
+					<span>{$t('civilian.loading_profile')}</span>
 				</div>
 			{:else if !profile}
 				<div class="empty-state">
 					<span class="material-icons">error_outline</span>
-					<span>Could not load your profile</span>
+					<span>{$t('civilian.could_not_load')}</span>
 				</div>
 			{:else}
 				<div class="profile-layout">
@@ -179,27 +177,27 @@
 						</div>
 
 						<div class="info-section">
-							<div class="info-row"><span class="info-label">Gender</span><span class="info-value">{profile.gender}</span></div>
-							<div class="info-row"><span class="info-label">Date of Birth</span><span class="info-value">{profile.dob}</span></div>
-							<div class="info-row"><span class="info-label">Phone</span><span class="info-value">{profile.phone}</span></div>
-							<div class="info-row"><span class="info-label">Fingerprint</span><span class="info-value">{profile.fingerprint || 'N/A'}</span></div>
-							<div class="info-row"><span class="info-label">DNA</span><span class="info-value">{profile.dna || 'N/A'}</span></div>
-							<div class="info-row"><span class="info-label">Arrests</span><span class="info-value">{profile.arrests}</span></div>
+							<div class="info-row"><span class="info-label">{$t('civilian.gender')}</span><span class="info-value">{profile.gender}</span></div>
+							<div class="info-row"><span class="info-label">{$t('civilian.date_of_birth')}</span><span class="info-value">{profile.dob}</span></div>
+							<div class="info-row"><span class="info-label">{$t('civilian.phone')}</span><span class="info-value">{profile.phone}</span></div>
+							<div class="info-row"><span class="info-label">{$t('civilian.fingerprint')}</span><span class="info-value">{profile.fingerprint || $t('civilian.na')}</span></div>
+							<div class="info-row"><span class="info-label">{$t('civilian.dna')}</span><span class="info-value">{profile.dna || $t('civilian.na')}</span></div>
+							<div class="info-row"><span class="info-label">{$t('civilian.arrests')}</span><span class="info-value">{profile.arrests}</span></div>
 						</div>
 
 						<div class="info-section">
-							<h3 class="section-title">Licenses</h3>
+							<h3 class="section-title">{$t('civilian.licenses')}</h3>
 							{#each baseLicenses as bl}
 								<div class="info-row">
 									<span class="info-label">{bl.label}</span>
-									<span class="info-value license" class:active={profile.licenses?.[bl.key]}>{profile.licenses?.[bl.key] ? 'Active' : 'None'}</span>
+									<span class="info-value license" class:active={profile.licenses?.[bl.key]}>{profile.licenses?.[bl.key] ? $t('civilian.active') : $t('civilian.none')}</span>
 								</div>
 							{/each}
 							{#if profile.customLicenses && profile.customLicenses.length > 0}
 								{#each profile.customLicenses as lic}
 									<div class="info-row">
 										<span class="info-label">{lic.name}</span>
-										<span class="info-value license" class:active={lic.active}>{lic.active ? 'Active' : 'None'}</span>
+										<span class="info-value license" class:active={lic.active}>{lic.active ? $t('civilian.active') : $t('civilian.none')}</span>
 									</div>
 								{/each}
 							{/if}
@@ -209,11 +207,11 @@
 					<div class="profile-main">
 						{#if profile.activeWarrants && profile.activeWarrants.length > 0}
 							<div class="section-card danger">
-								<h3 class="section-header"><span class="material-icons">warning</span> Active Warrants</h3>
+								<h3 class="section-header"><span class="material-icons">warning</span> {$t('civilian.active_warrants')}</h3>
 								{#each profile.activeWarrants as warrant}
 									<div class="list-item">
-										<span class="item-id">Report #{warrant.reportid}</span>
-										<span class="item-name">Expires: {new Date(warrant.expirydate).toLocaleDateString()}</span>
+										<span class="item-id">{$t('civilian.report')} #{warrant.reportid}</span>
+										<span class="item-name">{$t('civilian.expires')}: {new Date(warrant.expirydate).toLocaleDateString()}</span>
 									</div>
 								{/each}
 							</div>
@@ -221,11 +219,11 @@
 
 						{#if profile.activeBolos && profile.activeBolos.length > 0}
 							<div class="section-card danger">
-								<h3 class="section-header"><span class="material-icons">notification_important</span> Active BOLOs</h3>
+								<h3 class="section-header"><span class="material-icons">notification_important</span> {$t('civilian.active_bolos')}</h3>
 								{#each profile.activeBolos as bolo}
 									<div class="list-item">
 										<span class="item-id">#{bolo.reportId}</span>
-										<span class="item-name">{bolo.notes || 'No details'}</span>
+										<span class="item-name">{bolo.notes || $t('civilian.no_details')}</span>
 										<span class="item-tag">{bolo.type}</span>
 									</div>
 								{/each}
@@ -234,7 +232,7 @@
 
 						{#if profile.linkedReports && profile.linkedReports.length > 0}
 							<div class="section-card">
-								<h3 class="section-header"><span class="material-icons">description</span> Linked Reports</h3>
+								<h3 class="section-header"><span class="material-icons">description</span> {$t('civilian.linked_reports')}</h3>
 								{#each profile.linkedReports as report}
 									<div class="list-item">
 										<span class="item-id">#{report.id}</span>
@@ -247,7 +245,7 @@
 
 						{#if profile.ownedVehicles && profile.ownedVehicles.length > 0}
 							<div class="section-card">
-								<h3 class="section-header"><span class="material-icons">directions_car</span> Vehicles</h3>
+								<h3 class="section-header"><span class="material-icons">directions_car</span> {$t('civilian.vehicles')}</h3>
 								{#each profile.ownedVehicles as vehicle}
 									<div class="list-item">
 										<span class="item-id">{vehicle.plate}</span>
@@ -259,7 +257,7 @@
 
 						{#if profile.weapons && profile.weapons.length > 0}
 							<div class="section-card">
-								<h3 class="section-header"><span class="material-icons">security</span> Registered Weapons</h3>
+								<h3 class="section-header"><span class="material-icons">security</span> {$t('civilian.registered_weapons')}</h3>
 								{#each profile.weapons as weapon}
 									<div class="list-item">
 										<span class="item-id">{weapon.serial}</span>
@@ -272,7 +270,7 @@
 						{#if !profile.activeWarrants?.length && !profile.activeBolos?.length && !profile.linkedReports?.length && !profile.ownedVehicles?.length && !profile.weapons?.length}
 							<div class="empty-state">
 								<span class="material-icons">check_circle</span>
-								<span>No records on file</span>
+								<span>{$t('civilian.no_records')}</span>
 							</div>
 						{/if}
 					</div>
@@ -283,13 +281,13 @@
 			<div class="legislation-layout">
 				<div class="search-bar">
 					<span class="material-icons search-icon">search</span>
-					<input type="text" placeholder="Search penal codes..." bind:value={searchQuery} />
+					<input type="text" placeholder={$t('civilian.search_penal_codes')} bind:value={searchQuery} />
 				</div>
 
 				{#if loadingCharges}
 					<div class="loading-state">
 						<div class="spinner"></div>
-						<span>Loading penal codes...</span>
+						<span>{$t('civilian.loading_penal_codes')}</span>
 					</div>
 				{:else}
 					{#each Object.entries(chargesByType()) as [type, typeCharges]}
@@ -300,10 +298,10 @@
 								</h3>
 								<div class="charge-table">
 									<div class="charge-header-row">
-										<span class="ch-code">Code</span>
-										<span class="ch-label">Charge</span>
-										<span class="ch-fine">Fine</span>
-										<span class="ch-time">Jail</span>
+										<span class="ch-code">{$t('civilian.code')}</span>
+										<span class="ch-label">{$t('civilian.charge')}</span>
+										<span class="ch-fine">{$t('civilian.fine')}</span>
+										<span class="ch-time">{$t('civilian.jail')}</span>
 									</div>
 									{#each typeCharges as charge}
 										<div class="charge-row">
@@ -315,7 +313,7 @@
 												{/if}
 											</span>
 											<span class="ch-fine">${charge.fine.toLocaleString()}</span>
-											<span class="ch-time">{charge.time} mo</span>
+											<span class="ch-time">{charge.time} {$t('civilian.months')}</span>
 										</div>
 									{/each}
 								</div>
@@ -325,7 +323,7 @@
 					{#if filteredCharges().length === 0}
 						<div class="empty-state">
 							<span class="material-icons">search_off</span>
-							<span>No charges found</span>
+							<span>{$t('civilian.no_charges_found')}</span>
 						</div>
 					{/if}
 				{/if}

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from "../../stores/localeStore";
 	interface Props {
 		show: boolean;
 		uploading?: boolean;
@@ -43,13 +44,13 @@
 		onkeydown={handleKeydown}
 		role="button"
 		tabindex="0"
-		aria-label="Close upload dialog"
+		aria-label={$t("common.close_upload_dialog")}
 	>
 		<!-- svelte-ignore a11y_click_events_have_key_events -->
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div class="popup" role="dialog" aria-modal="true" tabindex="-1">
 			<div class="popup-header">
-				<span class="popup-title">Upload Evidence Image</span>
+				<span class="popup-title">{$t("common.uploadEvidenceImage") || "Upload Evidence Image"}</span>
 				{#if !uploading}
 					<button class="popup-close" onclick={onClose}>x</button>
 				{/if}
@@ -58,8 +59,8 @@
 				{#if uploading}
 					<div class="uploading-state">
 						<div class="spinner"></div>
-						<span class="uploading-text">Uploading{selectedFileName ? ` ${selectedFileName}` : ""}...</span>
-						<span class="uploading-hint">Please wait, compressing and uploading image</span>
+						<span class="uploading-text">{$t("common.uploading") || "Uploading"}{selectedFileName ? ` ${selectedFileName}` : ""}...</span>
+						<span class="uploading-hint">{$t("common.pleaseWaitCompress") || "Please wait, compressing and uploading image"}</span>
 					</div>
 				{:else}
 					<div class="upload-area">
@@ -72,8 +73,8 @@
 						/>
 						<label for="image-upload" class="upload-label">
 							<span class="upload-icon">+</span>
-							<span class="upload-text">Click to select image</span>
-							<span class="upload-hint">Supports JPG, PNG, GIF (auto-compressed)</span>
+							<span class="upload-text">{$t("common.clickToSelectImage") || "Click to select image"}</span>
+							<span class="upload-hint">{$t("common.supportsJpgPngGif") || "Supports JPG, PNG, GIF (auto-compressed)"}</span>
 						</label>
 					</div>
 				{/if}

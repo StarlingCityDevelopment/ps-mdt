@@ -30,7 +30,9 @@
 			visible = false;
 		} else if (action === "mugshotFlash") {
 			flashActive = true;
-			setTimeout(() => { flashActive = false; }, 150);
+			setTimeout(() => {
+				flashActive = false;
+			}, 150);
 		} else if (action === "updateMugshotZoom") {
 			if (data?.level !== undefined) {
 				zoomLevel = Math.round(data.level * 10) / 10;
@@ -143,14 +145,22 @@
 			</div>
 			<div class="status-center">
 				<div class="zoom-controls">
-					<button class="zoom-btn" onclick={zoomOut} disabled={zoomLevel <= 1.0}>
+					<button
+						class="zoom-btn"
+						onclick={zoomOut}
+						disabled={zoomLevel <= 1.0}
+					>
 						<span class="material-icons">remove</span>
 					</button>
 					<span class="zoom-display">
 						<span class="material-icons zoom-icon">search</span>
 						{zoomDisplay} ZOOM
 					</span>
-					<button class="zoom-btn" onclick={zoomIn} disabled={zoomLevel >= 5.0}>
+					<button
+						class="zoom-btn"
+						onclick={zoomIn}
+						disabled={zoomLevel >= 5.0}
+					>
 						<span class="material-icons">add</span>
 					</button>
 				</div>
@@ -210,21 +220,73 @@
 		background: rgba(255, 255, 255, 0.7);
 	}
 
-	.top-left { top: 12%; left: 15%; }
-	.top-left::before { top: 0; left: 0; width: 80px; height: 3px; }
-	.top-left::after { top: 0; left: 0; width: 3px; height: 80px; }
+	.top-left {
+		top: 12%;
+		left: 15%;
+	}
+	.top-left::before {
+		top: 0;
+		left: 0;
+		width: 80px;
+		height: 3px;
+	}
+	.top-left::after {
+		top: 0;
+		left: 0;
+		width: 3px;
+		height: 80px;
+	}
 
-	.top-right { top: 12%; right: 15%; }
-	.top-right::before { top: 0; right: 0; width: 80px; height: 3px; }
-	.top-right::after { top: 0; right: 0; width: 3px; height: 80px; }
+	.top-right {
+		top: 12%;
+		right: 15%;
+	}
+	.top-right::before {
+		top: 0;
+		right: 0;
+		width: 80px;
+		height: 3px;
+	}
+	.top-right::after {
+		top: 0;
+		right: 0;
+		width: 3px;
+		height: 80px;
+	}
 
-	.bottom-left { bottom: 12%; left: 15%; }
-	.bottom-left::before { bottom: 0; left: 0; width: 80px; height: 3px; }
-	.bottom-left::after { bottom: 0; left: 0; width: 3px; height: 80px; }
+	.bottom-left {
+		bottom: 12%;
+		left: 15%;
+	}
+	.bottom-left::before {
+		bottom: 0;
+		left: 0;
+		width: 80px;
+		height: 3px;
+	}
+	.bottom-left::after {
+		bottom: 0;
+		left: 0;
+		width: 3px;
+		height: 80px;
+	}
 
-	.bottom-right { bottom: 12%; right: 15%; }
-	.bottom-right::before { bottom: 0; right: 0; width: 80px; height: 3px; }
-	.bottom-right::after { bottom: 0; right: 0; width: 3px; height: 80px; }
+	.bottom-right {
+		bottom: 12%;
+		right: 15%;
+	}
+	.bottom-right::before {
+		bottom: 0;
+		right: 0;
+		width: 80px;
+		height: 3px;
+	}
+	.bottom-right::after {
+		bottom: 0;
+		right: 0;
+		width: 3px;
+		height: 80px;
+	}
 
 	/* Crosshair */
 	.crosshair {
@@ -235,7 +297,8 @@
 		z-index: 2;
 	}
 
-	.cross-h, .cross-v {
+	.cross-h,
+	.cross-v {
 		position: absolute;
 		background: rgba(255, 255, 255, 0.3);
 	}
@@ -270,19 +333,29 @@
 
 	.status-bar.top {
 		top: 0;
-		background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0%, transparent 100%);
+		background: linear-gradient(
+			to bottom,
+			rgba(0, 0, 0, 0.5) 0%,
+			transparent 100%
+		);
 		padding-top: 16px;
 		padding-bottom: 30px;
 	}
 
 	.status-bar.bottom {
 		bottom: 0;
-		background: linear-gradient(to top, rgba(0, 0, 0, 0.5) 0%, transparent 100%);
+		background: linear-gradient(
+			to top,
+			rgba(0, 0, 0, 0.5) 0%,
+			transparent 100%
+		);
 		padding-bottom: 16px;
 		padding-top: 30px;
 	}
 
-	.status-left, .status-right, .status-center {
+	.status-left,
+	.status-right,
+	.status-center {
 		display: flex;
 		align-items: center;
 		gap: 12px;
@@ -313,8 +386,13 @@
 	}
 
 	@keyframes pulse-rec {
-		0%, 100% { opacity: 1; }
-		50% { opacity: 0.2; }
+		0%,
+		100% {
+			opacity: 1;
+		}
+		50% {
+			opacity: 0.2;
+		}
 	}
 
 	.timestamp {
@@ -515,7 +593,11 @@
 	}
 
 	@keyframes flash-fade {
-		0% { opacity: 0.9; }
-		100% { opacity: 0; }
+		0% {
+			opacity: 0.9;
+		}
+		100% {
+			opacity: 0;
+		}
 	}
 </style>

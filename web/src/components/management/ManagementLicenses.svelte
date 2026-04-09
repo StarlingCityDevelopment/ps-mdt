@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte";
+	import { t } from "../../stores/localeStore";
 	import { fetchNui } from "../../utils/fetchNui";
 	import { isEnvBrowser } from "../../utils/misc";
 	import { NUI_EVENTS } from "../../constants/nuiEvents";
@@ -40,7 +41,7 @@
 		const name = formName.trim();
 		const desc = formDesc.trim();
 		if (!name) {
-			showStatus("License name is required", "error");
+			showStatus($t("management.licenseNameRequired"), "error");
 			return;
 		}
 
@@ -62,14 +63,14 @@
 				NUI_EVENTS.SETTINGS.SAVE_CUSTOM_LICENSE, payload, { success: false }
 			);
 			if (result?.success) {
-				showStatus(editingId ? "License updated" : "License created");
+				showStatus(editingId ? $t("management.licenseUpdated") : $t("management.licenseCreated"));
 				resetForm();
 				await loadLicenses();
 			} else {
-				showStatus(result?.message || "Failed to save", "error");
+				showStatus(result?.message || $t("management.failedToSave"), "error");
 			}
 		} catch {
-			showStatus("Failed to save license", "error");
+			showStatus($t("management.failedToSaveLicense"), "error");
 		} finally {
 			isSubmitting = false;
 		}
@@ -87,14 +88,14 @@
 				NUI_EVENTS.SETTINGS.DELETE_CUSTOM_LICENSE, { id: license.id }, { success: false }
 			);
 			if (result?.success) {
-				showStatus("License deleted");
+				showStatus($t("management.licenseDeleted"));
 				if (editingId === license.id) resetForm();
 				await loadLicenses();
 			} else {
-				showStatus("Failed to delete", "error");
+				showStatus($t("management.failedToDelete"), "error");
 			}
 		} catch {
-			showStatus("Failed to delete license", "error");
+			showStatus($t("management.failedToDeleteLicense"), "error");
 		}
 	}
 
@@ -124,7 +125,7 @@
 	});
 </script>
 
-<div class="licenses-panel">
+	<div class="licenses-panel">
 	{#if statusMessage}
 		<div class="status-toast {statusMessage.type}">{statusMessage.text}</div>
 	{/if}
@@ -132,21 +133,21 @@
 	<div class="info-section">
 		<div class="info-row">
 			<span class="material-icons info-icon">info</span>
-			<span class="info-text">State licenses (Driver's License, Weapon License) are managed by the core framework. Create custom licenses below that officers can grant or revoke from citizen profiles.</span>
+			<span class="info-text">{$t("management.licensesInfo")}</span>
 		</div>
 	</div>
 
 	<div class="form-section">
 		<div class="form-row">
-			<input class="form-input name-input" type="text" placeholder="License name..." bind:value={formName} maxlength="50" />
-			<input class="form-input desc-input" type="text" placeholder="Description (optional)..." bind:value={formDesc} maxlength="150" />
+			<input class="form-input name-input" type="text" placeholder={$t("management.licenseNamePlaceholder")} bind:value={formName} maxlength="50" />
+			<input class="form-input desc-input" type="text" placeholder={$t("management.descriptionOptional")} bind:value={formDesc} maxlength="150" />
 			<div class="form-actions">
 				{#if editingId}
-					<button class="btn-save" onclick={handleSave} disabled={isSubmitting}>Update</button>
-					<button class="btn-cancel" onclick={resetForm}>Cancel</button>
+					<button class="btn-save" onclick={handleSave} disabled={isSubmitting}>{$t("common.update")}</button>
+					<button class="btn-cancel" onclick={resetForm}>{$t("common.cancel")}</button>
 				{:else}
 					<button class="btn-create" onclick={handleSave} disabled={!formName.trim() || isSubmitting}>
-						{isSubmitting ? "..." : "+ Add"}
+						{isSubmitting ? $t("common.loading") : $t("common.add")}
 					</button>
 				{/if}
 			</div>
@@ -156,7 +157,7 @@
 	{#if isLoading}
 		<div class="empty-state">
 			<div class="loading-spinner"></div>
-			<p>Loading licenses...</p>
+			<p>{$t("management.loadingLicenses")}</p>
 		</div>
 	{:else}
 		<div class="licenses-list">
@@ -164,18 +165,18 @@
 			<div class="license-row state">
 				<span class="material-icons row-icon">verified</span>
 				<div class="row-info">
-					<span class="row-name">Driver's License</span>
-					<span class="row-desc">State-issued license for operating motor vehicles</span>
+					<span class="row-name">{$t("management.driversLicense")}</span>
+					<span class="row-desc">{$t("management.driversLicenseDesc")}</span>
 				</div>
-				<span class="row-badge state-badge">STATE</span>
+				<span class="row-badge state-badge">{$t("common.state")}</span>
 			</div>
 			<div class="license-row state">
 				<span class="material-icons row-icon">verified</span>
 				<div class="row-info">
-					<span class="row-name">Weapon License</span>
-					<span class="row-desc">State-issued license for carrying firearms</span>
+					<span class="row-name">{$t("management.weaponLicense")}</span>
+					<span class="row-desc">{$t("management.weaponLicenseDesc")}</span>
 				</div>
-				<span class="row-badge state-badge">STATE</span>
+				<span class="row-badge state-badge">{$t("common.state")}</span>
 			</div>
 
 			<!-- Custom licenses -->
@@ -188,12 +189,12 @@
 							<span class="row-desc">{license.description}</span>
 						{/if}
 					</div>
-					<span class="row-badge custom-badge">CUSTOM</span>
+					<span class="row-badge custom-badge">{$t("common.custom")}</span>
 					<div class="row-actions">
-						<button class="action-btn edit-btn" onclick={() => startEdit(license)} title="Edit">
+						<button class="action-btn edit-btn" onclick={() => startEdit(license)} title={$t("common.edit")}>
 							<span class="material-icons">edit</span>
 						</button>
-						<button class="action-btn delete-btn" onclick={() => handleDelete(license)} title="Delete">
+						<button class="action-btn delete-btn" onclick={() => handleDelete(license)} title={$t("common.delete")}>
 							<span class="material-icons">delete</span>
 						</button>
 					</div>
@@ -201,7 +202,7 @@
 			{/each}
 
 			{#if licenses.length === 0}
-				<div class="empty-state">No custom licenses configured. Add one above.</div>
+				<div class="empty-state">{$t("management.noCustomLicenses")}</div>
 			{/if}
 		</div>
 	{/if}

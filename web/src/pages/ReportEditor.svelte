@@ -29,6 +29,7 @@
 	import { usePersistence } from "../hooks/usePersistence.svelte";
 	import type { ReportPageData } from "../schemas/persistenceSchema";
 	import { fetchNui } from "../utils/fetchNui";
+	import { t } from "../stores/localeStore";
 	import { NUI_EVENTS } from "../constants/nuiEvents";
 	import { globalNotifications } from "../services/notificationService.svelte";
 	import { compressImage } from "../services/uploadService";
@@ -1115,7 +1116,7 @@
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div class="bw-modal-overlay" use:teleport onclick={closeBenchWarrantModal}>
-	<div class="bw-modal" onclick={(e) => e.stopPropagation()} role="dialog" aria-label="Issue Bench Warrant">
+	<div class="bw-modal" onclick={(e) => e.stopPropagation()} role="dialog" aria-label={$t("common.issue_bench_warrant")}>
 		<div class="bw-modal-header">
 			<span class="bw-modal-title">Issue Bench Warrant</span>
 			<button class="bw-modal-close" onclick={closeBenchWarrantModal} type="button">&times;</button>

@@ -1,31 +1,32 @@
 <script lang="ts">
 	import { REPORT_TYPES } from "../constants";
 	import type { Report } from "../interfaces/IReportEditor";
+	import { t } from "../stores/localeStore";
 
 	export let report: Report;
 	export let formatDate: (timestamp: number) => string;
 	export let formatTime: (timestamp: number) => string;
 </script>
 
-<section class="report-metadata" aria-label="Report information">
+<section class="report-metadata" aria-label={$t("report_editor_page.report_information")}>
 	<div class="metadata-row">
 		<div class="metadata-item">
-			<label for="report-id" class="metadata-label">Report ID</label>
+			<label for="report-id" class="metadata-label">{$t("common.reportId")}</label>
 			<span id="report-id" class="metadata-value">{report.reportId}</span>
 		</div>
 		<div class="metadata-item">
-			<label for="report-officer" class="metadata-label">Officer</label>
+			<label for="report-officer" class="metadata-label">{$t("common.officer")}</label>
 			<span id="report-officer" class="metadata-value"
 				>{report.officer}</span
 			>
 		</div>
 		<div class="metadata-item">
-			<label for="report-type" class="metadata-label">Type</label>
+			<label for="report-type" class="metadata-label">{$t("common.type")}</label>
 			<select
 				id="report-type"
 				bind:value={report.type}
 				class="type-select"
-				aria-label="Report type"
+				aria-label={$t("common.reportType")}
 			>
 				{#each REPORT_TYPES as type}
 					<option value={type}>{type}</option>
@@ -33,7 +34,7 @@
 			</select>
 		</div>
 		<div class="metadata-item">
-			<label for="report-created" class="metadata-label">Created</label>
+			<label for="report-created" class="metadata-label">{$t("common.created")}</label>
 			<span id="report-created" class="metadata-value">
 				{formatDate(report.created)}
 				{formatTime(report.created)}
@@ -41,7 +42,7 @@
 		</div>
 		<div class="metadata-item">
 			<label for="report-updated" class="metadata-label"
-				>Last Updated</label
+				>{$t("common.lastUpdated")}</label
 			>
 			<span id="report-updated" class="metadata-value">
 				{formatDate(report.lastUpdated)}

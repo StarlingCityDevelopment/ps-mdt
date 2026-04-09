@@ -11,7 +11,9 @@
 		onUpdate: (perms: string[]) => void;
 	} = $props();
 
-	let selected = $state(new Set<string>((role.permissions || []) as string[]));
+	let selected = $state(
+		new Set<string>((role.permissions || []) as string[]),
+	);
 	const isBoss = role.isBoss === true;
 
 	$effect(() => {
@@ -48,7 +50,9 @@
 		{/if}
 		{#each permissions as permission}
 			<label class="permission-row">
-				<span class="perm-label">{formatPermissionName(permission)}</span>
+				<span class="perm-label"
+					>{formatPermissionName(permission)}</span
+				>
 				<input
 					type="checkbox"
 					checked={selected.has(permission) || isBoss}

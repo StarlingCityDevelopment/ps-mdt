@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte";
+	import { t } from "../../stores/localeStore";
 	import { fetchNui } from "../../utils/fetchNui";
 	import { isEnvBrowser } from "../../utils/misc";
 	import { NUI_EVENTS } from "../../constants/nuiEvents";
@@ -57,11 +58,11 @@
 
 	async function saveTemplate() {
 		if (!formName.trim()) {
-			showStatus("Template name is required", "error");
+			showStatus($t("management.templateNameRequired"), "error");
 			return;
 		}
 		if (!formContent.trim()) {
-			showStatus("Template content is required", "error");
+			showStatus($t("management.templateContentRequired"), "error");
 			return;
 		}
 
@@ -76,7 +77,7 @@
 				templates = [...templates, { id: Date.now(), name: formName.trim(), type: formType, content: formContent }];
 			}
 			cancelEdit();
-			showStatus("Template saved");
+			showStatus($t("management.templateSaved"));
 			return;
 		}
 
@@ -95,15 +96,15 @@
 				{ success: false },
 			);
 			if (result?.success) {
-				showStatus(editingTemplate ? "Template updated" : "Template created");
+				showStatus(editingTemplate ? $t("management.templateUpdated") : $t("management.templateCreated"));
 				cancelEdit();
 				await loadTemplates();
 			} else {
-				showStatus(result?.message || "Failed to save template", "error");
+				showStatus(result?.message || $t("management.failedToSaveTemplate"), "error");
 			}
 		} catch (error) {
 			console.error("Failed to save template:", error);
-			showStatus("Failed to save template", "error");
+			showStatus($t("management.failedToSaveTemplate"), "error");
 		} finally {
 			isSaving = false;
 		}
@@ -112,7 +113,7 @@
 	async function deleteTemplate(id: number) {
 		if (isEnvBrowser()) {
 			templates = templates.filter((t) => t.id !== id);
-			showStatus("Template deleted");
+			showStatus($t("management.templateDeleted"));
 			return;
 		}
 
@@ -123,14 +124,14 @@
 				{ success: false },
 			);
 			if (result?.success) {
-				showStatus("Template deleted");
+				showStatus($t("management.templateDeleted"));
 				await loadTemplates();
 			} else {
-				showStatus(result?.message || "Failed to delete template", "error");
+				showStatus(result?.message || $t("management.failedToDeleteTemplate"), "error");
 			}
 		} catch (error) {
 			console.error("Failed to delete template:", error);
-			showStatus("Failed to delete template", "error");
+			showStatus($t("management.failedToDeleteTemplate"), "error");
 		}
 	}
 
@@ -180,32 +181,32 @@
 <div class="templates-page">
 	<div class="templates-card">
 		<div class="card-title-row">
-			<span class="card-label">Report Templates</span>
+			<span class="card-label">{$t("management.reportTemplates")}</span>
 			<div class="template-actions">
 				{#if !isCreating}
 					<button class="action-btn create-btn" onclick={startCreate}>
 						<span class="material-icons" style="font-size: 11px;">add</span>
-						New Template
+						{$t("management.newTemplate")}
 					</button>
 				{/if}
 			</div>
 		</div>
-		<p class="card-subtitle">Configure templates available when creating reports. Each template is linked to a report type.</p>
+		<p class="card-subtitle">{$t("management.reportTemplatesDesc")}</p>
 
 		{#if isLoading}
 			<div class="templates-loading">
 				<div class="loading-spinner"></div>
-				<p>Loading templates...</p>
+				<p>{$t("management.loadingTemplates")}</p>
 			</div>
 		{:else if isCreating}
 			<div class="template-form">
 				<div class="form-row">
 					<div class="form-group">
-						<label class="form-label" for="tmpl-name">Template Name</label>
-						<input id="tmpl-name" type="text" class="form-input" placeholder="e.g. Standard Incident" bind:value={formName} />
+						<label class="form-label" for="tmpl-name">{$t("management.templateName")}</label>
+						<input id="tmpl-name" type="text" class="form-input" placeholder={$t("management.templateNamePlaceholder")} bind:value={formName} />
 					</div>
 					<div class="form-group">
-						<label class="form-label" for="tmpl-type">Report Type</label>
+						<label class="form-label" for="tmpl-type">{$t("management.reportType")}</label>
 						<select id="tmpl-type" class="form-select" bind:value={formType}>
 							{#each REPORT_TYPES as rt}
 								<option value={rt}>{rt}</option>
@@ -215,15 +216,15 @@
 				</div>
 
 				<div class="form-group">
-					<label class="form-label" for="tmpl-content">Template Content <span class="form-hint">(HTML)</span></label>
-					<textarea id="tmpl-content" class="form-textarea" placeholder="Enter HTML template content..." bind:value={formContent} rows={12}></textarea>
+					<label class="form-label" for="tmpl-content">{$t("management.templateContent")} <span class="form-hint">(HTML)</span></label>
+					<textarea id="tmpl-content" class="form-textarea" placeholder={$t("management.templateContentPlaceholder")} bind:value={formContent} rows={12}></textarea>
 				</div>
 
 				<div class="form-actions">
-					<button class="btn-cancel" onclick={cancelEdit}>Cancel</button>
+					<button class="btn-cancel" onclick={cancelEdit}>{$t("common.cancel")}</button>
 					<button class="btn-save" onclick={saveTemplate} disabled={isSaving}>
 						<span class="material-icons btn-save-icon">save</span>
-						{isSaving ? "Saving..." : editingTemplate ? "Update Template" : "Create Template"}
+						{isSaving ? $t("common.saving") : editingTemplate ? $t("management.updateTemplate") : $t("management.createTemplate")}
 					</button>
 				</div>
 			</div>
@@ -232,8 +233,8 @@
 				{#if templates.length === 0}
 					<div class="empty-state">
 						<span class="material-icons" style="font-size: 20px; color: rgba(255,255,255,0.15); margin-bottom: 6px;">description</span>
-						<p>No templates configured</p>
-						<p class="empty-hint">Create a template to get started</p>
+						<p>{$t("management.noTemplatesConfigured")}</p>
+						<p class="empty-hint">{$t("management.createTemplateToStart")}</p>
 					</div>
 				{:else}
 					<div class="templates-list">
@@ -244,10 +245,10 @@
 									<span class="template-type">{template.type}</span>
 								</div>
 								<div class="template-row-actions">
-									<button class="row-btn edit-btn" onclick={() => startEdit(template)} aria-label="Edit">
+									<button class="row-btn edit-btn" onclick={() => startEdit(template)} aria-label={$t("common.edit")}>
 										<span class="material-icons">edit</span>
 									</button>
-									<button class="row-btn delete-btn" onclick={() => deleteTemplate(template.id)} aria-label="Delete">
+									<button class="row-btn delete-btn" onclick={() => deleteTemplate(template.id)} aria-label={$t("common.delete")}>
 										<span class="material-icons">delete</span>
 									</button>
 								</div>

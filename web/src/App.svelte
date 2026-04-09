@@ -8,11 +8,14 @@
 	import { queryClient } from "./utils/query-client";
 	import { onMount } from "svelte";
 	import { setupInputDebug } from "./utils/debugInputBlocker";
+	import { localeStore } from "./stores/localeStore";
 
 	let cleanupInputDebug: (() => void) | undefined;
 	let showComplaintForm = $state(false);
 
 	onMount(() => {
+		localeStore.load();
+
 		if (import.meta.env && import.meta.env.DEV) {
 			cleanupInputDebug = setupInputDebug();
 		}

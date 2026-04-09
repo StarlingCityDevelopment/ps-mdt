@@ -3,6 +3,7 @@
 	import { fetchNui } from "../utils/fetchNui";
 	import { NUI_EVENTS } from "../constants/nuiEvents";
 	import type { AuthService } from "../services/authService.svelte";
+	import { t } from "../stores/localeStore";
 
 	interface SOPSection {
 		id: number;
@@ -83,14 +84,14 @@
 	<div class="sop-sidebar">
 		<div class="sidebar-header">
 			<span class="material-icons header-icon">menu_book</span>
-			<h2>Standard Operating Procedures</h2>
+			<h2>{$t('sop.standard_operating_procedures')}</h2>
 		</div>
 
 		<div class="search-box">
 			<span class="material-icons search-icon">search</span>
 			<input
 				type="text"
-				placeholder="Search SOPs..."
+				placeholder={$t('sop.search_sops')}
 				bind:value={searchQuery}
 			/>
 		</div>
@@ -99,12 +100,12 @@
 			{#if loading}
 				<div class="loading-state">
 					<div class="spinner"></div>
-					<span>Loading...</span>
+					<span>{$t('common.loading')}</span>
 				</div>
 			{:else if filteredCategories().length === 0}
 				<div class="empty-state">
 					<span class="material-icons">info</span>
-					<span>No SOPs found</span>
+					<span>{$t('sop.no_sops_found')}</span>
 				</div>
 			{:else}
 				{#each filteredCategories() as category}
@@ -129,7 +130,7 @@
 			<div class="mission-banner">
 				<div class="mission-header">
 					<span class="material-icons mission-icon">flag</span>
-					<h3>Mission Statement</h3>
+					<h3>{$t('sop.mission_statement')}</h3>
 				</div>
 				<div class="mission-body prose">
 					{@html sopSettings.mission_statement}
@@ -139,19 +140,19 @@
 		{#if loading}
 			<div class="content-empty">
 				<div class="spinner"></div>
-				<span>Loading SOPs...</span>
+				<span>{$t('sop.loading_sops')}</span>
 			</div>
 		{:else if !selectedCategory}
 			<div class="content-empty">
 				<span class="material-icons empty-icon">menu_book</span>
-				<h3>Select a Category</h3>
-				<p>Choose an SOP category from the sidebar to view its contents.</p>
+				<h3>{$t('sop.select_category')}</h3>
+				<p>{$t('sop.choose_category')}</p>
 			</div>
 		{:else if selectedCategory.sections.length === 0}
 			<div class="content-empty">
 				<span class="material-icons empty-icon">article</span>
 				<h3>{selectedCategory.title}</h3>
-				<p>No sections have been added to this category yet.</p>
+				<p>{$t('sop.no_sections')}</p>
 			</div>
 		{:else}
 			<div class="content-header">

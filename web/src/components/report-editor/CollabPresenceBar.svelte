@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { CollabEditor } from "../../services/collabService.svelte";
+	import { t } from "../../stores/localeStore";
 
 	interface Props {
 		editors: CollabEditor[];
@@ -21,17 +22,32 @@
 	<div class="collab-bar">
 		<div class="collab-indicator">
 			<div class="pulse-dot" style="background: {myColor};"></div>
-			<span class="collab-label">Live Editing</span>
+			<span class="collab-label"
+				>{$t("common.liveEditing") || "Live Editing"}</span
+			>
 		</div>
 		<div class="collab-editors">
 			{#each editors as editor}
-				<div class="editor-avatar" style="background: {editor.color}; border-color: {editor.color};" title="{editor.name} is editing">
-					<span class="editor-initials">{getInitials(editor.name)}</span>
+				<div
+					class="editor-avatar"
+					style="background: {editor.color}; border-color: {editor.color};"
+					title="{editor.name} {$t('common.isEditing') ||
+						'is editing'}"
+				>
+					<span class="editor-initials"
+						>{getInitials(editor.name)}</span
+					>
 					<div class="editor-active-dot"></div>
 				</div>
 			{/each}
 		</div>
-		<span class="collab-count">{editors.length} other{editors.length !== 1 ? 's' : ''} editing</span>
+		<span class="collab-count"
+			>{editors.length}
+			{editors.length !== 1
+				? $t("common.others") || "others"
+				: $t("common.other") || "other"}
+			{$t("common.editing") || "editing"}</span
+		>
 	</div>
 {/if}
 
@@ -110,7 +126,12 @@
 	}
 
 	@keyframes pulse {
-		0%, 100% { opacity: 1; }
-		50% { opacity: 0.4; }
+		0%,
+		100% {
+			opacity: 1;
+		}
+		50% {
+			opacity: 0.4;
+		}
 	}
 </style>

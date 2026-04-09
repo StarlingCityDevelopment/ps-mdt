@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { ComponentId, MDTTab } from "../constants";
 	import InstanceTabButton from "./InstanceTabButton.svelte";
+	import { t } from "../stores/localeStore";
 	import type {
 		TabInstance,
 		createTabService,
@@ -53,7 +54,7 @@
 			<button
 				class="add-instance-btn"
 				onclick={handleAddNewInstance}
-				aria-label="Add new instance"
+				aria-label={$t("common.add_new_instance")}
 			>
 				<span class="material-icons">add</span>
 			</button>

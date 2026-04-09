@@ -7,6 +7,8 @@
 	import { NUI_EVENTS } from "../constants/nuiEvents";
 	import type { AuthService } from "../services/authService.svelte";
 
+	import { t } from "../stores/localeStore";
+
 	import ChargeType from "../components/ChargeType.svelte";
 
 	import type { Charge, GroupedCharges } from "./../interfaces/ICharges";
@@ -181,7 +183,7 @@
 	<div class="topbar">
 		<input
 			type="text"
-			placeholder="Search charges..."
+			placeholder={$t('charges_page.search_placeholder')}
 			bind:value={searchQuery}
 			class="search-input"
 		/>
@@ -192,7 +194,7 @@
 				onclick={loadCharges}
 				disabled={isLoading}
 			>
-				{isLoading ? "Loading..." : "Refresh"}
+				{isLoading ? $t('common.loading') : $t('common.refresh')}
 			</button>
 			{#if canEdit}
 				<button
@@ -201,7 +203,7 @@
 					onclick={toggleEdit}
 				>
 					<span class="material-icons btn-edit-icon">{isEditing ? "check" : "edit"}</span>
-					{isEditing ? "Done" : "Edit Charges"}
+					{isEditing ? $t('common.done') : $t('charges_page.edit_charges')}
 				</button>
 			{/if}
 		</div>
@@ -211,15 +213,15 @@
 		{#if isLoading && charges.length === 0}
 			<div class="empty-state">
 				<div class="loading-spinner"></div>
-				<p>Loading charges...</p>
+				<p>{$t('common.loading_charges')}</p>
 			</div>
 		{:else if filteredCharges.length === 0}
 			<div class="empty-state">
 				<p class="empty-title">No Charges Found</p>
 				<p class="empty-sub">
 					{searchQuery
-						? "No charges match your search criteria."
-						: "No charges have been loaded yet."}
+						? $t('charges_page.no_charges_match')
+						: $t('common.no_charges')}
 				</p>
 			</div>
 		{:else}

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from "../../stores/localeStore";
 	export let isEditing: boolean;
 	export let isSaving: boolean;
 	export let isLoading: boolean;
@@ -8,7 +9,7 @@
 
 <header class="editor-header">
 	<h1 class="editor-title">
-		{isEditing ? "Edit Report" : "Create New Report"}
+		{isEditing ? $t("common.editReport") || "Edit Report" : $t("common.createNewReport") || "Create New Report"}
 	</h1>
 	<div class="header-actions">
 		<button
@@ -17,19 +18,19 @@
 			disabled={isSaving}
 			type="button"
 			aria-label={isEditing
-				? "Cancel editing report"
-				: "Cancel creating report"}
+				? $t("common.cancelEditingReport") || "Cancel editing report"
+				: $t("common.cancelCreatingReport") || "Cancel creating report"}
 		>
-			Cancel
+			{$t("common.cancel") || "Cancel"}
 		</button>
 		<button
 			class="btn btn-primary"
 			onclick={onSave}
 			disabled={isSaving || isLoading}
 			type="button"
-			aria-label={isSaving ? "Saving report..." : "Save report"}
+			aria-label={isSaving ? $t("common.savingReport") || "Saving report..." : $t("common.saveReport") || "Save report"}
 		>
-			{isSaving ? "Saving..." : "Save Report"}
+			{isSaving ? $t("common.saving") || "Saving..." : $t("common.saveReport") || "Save Report"}
 		</button>
 	</div>
 </header>

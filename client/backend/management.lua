@@ -1,5 +1,15 @@
 local resourceName = tostring(GetCurrentResourceName())
 
+-- MANAGEMENT: Locales -------------------------------------------
+
+RegisterNUICallback('getLocales', function(_, cb)
+    local dict = lib.getLocales()
+    ps.debug('[getLocales] Result:', dict)
+    cb(dict or { success = false, message = 'Failed to fetch locales' })
+end)
+
+-- MANAGEMENT: Permissions -------------------------------------------
+
 RegisterNUICallback('getPermissionRoles', function(_, cb)
     if not MDTOpen then
         cb({ success = false, message = 'MDT is not open' })

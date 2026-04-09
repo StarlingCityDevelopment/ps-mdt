@@ -4,17 +4,9 @@
 	import { isEnvBrowser } from "../../utils/misc";
 	import { NUI_EVENTS } from "../../constants/nuiEvents";
 	import { globalNotifications } from "../../services/notificationService.svelte";
-	import type { createTabService } from "../../services/tabService.svelte";
-	import type { AuthService } from "../../services/authService.svelte";
 	import type { SearchResult } from "../../interfaces/IReportEditor";
 	import PersonSearchModal from "../../components/report-editor/PersonSearchModal.svelte";
-
-	interface Props {
-		tabService: ReturnType<typeof createTabService>;
-		authService: AuthService;
-	}
-
-	let { tabService, authService }: Props = $props();
+	import { t } from "../../stores/localeStore";
 
 	type CourtCaseStatus = "pending" | "scheduled" | "in_trial" | "closed" | "dismissed";
 	type CaseType = "criminal" | "civil" | "appeal" | "motion";
@@ -330,7 +322,7 @@
 		<div class="topbar">
 			<button class="back-btn" onclick={goBack}>
 				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-				Back to Cases
+				{$t('doj.back_to_cases')}
 			</button>
 			<span class="topbar-case-number">{selectedCase.court_case.case_number}</span>
 			<span class="pill {getStatusPillClass(selectedCase.court_case.status)}">{formatLabel(selectedCase.court_case.status)}</span>
@@ -340,50 +332,50 @@
 			<div class="detail-layout">
 				<div class="detail-main">
 					<div class="section">
-						<div class="section-title">Case Information</div>
+						<div class="section-title">{$t('doj.case_information')}</div>
 						<h3 class="case-title">{selectedCase.court_case.title}</h3>
 						<div class="field-row">
 							<div class="field-group">
-								<span class="field-label">Case Number</span>
+								<span class="field-label">{$t('doj.case_number')}</span>
 								<span class="field-value">{selectedCase.court_case.case_number}</span>
 							</div>
 							<div class="field-group">
-								<span class="field-label">Case Type</span>
+								<span class="field-label">{$t('doj.case_type')}</span>
 								<span class="field-value">{formatLabel(selectedCase.court_case.case_type)}</span>
 							</div>
 							<div class="field-group">
-								<span class="field-label">Status</span>
+								<span class="field-label">{$t('common.status')}</span>
 								<span class="pill {getStatusPillClass(selectedCase.court_case.status)}">{formatLabel(selectedCase.court_case.status)}</span>
 							</div>
 							<div class="field-group">
-								<span class="field-label">Filed Date</span>
+								<span class="field-label">{$t('doj.filed_date')}</span>
 								<span class="field-value">{formatDateValue(selectedCase.court_case.filed_date)}</span>
 							</div>
 						</div>
 					</div>
 
 					<div class="section">
-						<div class="section-title">Defendant</div>
+						<div class="section-title">{$t('doj.defendant')}</div>
 						<div class="field-row">
 							<div class="field-group">
-								<span class="field-label">Name</span>
+								<span class="field-label">{$t('common.name')}</span>
 								<span class="field-value">{selectedCase.court_case.defendant_name || "-"}</span>
 							</div>
 							<div class="field-group">
-								<span class="field-label">Citizen ID</span>
+								<span class="field-label">{$t('doj.citizen_id')}</span>
 								<span class="field-value mono">{selectedCase.court_case.defendant_citizenid || "-"}</span>
 							</div>
 						</div>
 					</div>
 
 					<div class="section">
-						<div class="section-title">Hearing</div>
+						<div class="section-title">{$t('doj.hearing_date')}</div>
 						<div class="field-row">
 							<div class="field-group" style="flex:1;">
-								<span class="field-label">Hearing Date</span>
+								<span class="field-label">{$t('doj.hearing_date')}</span>
 								<div class="inline-edit-row">
 									<input type="datetime-local" class="form-input" bind:value={editingHearingDate} />
-									<button class="save-field-btn" onclick={saveHearingDate}>Save</button>
+									<button class="save-field-btn" onclick={saveHearingDate}>{$t('common.save')}</button>
 								</div>
 							</div>
 						</div>
@@ -391,14 +383,14 @@
 
 					<div class="section">
 						<div class="section-header-row">
-							<span class="section-title">Documents</span>
-							<button class="add-btn" onclick={() => { newDocData = { title: `${selectedCase.court_case.case_number} - `, type: "brief", content: "" }; showNewDocModal = true; }}>+ Add</button>
+							<span class="section-title">{$t('common.documents')}</span>
+							<button class="add-btn" onclick={() => { newDocData = { title: `${selectedCase ? selectedCase.court_case.case_number : ''} - `, type: "brief", content: "" }; showNewDocModal = true; }}>{$t('doj.add_document')}</button>
 						</div>
 					</div>
 
 					{#if selectedCase.linked_reports.length > 0}
 						<div class="section">
-							<div class="section-title">Linked Reports</div>
+							<div class="section-title">{$t('doj.linked_reports')}</div>
 							<div class="linked-items">
 								{#each selectedCase.linked_reports as report}
 									<span class="linked-chip">#{report.id} - {report.title}</span>
@@ -410,7 +402,7 @@
 
 				<div class="detail-side">
 					<div class="section">
-						<div class="section-title">Update Status</div>
+						<div class="section-title">{$t('doj.update_status')}</div>
 						<select class="form-select" value={selectedCase.court_case.status} onchange={(e) => handleUpdateCase({ status: (e.target as HTMLSelectElement).value })}>
 							{#each statusOptions.filter((s) => s !== "all") as opt}
 								<option value={opt}>{formatLabel(opt)}</option>
@@ -420,11 +412,11 @@
 
 					<div class="section">
 						<div class="section-header-row">
-							<span class="section-title">Judge</span>
+							<span class="section-title">{$t('doj.judge')}</span>
 							{#if selectedCase.court_case.presiding_judge_name}
-								<button class="add-btn" onclick={() => clearParty("judge")}>x Remove</button>
+								<button class="add-btn" onclick={() => clearParty("judge")}>{$t('doj.remove')}</button>
 							{:else}
-								<button class="add-btn" onclick={() => (partySearchTarget = "judge")}>+ Add</button>
+								<button class="add-btn" onclick={() => (partySearchTarget = "judge")}>{$t('common.add')}</button>
 							{/if}
 						</div>
 						{#if selectedCase.court_case.presiding_judge_name}
@@ -433,9 +425,9 @@
 					</div>
 					<div class="section">
 						<div class="section-header-row">
-							<span class="section-title">Prosecutor</span>
+							<span class="section-title">{$t('doj.prosecutor')}</span>
 							{#if selectedCase.court_case.prosecutor_name}
-								<button class="add-btn" onclick={() => clearParty("prosecutor")}>x Remove</button>
+								<button class="add-btn" onclick={() => clearParty("prosecutor")}>{$t('doj.remove')}</button>
 							{:else}
 								<button class="add-btn" onclick={() => (partySearchTarget = "prosecutor")}>+ Add</button>
 							{/if}
@@ -446,7 +438,7 @@
 					</div>
 					<div class="section">
 						<div class="section-header-row">
-							<span class="section-title">Defense</span>
+							<span class="section-title">{$t('doj.defense')}</span>
 							{#if selectedCase.court_case.defense_attorney_name}
 								<button class="add-btn" onclick={() => clearParty("defense")}>x Remove</button>
 							{:else}
@@ -464,7 +456,7 @@
 		<!-- LIST VIEW -->
 		<div class="topbar">
 			<div class="search-box">
-				<input type="text" placeholder="Search cases..." bind:value={searchQuery} />
+				<input type="text" placeholder={$t('doj.search_cases')} bind:value={searchQuery} />
 			</div>
 			<div class="filter-pills">
 				{#each statusOptions as opt}
@@ -475,8 +467,8 @@
 			</div>
 			<div class="topbar-actions">
 				<span class="result-count">{allFilteredCases.length} case{allFilteredCases.length !== 1 ? "s" : ""}</span>
-				<button class="action-btn" onclick={loadCases} disabled={isLoading}>{isLoading ? "Loading..." : "Refresh"}</button>
-				<button class="primary-btn" onclick={() => (showCreateModal = true)}>New Court Case</button>
+				<button class="action-btn" onclick={loadCases} disabled={isLoading}>{isLoading ? $t('common.loading') : $t('common.refresh')}</button>
+				<button class="primary-btn" onclick={() => (showCreateModal = true)}>{$t('doj.new_court_case')}</button>
 			</div>
 		</div>
 
@@ -484,22 +476,22 @@
 			{#if isLoading && cases.length === 0}
 				<div class="center-state">
 					<div class="loading-spinner"></div>
-					<p>Loading court cases...</p>
+					<p>{$t('doj.loading_cases')}</p>
 				</div>
 			{:else if allFilteredCases.length === 0}
 				<div class="center-state">
-					<h3>No Court Cases Found</h3>
-					<p>{searchQuery ? "No cases match your search criteria." : "No court cases available."}</p>
+					<h3>{$t('doj.no_court_cases_found')}</h3>
+					<p>{searchQuery ? $t('common.no_results') : $t('doj.no_cases')}</p>
 				</div>
 			{:else}
 				<div class="table-header">
-					<span>Case #</span>
-					<span>Title</span>
-					<span>Defendant</span>
-					<span>Type</span>
-					<span>Status</span>
-					<span>Hearing</span>
-					<span>Filed</span>
+					<span>{$t('doj.case_number')}</span>
+					<span>{$t('common.title')}</span>
+					<span>{$t('doj.defendant')}</span>
+					<span>{$t('common.type')}</span>
+					<span>{$t('common.status')}</span>
+					<span>{$t('doj.hearing_date')}</span>
+					<span>{$t('doj.filed_date')}</span>
 				</div>
 				<div class="table-body">
 					{#each paginatedCases as item}
@@ -524,27 +516,27 @@
 	<div class="modal-backdrop" onclick={() => (showCreateModal = false)} role="presentation">
 		<div class="modal" onclick={(e) => e.stopPropagation()} role="dialog">
 			<div class="modal-header">
-				<span class="modal-title">New Court Case</span>
+				<span class="modal-title">{$t('doj.new_court_case')}</span>
 				<button class="modal-close" onclick={() => (showCreateModal = false)}>
 					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
 				</button>
 			</div>
 			<div class="modal-body">
 				<div class="form-group">
-					<label class="form-label">Title</label>
-					<input type="text" class="form-input" placeholder="e.g. State v. John Doe" bind:value={newCase.title} />
+					<label class="form-label">{$t('common.title')}</label>
+					<input type="text" class="form-input" placeholder={$t('doj.example_title')} bind:value={newCase.title} />
 				</div>
 				<div class="form-group">
-					<label class="form-label">Case Type</label>
+					<label class="form-label">{$t('doj.case_type')}</label>
 					<select class="form-select" bind:value={newCase.case_type}>
-						<option value="criminal">Criminal</option>
-						<option value="civil">Civil</option>
-						<option value="appeal">Appeal</option>
-						<option value="motion">Motion</option>
+						<option value="criminal">{$t('doj.case_type_criminal_trial')}</option>
+						<option value="civil">{$t('doj.case_type_civil_case')}</option>
+						<option value="appeal">{$t('doj.case_type_arraignment')}</option>
+						<option value="motion">{$t('doj.case_type_plea_deal')}</option>
 					</select>
 				</div>
 				<div class="form-group">
-					<label class="form-label">Defendant</label>
+					<label class="form-label">{$t('doj.defendant')}</label>
 					{#if newCase.defendant_citizenid}
 						<div class="selected-citizen">
 							<span class="citizen-name">{newCase.defendant_name}</span>
@@ -552,13 +544,13 @@
 							<button type="button" class="remove-citizen-btn" onclick={() => { newCase.defendant_citizenid = ""; newCase.defendant_name = ""; }}>x</button>
 						</div>
 					{:else}
-						<button type="button" class="form-input search-citizen-btn" onclick={() => (showDefendantSearch = true)}>Search citizen...</button>
+						<button type="button" class="form-input search-citizen-btn" onclick={() => (showDefendantSearch = true)}>{$t('doj.search_citizen')}</button>
 					{/if}
 				</div>
 				</div>
 			<div class="modal-footer">
-				<button class="back-btn" onclick={() => (showCreateModal = false)}>Cancel</button>
-				<button class="primary-btn" disabled={!newCase.title.trim()} onclick={handleCreateCase}>Create Case</button>
+				<button class="back-btn" onclick={() => (showCreateModal = false)}>{$t('common.cancel')}</button>
+				<button class="primary-btn" disabled={!newCase.title.trim()} onclick={handleCreateCase}>{$t('doj.create_case_btn')}</button>
 			</div>
 		</div>
 	</div>
@@ -566,7 +558,7 @@
 
 <PersonSearchModal
 	show={showDefendantSearch}
-	title="Search Defendant"
+	title={$t('doj.search_defendant')}
 	searchResults={defendantSearchResults}
 	onClose={() => { showDefendantSearch = false; defendantSearchResults = []; }}
 	onSearch={handleDefendantSearch}
@@ -575,7 +567,7 @@
 
 <PersonSearchModal
 	show={partySearchTarget !== null}
-	title={partySearchTarget === "judge" ? "Search Judge" : partySearchTarget === "prosecutor" ? "Search Prosecutor" : "Search Defense Attorney"}
+	title={partySearchTarget === "judge" ? $t('doj.search_judge') : partySearchTarget === "prosecutor" ? $t('doj.search_prosecutor') : $t('doj.search_defense_attorney')}
 	searchResults={partySearchResults}
 	onClose={() => { partySearchTarget = null; partySearchResults = []; }}
 	onSearch={handlePartySearch}

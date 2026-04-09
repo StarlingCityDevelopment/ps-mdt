@@ -4,6 +4,7 @@
 	import { isEnvBrowser } from "../utils/misc";
 	import { NUI_EVENTS } from "../constants/nuiEvents";
 	import { globalNotifications } from "../services/notificationService.svelte";
+	import { t } from "../stores/localeStore";
 
 	let bodycams = $state<Bodycam[]>([]);
 	let isLoading = $state(false);
@@ -125,29 +126,29 @@
 	<div class="topbar">
 		<input
 			type="text"
-			placeholder="Search by name, callsign or rank..."
+			placeholder={$t('bodycams.search_placeholder')}
 			bind:value={searchQuery}
 			class="search-input"
 		/>
 		<div class="topbar-right">
-			<span class="result-count">{filteredBodycams.length} officer{filteredBodycams.length !== 1 ? "s" : ""}</span>
+			<span class="result-count">{filteredBodycams.length} {filteredBodycams.length !== 1 ? $t('bodycams.officers') : $t('bodycams.officer')}</span>
 			<button
 				class="btn-secondary"
 				onclick={loadBodycams}
 				disabled={isLoading}
 			>
-				{isLoading ? "Loading..." : "Refresh"}
+				{isLoading ? $t('common.loading') : $t('common.refresh')}
 			</button>
 		</div>
 	</div>
 
 	<div class="list-panel">
 		<div class="table-header">
-			<span class="col-callsign">Callsign</span>
-			<span class="col-name">Officer</span>
-			<span class="col-rank">Rank</span>
-			<span class="col-status">Status</span>
-			<span class="col-viewers">Viewers</span>
+			<span class="col-callsign">{$t('common.callsign')}</span>
+			<span class="col-name">{$t('common.officer')}</span>
+			<span class="col-rank">{$t('common.rank')}</span>
+			<span class="col-status">{$t('common.status')}</span>
+			<span class="col-viewers">{$t('bodycams.viewers')}</span>
 			<span class="col-action"></span>
 		</div>
 
@@ -155,15 +156,15 @@
 			{#if isLoading && bodycams.length === 0}
 				<div class="empty-state">
 					<div class="loading-spinner"></div>
-					<p>Loading bodycams...</p>
+					<p>{$t('bodycams.loading')}</p>
 				</div>
 			{:else if filteredBodycams.length === 0}
 				<div class="empty-state">
-					<p class="empty-title">No Bodycams Found</p>
+					<p class="empty-title">{$t('bodycams.no_bodycams_found')}</p>
 					<p class="empty-sub">
 						{searchQuery
-							? "No officers match your search criteria."
-							: "No officers with bodycams are currently on duty."}
+							? $t('common.no_results')
+							: $t('bodycams.no_on_duty')}
 					</p>
 				</div>
 			{:else}
@@ -176,9 +177,9 @@
 						<span class="col-rank">{bodycam.rank}</span>
 						<span class="col-status">
 							{#if bodycam.isOnline}
-								<span class="pill pill-green">Online</span>
+								<span class="pill pill-green">{$t('common.online')}</span>
 							{:else}
-								<span class="pill pill-grey">Offline</span>
+								<span class="pill pill-grey">{$t('common.offline')}</span>
 							{/if}
 						</span>
 						<span class="col-viewers">
@@ -192,7 +193,7 @@
 							{#if bodycam.isOnline}
 								<button class="view-btn" onclick={() => viewBodycam(bodycam)}>
 									<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-									View
+									{$t('common.view')}
 								</button>
 							{/if}
 						</span>

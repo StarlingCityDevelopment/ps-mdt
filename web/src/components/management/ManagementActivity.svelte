@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte";
+	import { t } from "../../stores/localeStore";
 	import { fetchNui } from "../../utils/fetchNui";
 	import { isEnvBrowser } from "../../utils/misc";
 	import { NUI_EVENTS } from "../../constants/nuiEvents";
@@ -129,13 +130,13 @@
 	}
 
 	function formatTimestamp(value: string): string {
-		if (!value) return "Unknown";
+		if (!value) return $t("common.unknown");
 		const date = new Date(value);
 		if (Number.isNaN(date.getTime())) return value;
 		const now = new Date();
 		const diff = now.getTime() - date.getTime();
 		const mins = Math.floor(diff / 60000);
-		if (mins < 1) return "Just now";
+		if (mins < 1) return $t("common.justNow");
 		if (mins < 60) return `${mins}m ago`;
 		const hours = Math.floor(mins / 60);
 		if (hours < 24) return `${hours}h ago`;
@@ -217,18 +218,18 @@
 	<div class="activity-topbar">
 		<input
 			type="text"
-			placeholder="Search activity..."
+			placeholder={$t("management.searchActivity")}
 			value={searchQuery}
 			oninput={handleSearch}
 			class="search-input"
 		/>
-		<span class="result-count">{totalItems} entries</span>
+		<span class="result-count">{totalItems} {$t("management.entries")}</span>
 	</div>
 
 	{#if isLoading}
 		<div class="empty-state">
 			<div class="loading-spinner"></div>
-			<p>Loading activity...</p>
+			<p>{$t("management.loadingActivity")}</p>
 		</div>
 	{:else}
 		<div class="activity-list">
@@ -251,7 +252,7 @@
 				</div>
 			{:else}
 				<div class="empty-state">
-					{searchQuery ? "No results matching your search." : "No recent activity."}
+					{searchQuery ? $t("management.noResultsMatchingSearch") : $t("management.noRecentActivity")}
 				</div>
 			{/each}
 		</div>

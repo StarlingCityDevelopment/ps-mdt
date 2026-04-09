@@ -11,13 +11,13 @@
 	import type {
 		CaseAttachment,
 		CaseDetailResponse,
-		CaseNote,
 		CaseOfficerAssignment,
 		CaseRecord,
 		CaseStatus,
 		CasePriority,
 	} from "../interfaces/ICase";
 	import { globalNotifications } from "../services/notificationService.svelte";
+	import { t } from "../stores/localeStore";
 
 	let { tabService }: { tabService?: ReturnType<typeof createTabService> } = $props();
 
@@ -596,10 +596,10 @@
 		<div class="topbar">
 			<button class="back-btn" onclick={closeCaseView}>
 				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-				Back
+				{$t('common.back')}
 			</button>
 			{#if showCreatePanel}
-				<span class="topbar-title">New Case</span>
+				<span class="topbar-title">{$t('cases.new_case')}</span>
 			{:else if selectedCase}
 				<span class="topbar-case-number">{selectedCase.case.case_number}</span>
 				<span class="topbar-title">{selectedCase.case.title}</span>
@@ -614,11 +614,11 @@
 				<div class="create-layout">
 					<div class="create-main">
 						<div class="section">
-							<div class="section-title">Case Details</div>
-							<input type="text" placeholder="Case Title" bind:value={newCase.title} class="form-input title-input" />
+							<div class="section-title">{$t('cases.case_details')}</div>
+							<input type="text" placeholder={$t('cases.case_title_placeholder')} bind:value={newCase.title} class="form-input title-input" />
 							<div class="field-row">
 								<div class="field-group">
-									<span class="field-label">Status</span>
+									<span class="field-label">{$t('cases.status')}</span>
 									<select bind:value={newCase.status} class="form-select">
 										{#each statusOptions as option}
 											<option value={option}>{formatStatus(option)}</option>
@@ -626,7 +626,7 @@
 									</select>
 								</div>
 								<div class="field-group">
-									<span class="field-label">Priority</span>
+									<span class="field-label">{$t('cases.priority')}</span>
 									<select bind:value={newCase.priority} class="form-select">
 										{#each priorityOptions as option}
 											<option value={option}>{formatStatus(option)}</option>
@@ -634,46 +634,46 @@
 									</select>
 								</div>
 								<div class="field-group">
-									<span class="field-label">Department</span>
-									<input class="form-input" bind:value={newCase.department} placeholder="Optional" />
+									<span class="field-label">{$t('cases.department')}</span>
+									<input class="form-input" bind:value={newCase.department} placeholder={$t('cases.optional_placeholder')} />
 								</div>
 							</div>
 							<div class="field-group" style="margin-top:12px;">
-								<span class="field-label">Summary</span>
-								<textarea rows="8" bind:value={newCase.summary} placeholder="Case summary and initial notes..." class="form-textarea"></textarea>
+								<span class="field-label">{$t('cases.summary')}</span>
+								<textarea rows="8" bind:value={newCase.summary} placeholder={$t('cases.summary_placeholder')} class="form-textarea"></textarea>
 							</div>
 						</div>
 					</div>
 					<div class="create-side">
 						<div class="section">
-							<div class="section-title">Checklist</div>
+							<div class="section-title">{$t('cases.checklist')}</div>
 							<ul class="checklist">
 								<li class:complete={checklist.primaryOfficer}>
 									<span class="checkmark"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
-									Assign primary officer
+									{$t('cases.primary_officer')}
 								</li>
 								<li class:complete={checklist.attachments}>
 									<span class="checkmark"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
-									Attach evidence
+									{$t('cases.attachments')}
 								</li>
 								<li class:complete={checklist.reports}>
 									<span class="checkmark"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
-									Attach reports
+									{$t('cases.linked_reports')}
 								</li>
 								<li class:complete={checklist.statusPriority}>
 									<span class="checkmark"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
-									Set priority and status
+									{$t('cases.set_priority_status')}
 								</li>
 							</ul>
 						</div>
 						<div class="section">
-							<div class="section-title">Next Actions</div>
-							<p class="muted-text">After creation, open the case to manage officers, evidence, attachments, and audit logs.</p>
+							<div class="section-title">{$t('cases.next_actions')}</div>
+							<p class="muted-text">{$t('cases.after_creation')}</p>
 							{#if checklist.primaryOfficer && checklist.attachments && checklist.reports && checklist.statusPriority}
-								<p class="muted-text">All checklist items complete.</p>
+								<p class="muted-text">{$t('cases.all_complete')}</p>
 							{/if}
 						</div>
-						<button class="primary-btn create-btn" onclick={handleCreateCase} disabled={isCreateDisabled} type="button">Create Case</button>
+						<button class="primary-btn create-btn" onclick={handleCreateCase} disabled={isCreateDisabled} type="button">{$t('cases.new_case')}</button>
 					</div>
 				</div>
 			</div>
@@ -683,11 +683,11 @@
 			<div class="detail-scroll">
 				<!-- Info Section -->
 				<div class="section">
-					<div class="section-title">Case Information</div>
-					<p class="summary-text">{selectedCase.case.summary || "No summary"}</p>
+					<div class="section-title">{$t('cases.case_info_section')}</div>
+					<p class="summary-text">{selectedCase.case.summary || $t('common.none')}</p>
 					<div class="field-row">
 						<div class="field-group">
-							<span class="field-label">Status</span>
+							<span class="field-label">{$t('cases.status')}</span>
 							<select class="form-select" value={selectedCase.case.status} onchange={(event) => handleUpdateCase({ status: (event.target as HTMLSelectElement).value })}>
 								{#each statusOptions as option}
 									<option value={option}>{formatStatus(option)}</option>
@@ -695,7 +695,7 @@
 							</select>
 						</div>
 						<div class="field-group">
-							<span class="field-label">Priority</span>
+							<span class="field-label">{$t('cases.priority')}</span>
 							<select class="form-select" value={selectedCase.case.priority} onchange={(event) => handleUpdateCase({ priority: (event.target as HTMLSelectElement).value })}>
 								{#each priorityOptions as option}
 									<option value={option}>{formatStatus(option)}</option>
@@ -703,13 +703,13 @@
 							</select>
 						</div>
 						<div class="field-group">
-							<span class="field-label">Department</span>
+							<span class="field-label">{$t('cases.department')}</span>
 							<input class="form-input" value={selectedCase.case.assigned_department || ""} onchange={(event) => handleUpdateCase({ department: (event.target as HTMLInputElement).value })} />
 						</div>
 						<div class="field-group field-group-actions">
 							<button class="danger-btn" onclick={handleDeleteCase}>
 								<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-								Delete
+								{$t('common.delete')}
 							</button>
 						</div>
 					</div>
@@ -718,21 +718,21 @@
 				<!-- Officers Section -->
 				<div class="section">
 					<div class="section-header">
-						<div class="section-title" style="margin-bottom:0;">Officers</div>
+						<div class="section-title" style="margin-bottom:0;">{$t('cases.officers')}</div>
 						<div class="inline-controls">
 							<select bind:value={officerRole} class="form-select-sm">
-								<option value="primary">Primary</option>
-								<option value="assisting">Assisting</option>
-								<option value="supervisor">Supervisor</option>
+								<option value="primary">{$t('cases.primary')}</option>
+								<option value="assisting">{$t('cases.assisting')}</option>
+								<option value="supervisor">{$t('cases.supervisor')}</option>
 							</select>
 							<button class="action-btn" onclick={() => (showOfficerSearch = true)}>
 								<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-								Add Officer
+								{$t('common.add')}
 							</button>
 						</div>
 					</div>
 					{#if selectedCase.officers.length === 0}
-						<p class="muted-text">No officers assigned.</p>
+						<p class="muted-text">{$t('cases.no_officers')}</p>
 					{:else}
 						<div class="chip-list">
 							{#each selectedCase.officers as officer}
@@ -760,12 +760,12 @@
 				<!-- Linked Reports Section -->
 				<div class="section">
 					<div class="section-header">
-						<div class="section-title" style="margin-bottom:0;">Linked Reports</div>
+						<div class="section-title" style="margin-bottom:0;">{$t('cases.linked_reports')}</div>
 						<div class="inline-controls">
-							<input class="form-input-sm" placeholder="Report ID" bind:value={reportLinkId} />
+							<input class="form-input-sm" placeholder={$t('cases.report_id_placeholder')} bind:value={reportLinkId} />
 							<button class="action-btn" onclick={handleLinkReport}>
 								<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-								Link
+								{$t('cases.link')}
 							</button>
 						</div>
 					</div>
@@ -785,17 +785,17 @@
 							{/each}
 						</div>
 					{:else}
-						<p class="muted-text">No linked reports.</p>
+						<p class="muted-text">{$t('cases.no_reports')}</p>
 					{/if}
 				</div>
 
 				<!-- Notes Section -->
 				<div class="section">
-					<div class="section-title">Notes</div>
+					<div class="section-title">{$t('cases.notes_section')}</div>
 					<div class="note-input-row">
-						<textarea class="form-textarea" placeholder="Add a note..." bind:value={noteContent} rows="2"></textarea>
+						<textarea class="form-textarea" placeholder={$t('cases.note_placeholder')} bind:value={noteContent} rows="2"></textarea>
 						<button class="action-btn" disabled={!noteContent.trim() || noteSubmitting} onclick={handleAddNote}>
-							{noteSubmitting ? "Saving..." : "Add Note"}
+							{noteSubmitting ? $t('common.saving') : $t('cases.add_note')}
 						</button>
 					</div>
 					{#if selectedCase.notes && selectedCase.notes.length > 0}
@@ -803,7 +803,7 @@
 							{#each selectedCase.notes as note}
 								<div class="note-item">
 									<div class="note-header">
-										<span class="note-author">{note.author_name || "Unknown"}</span>
+										<span class="note-author">{note.author_name || $t('common.unknown')}</span>
 										<span class="note-date">{note.created_at ? new Date(note.created_at).toLocaleString() : ""}</span>
 										<button class="remove-btn" onclick={() => handleDeleteNote(note.id)}>
 											<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -814,22 +814,22 @@
 							{/each}
 						</div>
 					{:else}
-						<p class="muted-text">No notes yet.</p>
+						<p class="muted-text">{$t('cases.no_notes')}</p>
 					{/if}
 				</div>
 
 				<!-- Attachments Section -->
 				<div class="section">
-					<div class="section-title">Attachments</div>
+					<div class="section-title">{$t('cases.attachments')}</div>
 					<div class="attachment-form">
 						<select bind:value={attachmentDraft.type} class="form-select">
-							<option value="photo">Photo</option>
-							<option value="document">Document</option>
-							<option value="other">Other</option>
+							<option value="photo">{$t('cases.photo')}</option>
+							<option value="document">{$t('cases.document')}</option>
+							<option value="other">{$t('cases.other')}</option>
 						</select>
-						<input class="form-input" placeholder="URL" bind:value={attachmentDraft.url} />
-						<input class="form-input" placeholder="Label" bind:value={attachmentDraft.label} />
-						<button class="action-btn" onclick={handleAddAttachment}>Add</button>
+						<input class="form-input" placeholder={$t('cases.url_placeholder')} bind:value={attachmentDraft.url} />
+						<input class="form-input" placeholder={$t('cases.label_placeholder')} bind:value={attachmentDraft.label} />
+						<button class="action-btn" onclick={handleAddAttachment}>{$t('common.add')}</button>
 					</div>
 					<div class="upload-row">
 						<input type="file" accept=".jpg,.jpeg,.png,.webp,.pdf" class="file-input" onchange={(event) => {
@@ -839,13 +839,13 @@
 						{#if attachmentFile}
 							<span class="muted-text">{attachmentFile.name} ({formatBytes(attachmentFile.size)})</span>
 						{/if}
-						<button class="primary-btn" onclick={handleUploadAttachment}>Upload</button>
+						<button class="primary-btn" onclick={handleUploadAttachment}>{$t('common.upload')}</button>
 					</div>
 					{#if attachmentError}
 						<p class="error-text">{attachmentError}</p>
 					{/if}
 					{#if selectedCase.attachments.length === 0}
-						<p class="muted-text">No attachments yet.</p>
+						<p class="muted-text">{$t('cases.no_attachments')}</p>
 					{:else}
 						<div class="item-list">
 							{#each selectedCase.attachments as attachment}
@@ -865,45 +865,45 @@
 
 				<!-- Evidence Section -->
 				<div class="section">
-					<div class="section-title">Evidence</div>
+					<div class="section-title">{$t('cases.evidence')}</div>
 					<div class="evidence-form-grid">
 						<div class="field-group">
-							<span class="field-label">Title</span>
+							<span class="field-label">{$t('evidence_page.title')}</span>
 							<input class="form-input" bind:value={evidenceDraft.title} />
 						</div>
 						<div class="field-group">
-							<span class="field-label">Type</span>
+							<span class="field-label">{$t('evidence_page.type')}</span>
 							<input class="form-input" bind:value={evidenceDraft.type} />
 						</div>
 						<div class="field-group">
-							<span class="field-label">Serial</span>
+							<span class="field-label">{$t('evidence_page.serial_num')}</span>
 							<input class="form-input" bind:value={evidenceDraft.serial} />
 						</div>
 						<div class="field-group">
-							<span class="field-label">Location</span>
+							<span class="field-label">{$t('evidence_page.location')}</span>
 							<input class="form-input" bind:value={evidenceDraft.location} />
 						</div>
 						<div class="field-group">
-							<span class="field-label">Stash ID</span>
+							<span class="field-label">{$t('evidence_page.stash_id')}</span>
 							<input class="form-input" bind:value={evidenceDraft.stashId} />
 						</div>
 						<div class="field-group">
-							<span class="field-label">Notes</span>
+							<span class="field-label">{$t('evidence_page.notes')}</span>
 							<textarea rows="2" class="form-textarea" bind:value={evidenceDraft.notes}></textarea>
 						</div>
 					</div>
 					<div class="evidence-actions-row">
 						<label class="checkbox-label">
 							<input type="checkbox" bind:checked={evidenceDraft.stored} />
-							Stored
+							{$t('evidence_page.stored')}
 						</label>
-						<button class="primary-btn" onclick={handleAddEvidence}>Add Evidence</button>
+						<button class="primary-btn" onclick={handleAddEvidence}>{$t('cases.add_evidence')}</button>
 					</div>
 					{#if evidenceError}
 						<p class="error-text">{evidenceError}</p>
 					{/if}
 					{#if selectedCase.evidence.length === 0}
-						<p class="muted-text">No evidence logged.</p>
+						<p class="muted-text">{$t('common.no_evidence')}</p>
 					{:else}
 						<div class="item-list">
 							{#each pagedEvidence as item}
@@ -914,14 +914,14 @@
 										<span>{item.serial || ""}</span>
 								</button>
 								<!-- svelte-ignore a11y_click_events_have_key_events -->
-								<span class="nav-link nav-link-sm" role="button" tabindex="-1" onclick={() => navigateTo("Evidence")}>View in Evidence</span>
+								<span class="nav-link nav-link-sm" role="button" tabindex="-1" onclick={() => navigateTo("Evidence")}>{$t('evidence_page.view_in_evidence')}</span>
 									<div class="evidence-actions">
 										<button class="action-btn" onclick={() => handleUpdateEvidence(item.id, { stored: !item.stored })}>
-											{item.stored ? "Unstore" : "Store"}
+											{item.stored ? $t('cases.unstore') : $t('cases.store')}
 										</button>
 										<button class="remove-btn" onclick={() => handleDeleteEvidence(item.id)}>
 											<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-											Remove
+											{$t('common.remove')}
 										</button>
 									</div>
 								</div>
@@ -937,7 +937,7 @@
 										evidenceTotal = response.data.total || 0;
 									}
 								}
-							}}>Prev</button>
+							}}>{$t('cases.prev')}</button>
 							<span class="page-info">Page {evidencePage} / {evidenceTotalPages()}</span>
 							<button class="page-btn" disabled={evidencePage >= evidenceTotalPages()} onclick={async () => {
 								evidencePage = Math.min(evidenceTotalPages(), evidencePage + 1);
@@ -948,7 +948,7 @@
 										evidenceTotal = response.data.total || 0;
 									}
 								}
-							}}>Next</button>
+							}}>{$t('cases.next')}</button>
 						</div>
 					{/if}
 				</div>
@@ -956,23 +956,23 @@
 				<!-- Evidence Custody (when evidence selected) -->
 				{#if selectedEvidenceId}
 					<div class="section">
-						<div class="section-title">Evidence Custody</div>
+						<div class="section-title">{$t('cases.evidence_custody')}</div>
 						<div class="transfer-row">
-							<input class="form-input" placeholder="Transfer to Citizen ID" bind:value={transferCitizenId} />
-							<input class="form-input" placeholder="Transfer notes" bind:value={transferNotes} />
+							<input class="form-input" placeholder={$t('cases.transfer_citizen_placeholder')} bind:value={transferCitizenId} />
+							<input class="form-input" placeholder={$t('evidence_page.transfer_notes_placeholder')} bind:value={transferNotes} />
 							<button class="action-btn" onclick={() => {
 								handleTransferEvidence(transferCitizenId, transferNotes);
 								transferCitizenId = "";
 								transferNotes = "";
-							}}>Transfer</button>
+							}}>{$t('evidence_page.transfer')}</button>
 						</div>
 						<div class="upload-row">
 							<input type="file" accept=".jpg,.jpeg,.png,.webp" class="file-input" onchange={(event) => {
 								const input = event.target as HTMLInputElement;
 								evidenceImageFile = input.files && input.files[0] ? input.files[0] : null;
 							}} />
-							<input class="form-input" placeholder="Image label" bind:value={evidenceImageLabel} />
-							<button class="primary-btn" onclick={handleUploadEvidenceImage}>Upload Image</button>
+							<input class="form-input" placeholder={$t('evidence_page.image_label_placeholder')} bind:value={evidenceImageLabel} />
+							<button class="primary-btn" onclick={handleUploadEvidenceImage}>{$t('common.upload')}</button>
 						</div>
 						{#if selectedCase?.evidence}
 							{#each selectedCase.evidence.filter((e) => e.id === selectedEvidenceId) as item}
@@ -981,7 +981,7 @@
 										{#each item.images as image}
 											<div class="list-item">
 												<div class="list-item-info">
-													<strong>{image.label || "Evidence Image"}</strong>
+													<strong>{image.label || $t('evidence_page.images')}</strong>
 													<span>{image.url}</span>
 												</div>
 												<button class="remove-btn" onclick={() => handleRemoveEvidenceImage(image.id)}>
@@ -994,7 +994,7 @@
 							{/each}
 						{/if}
 						{#if evidenceCustody.length === 0}
-							<p class="muted-text">No custody updates yet.</p>
+							<p class="muted-text">{$t('cases.no_custody')}</p>
 						{:else}
 							<div class="custody-list">
 								{#each evidenceCustody as entry}
@@ -1011,9 +1011,9 @@
 
 				<!-- Audit Log Section -->
 				<div class="section">
-					<div class="section-title">Audit Log</div>
+					<div class="section-title">{$t('cases.audit_log')}</div>
 					{#if auditLogs.length === 0}
-						<p class="muted-text">No audit entries found.</p>
+						<p class="muted-text">{$t('cases.no_audit')}</p>
 					{:else}
 						<div class="audit-list">
 							{#each pagedAuditLogs as entry}
@@ -1040,7 +1040,7 @@
 									auditTotal = response.total || 0;
 									pagedAuditLogs = auditLogs;
 								}
-							}}>Prev</button>
+							}}>{$t('cases.prev')}</button>
 							<span class="page-info">Page {auditPage} / {auditTotalPages()}</span>
 							<button class="page-btn" disabled={auditPage >= auditTotalPages()} onclick={async () => {
 								auditPage = Math.min(auditTotalPages(), auditPage + 1);
@@ -1050,7 +1050,7 @@
 									auditTotal = response.total || 0;
 									pagedAuditLogs = auditLogs;
 								}
-							}}>Next</button>
+							}}>{$t('cases.next')}</button>
 						</div>
 					{/if}
 				</div>
@@ -1058,8 +1058,8 @@
 
 		{:else}
 			<div class="section empty-detail">
-				<h3>Select a case to view details</h3>
-				<p>Use the list to open a case or create a new one.</p>
+				<h3>{$t('cases.select_case')}</h3>
+				<p>{$t('cases.use_list')}</p>
 			</div>
 		{/if}
 
@@ -1068,16 +1068,16 @@
 		<div class="topbar">
 			<div class="search-box">
 				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-				<input type="text" placeholder="Search cases..." bind:value={searchQuery} />
+				<input type="text" placeholder={$t('cases.search_placeholder')} bind:value={searchQuery} />
 			</div>
 			<select class="form-select-sm" bind:value={filters.status} onchange={loadCases}>
-				<option value="">All Status</option>
+				<option value="">{$t('cases.all_status')}</option>
 				{#each statusOptions as option}
 					<option value={option}>{formatStatus(option)}</option>
 				{/each}
 			</select>
 			<select class="form-select-sm" bind:value={filters.priority} onchange={loadCases}>
-				<option value="">All Priority</option>
+				<option value="">{$t('cases.all_priority')}</option>
 				{#each priorityOptions as option}
 					<option value={option}>{formatStatus(option)}</option>
 				{/each}
@@ -1085,11 +1085,11 @@
 			<div style="flex:1;"></div>
 			<button class="action-btn" onclick={openCreatePanel}>
 				<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-				New Case
+				{$t('cases.new_case')}
 			</button>
 			<button class="back-btn" onclick={loadCases} disabled={isLoading}>
 				<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-				Refresh
+				{$t('common.refresh')}
 			</button>
 		</div>
 
@@ -1097,28 +1097,28 @@
 			{#if isLoading && cases.length === 0}
 				<div class="center-state">
 					<div class="loading-spinner"></div>
-					<p>Loading cases...</p>
+					<p>{$t('cases.loading_cases')}</p>
 				</div>
 			{:else if filteredCaseList.length === 0}
 				<div class="center-state">
 					<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-					<h3>No Cases Found</h3>
-					<p>{searchQuery ? "No cases match your search criteria." : "No cases have been created yet."}</p>
+					<h3>{$t('cases.no_cases_found')}</h3>
+					<p>{searchQuery ? $t('cases.no_match') : $t('cases.none_yet')}</p>
 					{#if !searchQuery}
-						<button class="action-btn" onclick={openCreatePanel}>Create First Case</button>
+						<button class="action-btn" onclick={openCreatePanel}>{$t('cases.create_first')}</button>
 					{/if}
 				</div>
 			{:else}
 				<!-- Table Header -->
 				<div class="table-header">
-					<span class="col-title">Title</span>
-					<span class="col-case">Case #</span>
-					<span class="col-status">Status</span>
-					<span class="col-priority">Priority</span>
-					<span class="col-dept">Department</span>
-					<span class="col-officer">Primary Officer</span>
-					<span class="col-date">Created</span>
-					<span class="col-date">Updated</span>
+					<span class="col-title">{$t('common.title')}</span>
+					<span class="col-case">{$t('cases.case_num')}</span>
+					<span class="col-status">{$t('common.status')}</span>
+					<span class="col-priority">{$t('cases.priority')}</span>
+					<span class="col-dept">{$t('cases.department')}</span>
+					<span class="col-officer">{$t('cases.primary_officer')}</span>
+					<span class="col-date">{$t('common.created')}</span>
+					<span class="col-date">{$t('common.updated')}</span>
 				</div>
 				<div class="table-body">
 					{#each filteredCaseList.slice().reverse() as item}
@@ -1153,7 +1153,6 @@
 <PersonSearchModal
 	show={showOfficerSearch}
 	title="Search Officers"
-	searchQuery={officerSearchQuery}
 	searchResults={searchService.state.results}
 	onClose={() => {
 		showOfficerSearch = false;

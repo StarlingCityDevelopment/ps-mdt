@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { SearchResult } from "../../interfaces/IReportEditor";
+	import { t } from "../../stores/localeStore";
 
 	interface Props {
 		show: boolean;
@@ -76,7 +77,7 @@
 				<input
 					bind:this={inputRef}
 					type="text"
-					placeholder="Search by name or ID..."
+					placeholder={$t("common.searchByNameOrId") || "Search by name or ID..."}
 					bind:value={localQuery}
 					oninput={handleInput}
 					class="search-input"
@@ -93,14 +94,17 @@
 								>
 								<span class="result-details">
 									{#if person.badgeId}
-										Badge: {person.badgeId} | {person.rank}
+										{$t("common.badge") || "Badge"}: {person.badgeId} | {person.rank}
 									{:else if person.citizenid}
-										ID: {person.citizenid}
+										{$t("common.id") || "ID"}: {person.citizenid}
 									{/if}
 								</span>
 							</div>
 						</button>
 					{/each}
+					{#if searchResults.length === 0 && localQuery.trim().length > 0}
+						<div class="no-results">{$t("common.noResultsFound") || "No results found"}</div>
+					{/if}
 				</div>
 			</div>
 		</div>
@@ -249,5 +253,12 @@
 
 	.search-results::-webkit-scrollbar-thumb:hover {
 		background: rgba(255, 255, 255, 0.1);
+	}
+
+	.no-results {
+		padding: 10px;
+		text-align: center;
+		color: rgba(255, 255, 255, 0.35);
+		font-size: 11px;
 	}
 </style>

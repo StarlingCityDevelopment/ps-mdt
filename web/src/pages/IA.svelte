@@ -9,6 +9,7 @@
 	import PersonSearchModal from "../components/report-editor/PersonSearchModal.svelte";
 	import type { createTabService } from "../services/tabService.svelte";
 	import type { AuthService } from "../services/authService.svelte";
+	import { t } from "../stores/localeStore";
 
 	let { tabService, authService }: { tabService?: ReturnType<typeof createTabService>; authService?: AuthService } = $props();
 
@@ -371,7 +372,7 @@
 		<div class="topbar">
 			<button class="back-btn" onclick={goBack}>
 				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-				Back to Complaints
+				{$t('ia.back_to_complaints')}
 			</button>
 			<span class="topbar-case-number">{selectedComplaint.complaint.complaint_number}</span>
 			<span class="pill {getStatusPillClass(selectedComplaint.complaint.status)}">{formatLabel(selectedComplaint.complaint.status)}</span>
@@ -383,14 +384,14 @@
 				<div class="detail-main">
 					<div class="section">
 						<div class="section-header">
-							<div class="section-title" style="margin-bottom:0;">Complaint Information</div>
+							<div class="section-title" style="margin-bottom:0;">{$t('ia.complaint_information')}</div>
 							{#if canManage}
 								<div class="inline-controls">
 									{#if editMode}
-										<button class="action-btn" onclick={handleSaveComplaintInfo}>Save</button>
-										<button class="action-btn" onclick={() => { editMode = false; }}>Cancel</button>
+										<button class="action-btn" onclick={handleSaveComplaintInfo}>{$t('common.save')}</button>
+										<button class="action-btn" onclick={() => { editMode = false; }}>{$t('common.cancel')}</button>
 									{:else}
-										<button class="action-btn" onclick={() => { editMode = true; }}>Edit</button>
+										<button class="action-btn" onclick={() => { editMode = true; }}>{$t('common.edit')}</button>
 									{/if}
 								</div>
 							{/if}
@@ -398,41 +399,41 @@
 						{#if editMode && canManage}
 							<div class="field-row">
 								<div class="field-group">
-									<span class="field-label">Officer</span>
+									<span class="field-label">{$t('ia.officer')}</span>
 									<div class="inline-controls">
-										<input type="text" class="form-input" bind:value={editOfficerName} placeholder="Officer name" />
-										<button class="action-btn" onclick={() => (showOfficerSearchForEdit = true)}>Search</button>
+										<input type="text" class="form-input" bind:value={editOfficerName} placeholder={$t('ia.officer_name')} />
+										<button class="action-btn" onclick={() => (showOfficerSearchForEdit = true)}>{$t('common.search')}</button>
 									</div>
 								</div>
 								<div class="field-group">
-									<span class="field-label">Badge</span>
-									<input type="text" class="form-input" bind:value={editOfficerBadge} placeholder="Badge #" />
+									<span class="field-label">{$t('common.badge')}</span>
+									<input type="text" class="form-input" bind:value={editOfficerBadge} placeholder={$t('ia.badge_number')} />
 								</div>
 								<div class="field-group">
-									<span class="field-label">Incident Date</span>
+									<span class="field-label">{$t('ia.incident_date')}</span>
 									<input type="date" class="form-input" bind:value={editIncidentDate} />
 								</div>
 								<div class="field-group">
-									<span class="field-label">Location</span>
-									<input type="text" class="form-input" bind:value={editIncidentLocation} placeholder="Location" />
+									<span class="field-label">{$t('common.location')}</span>
+									<input type="text" class="form-input" bind:value={editIncidentLocation} placeholder={$t('common.location')} />
 								</div>
 							</div>
 						{:else}
 							<div class="field-row">
 								<div class="field-group">
-									<span class="field-label">Officer</span>
+									<span class="field-label">{$t('ia.officer')}</span>
 									<span class="field-value">{selectedComplaint.complaint.officer_name || '-'}{selectedComplaint.complaint.officer_badge ? ` (#${selectedComplaint.complaint.officer_badge})` : ''}</span>
 								</div>
 								<div class="field-group">
-									<span class="field-label">Category</span>
+									<span class="field-label">{$t('ia.category')}</span>
 									<span class="field-value">{formatLabel(selectedComplaint.complaint.category)}</span>
 								</div>
 								<div class="field-group">
-									<span class="field-label">Incident Date</span>
+									<span class="field-label">{$t('ia.incident_date')}</span>
 									<span class="field-value">{selectedComplaint.complaint.incident_date || '-'}</span>
 								</div>
 								<div class="field-group">
-									<span class="field-label">Location</span>
+									<span class="field-label">{$t('common.location')}</span>
 									<span class="field-value">{selectedComplaint.complaint.incident_location || '-'}</span>
 								</div>
 							</div>
@@ -440,13 +441,13 @@
 					</div>
 
 					<div class="section">
-						<div class="section-title">Description</div>
-						<p class="summary-text">{selectedComplaint.complaint.description || 'No description provided.'}</p>
+						<div class="section-title">{$t('common.description')}</div>
+						<p class="summary-text">{selectedComplaint.complaint.description || $t('ia.no_description')}</p>
 					</div>
 
 					{#if selectedComplaint.complaint.witnesses}
 						<div class="section">
-							<div class="section-title">Witnesses</div>
+							<div class="section-title">{$t('ia.witnesses')}</div>
 							<p class="summary-text">{selectedComplaint.complaint.witnesses}</p>
 						</div>
 					{/if}
@@ -455,12 +456,12 @@
 						{@const evidenceLinks = parseEvidence(selectedComplaint.complaint.evidence)}
 						{#if evidenceLinks.length > 0}
 							<div class="section">
-								<div class="section-title">Evidence</div>
+								<div class="section-title">{$t('ia.evidence')}</div>
 								<div class="evidence-links">
 									{#each evidenceLinks as link, i}
 										<a href={link} target="_blank" rel="noopener noreferrer" class="evidence-link">
 											<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-											Evidence #{i + 1}
+											{$t('ia.evidence')} #{i + 1}
 										</a>
 									{/each}
 								</div>
@@ -472,14 +473,14 @@
 				<!-- Right Column: Sidebar -->
 				<div class="detail-side">
 					<div class="section">
-						<div class="section-title">Complainant</div>
+						<div class="section-title">{$t('ia.complainant')}</div>
 						<div class="field-group">
-							<span class="field-label">Name</span>
+							<span class="field-label">{$t('common.name')}</span>
 							<span class="field-value">{selectedComplaint.complaint.complainant_name}</span>
 						</div>
 						{#if selectedComplaint.complaint.complainant_phone}
 							<div class="field-group">
-								<span class="field-label">Phone</span>
+								<span class="field-label">{$t('common.phone')}</span>
 								<span class="field-value">{selectedComplaint.complaint.complainant_phone}</span>
 							</div>
 						{/if}
@@ -487,45 +488,45 @@
 
 					{#if canManage}
 						<div class="section">
-							<div class="section-title">Status Management</div>
+							<div class="section-title">{$t('ia.status_management')}</div>
 							<div class="inline-controls">
 								<select class="form-select" bind:value={statusUpdateValue}>
 									{#each statusOptions.filter(s => s !== 'all') as opt}
 										<option value={opt}>{formatLabel(opt)}</option>
 									{/each}
 								</select>
-								<button class="primary-btn" onclick={handleUpdateStatus}>Update</button>
+								<button class="primary-btn" onclick={handleUpdateStatus}>{$t('common.update')}</button>
 							</div>
 						</div>
 
 						<div class="section">
-							<div class="section-title">Investigator</div>
+							<div class="section-title">{$t('ia.investigator')}</div>
 							{#if selectedComplaint.complaint.assigned_to_name}
 								<p class="assigned-name">{selectedComplaint.complaint.assigned_to_name}</p>
 							{:else}
-								<p class="muted-text">No investigator assigned</p>
+								<p class="muted-text">{$t('ia.no_investigator')}</p>
 							{/if}
 							<div class="inline-controls">
-								<button class="action-btn" onclick={() => (showInvestigatorSearch = true)}>Search</button>
-								<button class="action-btn" onclick={handleSelfAssign}>Self</button>
+								<button class="action-btn" onclick={() => (showInvestigatorSearch = true)}>{$t('common.search')}</button>
+								<button class="action-btn" onclick={handleSelfAssign}>{$t('ia.self')}</button>
 								{#if selectedComplaint.complaint.assigned_to_name}
-									<button class="action-btn danger" onclick={handleUnassign}>Unassign</button>
+									<button class="action-btn danger" onclick={handleUnassign}>{$t('ia.unassign')}</button>
 								{/if}
 							</div>
 						</div>
 					{/if}
 
 					<div class="section">
-						<div class="section-title">Internal Notes</div>
+						<div class="section-title">{$t('ia.internal_notes')}</div>
 						<div class="note-input-row">
 							<textarea
 								class="form-textarea"
 								rows="2"
-								placeholder="Add a note..."
+								placeholder={$t('ia.add_note')}
 								bind:value={noteContent}
 							></textarea>
 							<button class="action-btn" onclick={handleAddNote} disabled={noteSubmitting || !noteContent.trim()}>
-								{noteSubmitting ? 'Adding...' : 'Add Note'}
+								{noteSubmitting ? $t('ia.adding') : $t('ia.add_note_btn')}
 							</button>
 						</div>
 						{#if selectedComplaint.notes.length > 0}
@@ -546,7 +547,7 @@
 								{/each}
 							</div>
 						{:else}
-							<p class="muted-text">No notes yet.</p>
+							<p class="muted-text">{$t('ia.no_notes')}</p>
 						{/if}
 					</div>
 				</div>
@@ -562,7 +563,7 @@
 						class:active={statusFilter === opt}
 						onclick={() => { statusFilter = opt; }}
 					>
-						{opt === 'all' ? 'All' : formatLabel(opt)}
+						{opt === 'all' ? $t('common.all') : formatLabel(opt)}
 					</button>
 				{/each}
 			</div>
@@ -571,12 +572,12 @@
 		<div class="topbar">
 			<div class="search-box">
 				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-				<input type="text" placeholder="Search complaints..." bind:value={searchQuery} />
+				<input type="text" placeholder={$t('ia.search_complaints')} bind:value={searchQuery} />
 			</div>
 			<div style="flex:1;"></div>
 			<button class="back-btn" onclick={loadComplaints} disabled={loading}>
 				<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-				Refresh
+				{$t('common.refresh')}
 			</button>
 		</div>
 
@@ -584,23 +585,23 @@
 			{#if loading && complaints.length === 0}
 				<div class="center-state">
 					<div class="loading-spinner"></div>
-					<p>Loading complaints...</p>
+					<p>{$t('ia.loading_complaints')}</p>
 				</div>
 			{:else if paginatedComplaints.length === 0}
 				<div class="center-state">
 					<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-					<h3>No Complaints Found</h3>
-					<p>{searchQuery ? "No complaints match your search criteria." : "No complaints have been filed yet."}</p>
+					<h3>{$t('ia.no_complaints_found')}</h3>
+					<p>{searchQuery ? $t('common.no_results') : $t('ia.no_complaints_filed')}</p>
 				</div>
 			{:else}
 				<div class="table-header">
 					<span>#</span>
-					<span>Status</span>
-					<span>Category</span>
-					<span>Officer</span>
-					<span>Complainant</span>
-					<span>Date</span>
-					<span>Assigned To</span>
+					<span>{$t('common.status')}</span>
+					<span>{$t('ia.category')}</span>
+					<span>{$t('ia.officer')}</span>
+					<span>{$t('ia.complainant')}</span>
+					<span>{$t('common.date')}</span>
+					<span>{$t('ia.assigned_to')}</span>
 				</div>
 				<div class="table-body">
 					{#each paginatedComplaints as item}
@@ -613,7 +614,7 @@
 							<span>{item.officer_name}</span>
 							<span>{item.complainant_name}</span>
 							<span>{formatDateValue(item.created_at)}</span>
-							<span>{item.assigned_to_name || 'Unassigned'}</span>
+							<span>{item.assigned_to_name || $t('ia.unassigned')}</span>
 						</button>
 					{/each}
 				</div>

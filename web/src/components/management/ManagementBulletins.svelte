@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte";
+	import { t } from "../../stores/localeStore";
 	import { fetchNui } from "../../utils/fetchNui";
 	import { isEnvBrowser } from "../../utils/misc";
 	import { NUI_EVENTS } from "../../constants/nuiEvents";
@@ -76,16 +77,16 @@
 				{ success: false },
 			);
 			if (result && result.success) {
-				showStatus("Bulletin posted");
+				showStatus($t("management.bulletinPosted"));
 				newTitle = "";
 				newContent = "";
 				await loadBulletins();
 			} else {
-				showStatus(result?.message || "Failed to post bulletin", "error");
+				showStatus(result?.message || $t("management.failedToPostBulletin"), "error");
 			}
 		} catch (error) {
 			console.error("Failed to create bulletin:", error);
-			showStatus("Failed to post bulletin", "error");
+			showStatus($t("management.failedToPostBulletin"), "error");
 		} finally {
 			isSubmitting = false;
 		}
@@ -104,14 +105,14 @@
 				{ success: false },
 			);
 			if (result && result.success) {
-				showStatus("Bulletin deleted");
+				showStatus($t("management.bulletinDeleted"));
 				await loadBulletins();
 			} else {
-				showStatus(result?.message || "Failed to delete bulletin", "error");
+				showStatus(result?.message || $t("management.failedToDeleteBulletin"), "error");
 			}
 		} catch (error) {
 			console.error("Failed to delete bulletin:", error);
-			showStatus("Failed to delete bulletin", "error");
+			showStatus($t("management.failedToDeleteBulletin"), "error");
 		}
 	}
 
@@ -140,12 +141,12 @@
 			<input
 				class="bulletin-title-input"
 				type="text"
-				placeholder="Title (e.g. TRAINING, BOLO REMINDER)"
+				placeholder={$t("management.bulletinTitlePlaceholder")}
 				bind:value={newTitle}
 			/>
 			<textarea
 				class="bulletin-input"
-				placeholder="Write a bulletin..."
+				placeholder={$t("management.bulletinContentPlaceholder")}
 				rows="2"
 				bind:value={newContent}
 			></textarea>
@@ -155,14 +156,14 @@
 			onclick={handleSubmit}
 			disabled={(!newContent.trim() && !newTitle.trim()) || isSubmitting}
 		>
-			{isSubmitting ? "Posting..." : "Post"}
+			{isSubmitting ? $t("common.posting") : $t("common.post")}
 		</button>
 	</div>
 
 	{#if isLoading}
 		<div class="empty-state">
 			<div class="loading-spinner"></div>
-			<p>Loading bulletins...</p>
+			<p>{$t("management.loadingBulletins")}</p>
 		</div>
 	{:else}
 		<div class="bulletins-list">
@@ -181,14 +182,14 @@
 						<button
 							class="delete-btn"
 							onclick={() => deleteBulletin(bulletin.id)}
-							aria-label="Delete bulletin"
+							aria-label={$t("management.delete_bulletin")}
 						>
 							<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
 						</button>
 					{/if}
 				</div>
 			{:else}
-				<div class="empty-state">No bulletins posted.</div>
+				<div class="empty-state">{$t("management.noBulletinsPosted")}</div>
 			{/each}
 		</div>
 	{/if}

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte";
+	import { t } from "../../stores/localeStore";
 	import { fetchNui } from "../../utils/fetchNui";
 	import { isEnvBrowser } from "../../utils/misc";
 	import { NUI_EVENTS } from "../../constants/nuiEvents";
@@ -48,7 +49,7 @@
 
 	async function saveConfig() {
 		if (isEnvBrowser()) {
-			showStatus("Settings saved");
+			showStatus($t("management.settingsSaved"));
 			return;
 		}
 		try {
@@ -59,13 +60,13 @@
 				{ success: false },
 			);
 			if (result?.success) {
-				showStatus("Jail & Fines settings saved");
+				showStatus($t("management.jailFinesSettingsSaved"));
 			} else {
-				showStatus(result?.message || "Failed to save settings", "error");
+				showStatus(result?.message || $t("management.failedToSaveSettings"), "error");
 			}
 		} catch (error) {
 			console.error("Failed to save jail/fines config:", error);
-			showStatus("Failed to save settings", "error");
+			showStatus($t("management.failedToSaveSettings"), "error");
 		} finally {
 			isSaving = false;
 		}
@@ -74,11 +75,11 @@
 	function addOffer() {
 		const val = parseInt(newOfferValue, 10);
 		if (!val || val < 1 || val > 100) {
-			showStatus("Enter a value between 1 and 100", "error");
+			showStatus($t("management.percentageRange"), "error");
 			return;
 		}
 		if (config.reductionOffers.includes(val)) {
-			showStatus("That percentage already exists", "error");
+			showStatus($t("management.percentageExists"), "error");
 			return;
 		}
 		config.reductionOffers = [...config.reductionOffers, val].sort((a, b) => a - b);
@@ -103,34 +104,34 @@
 
 <div class="jf-page">
 	<div class="jf-card">
-		<span class="card-label">Jail & Fines Configuration</span>
-		<p class="card-subtitle">Configure reduction offers and fine limits. Changes apply department-wide.</p>
+		<span class="card-label">{$t("management.jailFinesConfig")}</span>
+		<p class="card-subtitle">{$t("management.jailFinesConfigDesc")}</p>
 
 		{#if isLoading}
 			<div class="jf-loading">
 				<div class="loading-spinner"></div>
-				<p>Loading settings...</p>
+				<p>{$t("management.loadingSettings")}</p>
 			</div>
 		{:else}
 			<div class="jf-scroll">
 				<!-- Reduction Offers -->
 				<div class="setting-group">
 					<div class="setting-group-header">
-						<span class="group-label">Reduction Offers</span>
-						<span class="group-desc">Percentage options shown when offering a reduction on charges</span>
+						<span class="group-label">{$t("management.reductionOffers")}</span>
+						<span class="group-desc">{$t("management.reductionOffersDesc")}</span>
 					</div>
 
 					<div class="offers-list">
 						{#each config.reductionOffers as offer}
 							<div class="offer-chip">
 								<span class="offer-value">{offer}%</span>
-								<button class="offer-remove" onclick={() => removeOffer(offer)} aria-label="Remove {offer}%">
+								<button class="offer-remove" onclick={() => removeOffer(offer)} aria-label={$t("management.remove") + ` ${offer}%`}>
 									<svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
 								</button>
 							</div>
 						{/each}
 						{#if config.reductionOffers.length === 0}
-							<span class="no-offers">No reduction offers configured</span>
+							<span class="no-offers">{$t("management.noReductionOffers")}</span>
 						{/if}
 					</div>
 
@@ -138,22 +139,22 @@
 						<input
 							type="number"
 							class="offer-input"
-							placeholder="e.g. 25"
+							placeholder={$t("management.percentageExample")}
 							min="1"
 							max="100"
 							bind:value={newOfferValue}
 							onkeydown={handleOfferKeydown}
 						/>
 						<span class="offer-input-suffix">%</span>
-						<button class="add-offer-btn" onclick={addOffer}>Add</button>
+						<button class="add-offer-btn" onclick={addOffer}>{$t("common.add")}</button>
 					</div>
 				</div>
 
 				<!-- Max Fine Amount -->
 				<div class="setting-group">
 					<div class="setting-group-header">
-						<span class="group-label">Maximum Fine Amount</span>
-						<span class="group-desc">The highest fine amount that can be processed through the MDT</span>
+						<span class="group-label">{$t("management.maxFineAmount")}</span>
+						<span class="group-desc">{$t("management.maxFineAmountDesc")}</span>
 					</div>
 
 					<div class="fine-input-row">
@@ -174,7 +175,7 @@
 		<div class="save-bar">
 			<button class="btn-save" onclick={saveConfig} disabled={isSaving}>
 				<span class="material-icons btn-save-icon">save</span>
-				{isSaving ? "Saving..." : "Save Settings"}
+				{isSaving ? $t("common.saving") : $t("management.saveSettings")}
 			</button>
 			{#if statusMsg}
 				<span class="save-status {statusMsg.type}">{statusMsg.text}</span>

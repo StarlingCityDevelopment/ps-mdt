@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Evidence } from "../../interfaces/IReportEditor";
+	import { t } from "../../stores/localeStore";
 
 	interface Props {
 		evidence: Evidence[];
@@ -24,7 +25,6 @@
 		onLinkEvidenceCase,
 		onCreateCaseFromEvidence,
 		onNavigateToCases,
-		onNavigateToEvidence,
 	}: Props = $props();
 
 	const evidenceTypes = [
@@ -53,13 +53,13 @@
 
 <div class="metadata-section">
 	<div class="section-header">
-		<span class="section-label">EVIDENCE</span>
+		<span class="section-label">{$t("common.evidence") || "EVIDENCE"}</span>
 		<button
 			class="add-btn"
 			onclick={onAddEvidence}
-			title="Add Evidence"
-			aria-label="Add Evidence"
-		>+ Add</button>
+			title={$t("common.addEvidence") || "Add Evidence"}
+			aria-label={$t("common.addEvidence") || "Add Evidence"}
+		>+ {$t("common.add") || "Add"}</button>
 	</div>
 
 	{#if evidence.length > 0}
@@ -69,7 +69,7 @@
 					<div class="card-info">
 						<input
 							type="text"
-							placeholder="Evidence Title"
+							placeholder={$t("common.evidenceTitle") || "Evidence Title"}
 							value={item.title}
 							oninput={(e) => updateEvidence(item.id, "title", e.currentTarget.value)}
 							class="title-input"
@@ -86,7 +86,7 @@
 					<button
 						class="remove-btn"
 						onclick={() => onRemoveEvidence(item.id)}
-						aria-label="Remove evidence"
+						aria-label={$t("common.remove_evidence")}
 					>
 						<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
 							<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
@@ -107,14 +107,14 @@
 						</select>
 						<input
 							type="text"
-							placeholder="Serial Number"
+							placeholder={$t("common.serialNumber") || "Serial Number"}
 							value={item.serial}
 							oninput={(e) => updateEvidence(item.id, "serial", e.currentTarget.value)}
 							class="field-input"
 						/>
 					</div>
 					<textarea
-						placeholder="Notes"
+						placeholder={$t("common.notes") || "Notes"}
 						value={item.notes}
 						oninput={(e) => updateEvidence(item.id, "notes", e.currentTarget.value)}
 						class="notes-input"
@@ -126,17 +126,17 @@
 						<input
 							type="text"
 							class="field-input"
-							placeholder="Case ID"
+							placeholder={$t("common.caseId") || "Case ID"}
 							value={(item as any).caseId || ""}
 							onchange={(e) => linkEvidenceCase(item.id, e.currentTarget.value)}
 						/>
 						<button class="action-btn" onclick={() => onCreateCaseFromEvidence(item.id)}>
-							Create Case
+							{$t("common.createCase") || "Create Case"}
 						</button>
 					</div>
 					<div class="image-actions">
 						<button class="action-btn" onclick={() => onOpenImageUpload(item.id)}>
-							Add Image
+							{$t("common.addImage") || "Add Image"}
 						</button>
 						{#if item.images.length > 0}
 							<span class="image-count">{item.images.length} image{item.images.length > 1 ? "s" : ""}</span>
@@ -152,7 +152,7 @@
 								<button
 									class="image-remove-btn"
 									onclick={() => onRemoveImage(item.id, imageIndex)}
-									aria-label="Remove image"
+									aria-label={$t("common.remove_image")}
 								>
 									<svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor">
 										<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />

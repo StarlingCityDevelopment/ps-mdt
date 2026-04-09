@@ -418,14 +418,14 @@ function CameraPlacement.showPlacementMenu()
 
     if not input then
         ps.info('Camera placement cancelled')
-        ps.notify('Camera placement cancelled', 'info')
+        ps.notify(locale('ui.camera_placement_cancelled'), 'info')
         return
     end
 
     -- Validate camera ID format
     if not tostring(input[1]):match("^[a-zA-Z0-9_%-]+$") then
         ps.warn('Invalid camera ID format', 'error')
-        ps.notify('Camera ID can only contain letters, numbers, underscores, and dashes', 'error')
+        ps.notify(locale('validation.invalid_camera_id_format'), 'error')
         return
     end
 
@@ -435,14 +435,14 @@ function CameraPlacement.showPlacementMenu()
 
     if not x or not y or not z or not heading then
         ps.warn('Invalid vector4 format', 'error')
-        ps.notify('Invalid vector4 format. Use: vector4(x, y, z, heading)', 'error')
+        ps.notify(locale('validation.invalid_vector4_format'), 'error')
         return
     end
 
     -- Validate coordinate ranges
     if x < -4000 or x > 4000 or y < -4000 or y > 4000 or z < -100 or z > 1000 then
         ps.warn('Coordinates out of range', 'error')
-        ps.notify('Coordinates out of range. X,Y: -4000 to 4000, Z: -100 to 1000', 'error')
+        ps.notify(locale('validation.coordinates_out_of_range'), 'error')
         return
     end
 
@@ -454,7 +454,7 @@ function CameraPlacement.showPlacementMenu()
     local modelValid = ps.callback('ps-mdt:server:validateCameraModel', tostring(input[3]))
     if not modelValid then
         ps.warn('Invalid camera model selected: ' .. tostring(input[3]))
-        ps.notify('Invalid camera model selected', 'error')
+        ps.notify(locale('ui.invalid_camera_model_selected'), 'error')
         return
     end
 
@@ -481,7 +481,7 @@ end
 RegisterNetEvent(resourceName .. ':client:receiveCameraList', function(cameras)
     if not cameras or #cameras == 0 then
         ps.info('No cameras found')
-        ps.notify('No cameras found', 'info')
+        ps.notify(locale('ui.no_cameras_found'), 'info')
         return
     end
 
@@ -504,7 +504,7 @@ RegisterNetEvent(resourceName .. ':client:receiveCameraList', function(cameras)
 
     lib.registerContext({
         id = 'camera_management',
-        title = 'Camera Management',
+        title = locale('ui.camera_management'),
         options = options
     })
 
@@ -622,7 +622,7 @@ function CameraPlacement.showEditMenu(camera)
 
     if not input then
         ps.info('Camera edit cancelled')
-        ps.notify('Camera edit cancelled', 'info')
+        ps.notify(locale('ui.camera_edit_cancelled'), 'info')
         return
     end
 
@@ -632,14 +632,14 @@ function CameraPlacement.showEditMenu(camera)
 
     if not x or not y or not z or not heading then
         ps.warn('Invalid vector4 format', 'error')
-        ps.notify('Invalid vector4 format. Use: vector4(x, y, z, heading)', 'error')
+        ps.notify(locale('validation.invalid_vector4_format'), 'error')
         return
     end
 
     -- Validate coordinate ranges
     if x < -4000 or x > 4000 or y < -4000 or y > 4000 or z < -100 or z > 1000 then
         ps.warn('Coordinates out of range', 'error')
-        ps.notify('Coordinates out of range. X,Y: -4000 to 4000, Z: -100 to 1000', 'error')
+        ps.notify(locale('validation.coordinates_out_of_range'), 'error')
         return
     end
 
@@ -651,7 +651,7 @@ function CameraPlacement.showEditMenu(camera)
     local modelValid = ps.callback('ps-mdt:server:validateCameraModel', tostring(input[2]))
     if not modelValid then
         ps.warn('Invalid camera model selected: ' .. tostring(input[2]))
-        ps.notify('Invalid camera model selected', 'error')
+        ps.notify(locale('ui.invalid_camera_model_selected'), 'error')
         return
     end
 
@@ -670,7 +670,7 @@ function CameraPlacement.showEditMenu(camera)
         ps.info('Camera update request sent to server for: ' .. camera.camId)
     else
         ps.warn('Camera update failed for: ' .. camera.camId)
-        ps.notify('Camera update failed', 'error')
+        ps.notify(locale('ui.camera_update_failed'), 'error')
     end
 end
 
@@ -703,14 +703,14 @@ function CameraPlacement.createWithGizmo()
 
     if not input then
         ps.info('Camera creation cancelled')
-        ps.notify('Camera creation cancelled', 'info')
+        ps.notify(locale('ui.camera_creation_cancelled'), 'info')
         return
     end
 
     -- Validate camera ID format
     if not tostring(input[1]):match("^[a-zA-Z0-9_%-]+$") then
         ps.warn('Invalid camera ID format', 'error')
-        ps.notify('Camera ID can only contain letters, numbers, underscores, and dashes', 'error')
+        ps.notify(locale('validation.invalid_camera_id_format'), 'error')
         return
     end
 
@@ -718,7 +718,7 @@ function CameraPlacement.createWithGizmo()
     local modelValid = ps.callback('ps-mdt:server:validateCameraModel', tostring(input[3]))
     if not modelValid then
         ps.warn('Invalid camera model selected: ' .. tostring(input[3]))
-        ps.notify('Invalid camera model selected', 'error')
+        ps.notify(locale('ui.invalid_camera_model_selected'), 'error')
         return
     end
 
@@ -741,18 +741,18 @@ function CameraPlacement.createWithGizmo()
 
     if not tempObj or tempObj == 0 then
         ps.error('Failed to create temporary camera object for placement')
-        ps.notify('Failed to create placement object', 'error')
+        ps.notify(locale('ui.failed_to_create_placement_object'), 'error')
         return
     end
     ps.debug('Created temporary object for gizmo placement')
 
     -- Use gizmo for placement
-    ps.notify('Use the gizmo to position the camera, then press ENTER when done', 'info')
+    ps.notify(locale('ui.use_gizmo_to_position'), 'info')
     local gizmoResult = exports[GetCurrentResourceName()]:useGizmo(tempObj)
 
     if not gizmoResult then
         ps.warn('Gizmo placement cancelled')
-        ps.notify('Camera placement cancelled', 'info')
+        ps.notify(locale('ui.camera_placement_cancelled'), 'info')
         DeleteObject(tempObj)
         return
     end
@@ -785,7 +785,7 @@ function CameraPlacement.createWithGizmo()
     -- Send to server for creation
     TriggerServerEvent(resourceName .. ':server:createStaticCamera', cameraData)
     ps.info('Camera placement request sent to server for: ' .. cameraData.camId)
-    ps.notify('Camera created at position: ' .. string.format('%.2f, %.2f, %.2f', finalCoords.x, finalCoords.y, finalCoords.z), 'success')
+    ps.notify(locale('ui.camera_created', string.format('%.2f, %.2f, %.2f', finalCoords.x, finalCoords.y, finalCoords.z)), 'success')
 end
 
 -- Position existing camera with gizmo
@@ -802,7 +802,7 @@ function CameraPlacement.placeWithGizmo(camera)
 
     if not tempObj or tempObj == 0 then
         ps.error('Failed to create temporary camera object for placement')
-        ps.notify('Failed to create placement object', 'error')
+        ps.notify(locale('ui.failed_to_create_placement_object'), 'error')
         return
     end
 
@@ -810,13 +810,13 @@ function CameraPlacement.placeWithGizmo(camera)
 
     ps.debug('Created temporary object for gizmo repositioning')
 
-    ps.notify('Use the gizmo to reposition camera "' .. camera.camLabel .. '", then press ENTER when done', 'info')
+    ps.notify(locale('ui.use_gizmo_to_reposition', camera.camLabel), 'info')
 
     local gizmoResult = exports[GetCurrentResourceName()]:useGizmo(tempObj)
 
     if not gizmoResult then
         ps.warn('Gizmo placement cancelled')
-        ps.notify('Camera repositioning cancelled', 'info')
+        ps.notify(locale('ui.camera_repositioning_cancelled'), 'info')
         DeleteObject(tempObj)
         return
     end
@@ -844,10 +844,10 @@ function CameraPlacement.placeWithGizmo(camera)
     local result = ps.callback(resourceName .. ':server:updateCamera', updateData)
     if not result or not result.success then
         ps.warn('Camera update failed for: ' .. camera.camId)
-        ps.notify('Camera update failed', 'error')
+        ps.notify(locale('ui.camera_update_failed'), 'error')
     end
     ps.info('Camera repositioning request sent to server for: ' .. camera.camId)
-    ps.notify('Camera repositioned at: ' .. string.format('%.2f, %.2f, %.2f', finalCoords.x, finalCoords.y, finalCoords.z), 'success')
+    ps.notify(locale('ui.camera_repositioned', string.format('%.2f, %.2f, %.2f', finalCoords.x, finalCoords.y, finalCoords.z)), 'success')
 end
 
 -- Main camera menu

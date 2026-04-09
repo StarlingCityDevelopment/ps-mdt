@@ -7,6 +7,7 @@
 	import { openReportInEditor } from "../stores/reportsStore";
 	import type { createTabService } from "../services/tabService.svelte";
 	import { globalNotifications } from "../services/notificationService.svelte";
+	import { t } from "../stores/localeStore";
 
 	let { tabService }: { tabService: ReturnType<typeof createTabService> } = $props();
 
@@ -104,7 +105,7 @@
 	<div class="topbar">
 		<input
 			type="text"
-			placeholder="Search by name, ID, or report..."
+			placeholder={$t('warrants.search_placeholder')}
 			bind:value={searchQuery}
 			class="search-input"
 		/>
@@ -115,26 +116,26 @@
 				onclick={loadWarrants}
 				disabled={isLoading}
 			>
-				{isLoading ? "Loading..." : "Refresh"}
+				{isLoading ? $t('common.loading') : $t('common.refresh')}
 			</button>
 			<button
 				class="btn-primary"
 				onclick={createWarrantReport}
 			>
-				New Warrant
+				{$t('warrants.new_warrant')}
 			</button>
 		</div>
 	</div>
 
 	<div class="list-panel">
 		<div class="table-header">
-			<span>Name</span>
-			<span>Citizen ID</span>
-			<span>Report</span>
-			<span>Felonies</span>
-			<span>Misdemeanors</span>
-			<span>Infractions</span>
-			<span>Expires</span>
+			<span>{$t('common.name')}</span>
+			<span>{$t('warrants.citizen_id')}</span>
+			<span>{$t('warrants.report')}</span>
+			<span>{$t('warrants.felonies')}</span>
+			<span>{$t('warrants.misdemeanors')}</span>
+			<span>{$t('warrants.infractions')}</span>
+			<span>{$t('warrants.expires')}</span>
 			<span></span>
 		</div>
 
@@ -142,15 +143,15 @@
 			{#if isLoading && warrants.length === 0}
 				<div class="empty-state">
 					<div class="loading-spinner"></div>
-					<p>Loading warrants...</p>
+					<p>{$t('common.loading_warrants')}</p>
 				</div>
 			{:else if filteredWarrants.length === 0}
 				<div class="empty-state">
-					<p class="empty-title">No Warrants Found</p>
+					<p class="empty-title">{$t('common.no_warrants')}</p>
 					<p class="empty-sub">
 						{searchQuery
-							? "No warrants match your search criteria."
-							: "No active warrants available."}
+							? $t('warrants.no_warrants_match')
+							: $t('dashboard.no_active_warrants')}
 					</p>
 				</div>
 			{:else}

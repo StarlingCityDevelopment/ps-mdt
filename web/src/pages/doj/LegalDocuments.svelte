@@ -4,15 +4,7 @@
 	import { isEnvBrowser } from "../../utils/misc";
 	import { NUI_EVENTS } from "../../constants/nuiEvents";
 	import { globalNotifications } from "../../services/notificationService.svelte";
-	import type { createTabService } from "../../services/tabService.svelte";
-	import type { AuthService } from "../../services/authService.svelte";
-
-	interface Props {
-		tabService: ReturnType<typeof createTabService>;
-		authService: AuthService;
-	}
-
-	let { tabService, authService }: Props = $props();
+	import { t } from "../../stores/localeStore";
 
 	type DocType = "brief" | "motion" | "ruling" | "opinion" | "plea_deal" | "sentencing" | "other";
 	type DocStatus = "draft" | "filed" | "approved" | "rejected";
@@ -264,12 +256,12 @@
 		<div class="topbar">
 			<button class="back-btn" onclick={goBack}>
 				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-				Back to Documents
+				{$t('doj.back_to_documents')}
 			</button>
 			<span class="pill {getTypePillClass(selectedDocument.type)}">{formatLabel(selectedDocument.type)}</span>
 			<span class="pill {getStatusPillClass(selectedDocument.status)}">{formatLabel(selectedDocument.status)}</span>
 			<div class="topbar-actions">
-				<button class="action-btn" onclick={handleSaveContent} disabled={isLoading}>Save</button>
+				<button class="action-btn" onclick={handleSaveContent} disabled={isLoading}>{$t('common.save')}</button>
 			</div>
 		</div>
 
@@ -277,20 +269,20 @@
 			<div class="detail-layout">
 				<div class="detail-main">
 					<div class="section">
-						<div class="section-title">Document Information</div>
+						<div class="section-title">{$t('doj.document_info')}</div>
 						<h3 class="doc-title">{selectedDocument.title}</h3>
 						<div class="field-row">
 							<div class="field-group">
-								<span class="field-label">Author</span>
+								<span class="field-label">{$t('doj.author')}</span>
 								<span class="field-value">{selectedDocument.author_name}</span>
 							</div>
 							<div class="field-group">
-								<span class="field-label">Created</span>
+								<span class="field-label">{$t('doj.created')}</span>
 								<span class="field-value">{formatDateValue(selectedDocument.created_at)}</span>
 							</div>
 							{#if selectedDocument.linked_court_case_number}
 								<div class="field-group">
-									<span class="field-label">Court Case</span>
+									<span class="field-label">{$t('doj.court_case')}</span>
 									<span class="field-value link">{selectedDocument.linked_court_case_number}</span>
 								</div>
 							{/if}
@@ -298,26 +290,26 @@
 					</div>
 
 					<div class="section editor-section">
-						<div class="section-title">Content</div>
+						<div class="section-title">{$t('doj.content')}</div>
 						<textarea class="editor-textarea" bind:value={editContent} placeholder="Document content..."></textarea>
 					</div>
 				</div>
 
 				<div class="detail-side">
 					<div class="section">
-						<div class="section-title">Status</div>
+						<div class="section-title">{$t('common.status')}</div>
 						<select class="form-select" value={selectedDocument.status} onchange={(e) => handleUpdateStatus((e.target as HTMLSelectElement).value as DocStatus)}>
-							<option value="draft">Draft</option>
-							<option value="filed">Filed</option>
-							<option value="approved">Approved</option>
-							<option value="rejected">Rejected</option>
+<option value="draft">{$t('doj.draft')}</option>
+						<option value="filed">{$t('doj.filed')}</option>
+						<option value="approved">{$t('doj.approved')}</option>
+						<option value="rejected">{$t('doj.denied')}</option>
 						</select>
 					</div>
 
 					<div class="section">
-						<div class="section-title">Actions</div>
+						<div class="section-title">{$t('common.actions')}</div>
 						<button class="danger-btn" onclick={handleDeleteDocument} disabled={isLoading}>
-							Delete Document
+							{$t('doj.delete_document')}
 						</button>
 					</div>
 				</div>
@@ -327,7 +319,7 @@
 		<!-- LIST VIEW -->
 		<div class="topbar">
 			<div class="search-box">
-				<input type="text" placeholder="Search documents..." bind:value={searchQuery} />
+				<input type="text" placeholder={$t('doj.search_documents')} bind:value={searchQuery} />
 			</div>
 			<div class="filter-pills">
 				{#each statusOptions as opt}
@@ -343,8 +335,8 @@
 			</select>
 			<div class="topbar-actions">
 				<span class="result-count">{allFilteredDocs.length} document{allFilteredDocs.length !== 1 ? "s" : ""}</span>
-				<button class="action-btn" onclick={loadDocuments} disabled={isLoading}>{isLoading ? "Loading..." : "Refresh"}</button>
-				<button class="primary-btn" onclick={() => (showCreateModal = true)}>New Document</button>
+				<button class="action-btn" onclick={loadDocuments} disabled={isLoading}>{isLoading ? $t('common.loading') : $t('common.refresh')}</button>
+				<button class="primary-btn" onclick={() => (showCreateModal = true)}>{$t('doj.new_document')}</button>
 			</div>
 		</div>
 
@@ -352,21 +344,21 @@
 			{#if isLoading && documents.length === 0}
 				<div class="center-state">
 					<div class="loading-spinner"></div>
-					<p>Loading legal documents...</p>
+					<p>{$t('doj.loading_documents')}</p>
 				</div>
 			{:else if allFilteredDocs.length === 0}
 				<div class="center-state">
-					<h3>No Legal Documents Found</h3>
-					<p>{searchQuery ? "No documents match your search criteria." : "No legal documents available."}</p>
+					<h3>{$t('doj.no_legal_documents_found')}</h3>
+					<p>{searchQuery ? $t('common.no_results') : $t('doj.no_documents')}</p>
 				</div>
 			{:else}
 				<div class="table-header">
-					<span>Title</span>
-					<span>Type</span>
-					<span>Status</span>
-					<span>Author</span>
-					<span>Court Case</span>
-					<span>Date</span>
+					<span>{$t('common.title')}</span>
+					<span>{$t('common.type')}</span>
+					<span>{$t('common.status')}</span>
+					<span>{$t('doj.author')}</span>
+					<span>{$t('doj.court_case')}</span>
+					<span>{$t('common.date')}</span>
 				</div>
 				<div class="table-body">
 					{#each allFilteredDocs as item}
@@ -390,40 +382,40 @@
 	<div class="modal-backdrop" onclick={() => (showCreateModal = false)} role="presentation">
 		<div class="modal" onclick={(e) => e.stopPropagation()} role="dialog">
 			<div class="modal-header">
-				<span class="modal-title">New Legal Document</span>
+				<span class="modal-title">{$t('doj.new_document')}</span>
 				<button class="modal-close" onclick={() => (showCreateModal = false)}>
 					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
 				</button>
 			</div>
 			<div class="modal-body">
 				<div class="form-group">
-					<label class="form-label">Type</label>
+					<label class="form-label">{$t('common.type')}</label>
 					<select class="form-select" bind:value={newDoc.type}>
-						<option value="brief">Brief</option>
-						<option value="motion">Motion</option>
-						<option value="ruling">Ruling</option>
-						<option value="opinion">Opinion</option>
-						<option value="plea_deal">Plea Deal</option>
-						<option value="sentencing">Sentencing</option>
-						<option value="other">Other</option>
+						<option value="brief">{$t('doj.document_type_brief')}</option>
+						<option value="motion">{$t('doj.case_type_arraignment')}</option>
+						<option value="ruling">{$t('doj.document_type_ruling')}</option>
+						<option value="opinion">{$t('doj.verdict')}</option>
+						<option value="plea_deal">{$t('doj.document_type_plea_deal')}</option>
+						<option value="sentencing">{$t('doj.sentence')}</option>
+						<option value="other">{$t('common.other')}</option>
 					</select>
 				</div>
 				<div class="form-group">
-					<label class="form-label">Title</label>
-					<input type="text" class="form-input" placeholder="Document title..." bind:value={newDoc.title} />
+					<label class="form-label">{$t('common.title')}</label>
+					<input type="text" class="form-input" placeholder={$t('doj.document_title_placeholder')} bind:value={newDoc.title} />
 				</div>
 				<div class="form-group">
-					<label class="form-label">Link to Court Case (optional, ID)</label>
-					<input type="text" class="form-input" placeholder="Court case ID" bind:value={newDoc.linked_court_case_id} />
+					<label class="form-label">{$t('doj.link_to_court_case')}</label>
+					<input type="text" class="form-input" placeholder={$t('doj.court_case_id')} bind:value={newDoc.linked_court_case_id} />
 				</div>
 				<div class="form-group">
-					<label class="form-label">Content</label>
-					<textarea class="form-textarea" style="min-height: 120px;" placeholder="Document content..." bind:value={newDoc.content}></textarea>
+					<label class="form-label">{$t('doj.content')}</label>
+					<textarea class="form-textarea" style="min-height: 120px;" placeholder={$t('doj.document_content_placeholder')} bind:value={newDoc.content}></textarea>
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button class="back-btn" onclick={() => (showCreateModal = false)}>Cancel</button>
-				<button class="primary-btn" disabled={!newDoc.title.trim()} onclick={handleCreateDocument}>Create Document</button>
+				<button class="back-btn" onclick={() => (showCreateModal = false)}>{$t('common.cancel')}</button>
+				<button class="primary-btn" disabled={!newDoc.title.trim()} onclick={handleCreateDocument}>{$t('doj.create_document_btn')}</button>
 			</div>
 		</div>
 	</div>

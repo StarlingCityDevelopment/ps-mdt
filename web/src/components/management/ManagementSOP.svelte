@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { onMount } from "svelte";
+	import { t } from "../../stores/localeStore";
 	import { fetchNui } from "../../utils/fetchNui";
 	import { NUI_EVENTS } from "../../constants/nuiEvents";
 	import { createEditorService } from "../../services/editorService.svelte";
-	import type { AuthService } from "../../services/authService.svelte";
 
 	interface SOPSection {
 		id: number;
@@ -29,13 +29,10 @@
 		updated_at?: string;
 	}
 
-	let { authService }: { authService?: AuthService } = $props();
-
 	// State
 	let activeTab = $state<"mission" | "intro" | "categories" | "publish">("categories");
 	let categories = $state<SOPCategory[]>([]);
 	let settings = $state<SOPSettings>({});
-	let loading = $state(true);
 	let statusMsg = $state("");
 
 	// Category editing
@@ -115,12 +112,10 @@
 	});
 
 	async function loadCategories() {
-		loading = true;
 		try {
 			const result = await fetchNui<SOPCategory[]>(NUI_EVENTS.SOP.GET_SOP_CATEGORIES, {}, []);
 			categories = result || [];
 		} catch { categories = []; }
-		finally { loading = false; }
 	}
 
 	async function loadSettings() {
@@ -143,7 +138,7 @@
 			newCategoryTitle = "";
 			newCategoryIcon = "description";
 			await loadCategories();
-			showStatus("Category created");
+			showStatus($t("management.categoryCreated"));
 		}
 	}
 
@@ -157,7 +152,7 @@
 		if (result?.success) {
 			editingCategoryId = null;
 			await loadCategories();
-			showStatus("Category updated");
+			showStatus($t("management.categoryUpdated"));
 		}
 	}
 
@@ -170,7 +165,7 @@
 		if (result?.success) {
 			if (selectedCategoryId === id) selectedCategoryId = null;
 			await loadCategories();
-			showStatus("Category deleted");
+			showStatus($t("management.categoryDeleted"));
 		}
 	}
 
@@ -192,7 +187,7 @@
 		if (result?.success) {
 			newSectionTitle = "";
 			await loadCategories();
-			showStatus("Section created");
+			showStatus($t("management.sectionCreated"));
 		}
 	}
 
@@ -215,7 +210,7 @@
 			sectionInitialized = false;
 			editingSectionId = null;
 			await loadCategories();
-			showStatus("Section saved");
+			showStatus($t("management.sectionSaved"));
 		}
 	}
 
@@ -234,7 +229,7 @@
 		if (result?.success) {
 			if (editingSectionId === id) cancelEditSection();
 			await loadCategories();
-			showStatus("Section deleted");
+			showStatus($t("management.sectionDeleted"));
 		}
 	}
 
@@ -248,7 +243,7 @@
 			{ success: true }
 		);
 		if (result?.success) {
-			showStatus("Mission statement saved");
+			showStatus($t("management.missionSaved"));
 		}
 	}
 
@@ -262,7 +257,7 @@
 			{ success: true }
 		);
 		if (result?.success) {
-			showStatus("Introduction saved");
+			showStatus($t("management.introductionSaved"));
 		}
 	}
 
@@ -279,7 +274,7 @@
 			if (result?.success) {
 				settings.version = result.version;
 				confirmPublish = false;
-				showStatus(`SOP published - Version ${result.version}`);
+				showStatus(`${$t("management.sopPublished")} ${result.version}`);
 			}
 		} finally { publishing = false; }
 	}
@@ -304,27 +299,27 @@
 
 	<div class="sop-tabs">
 		<button class="sop-tab" class:active={activeTab === "mission"} onclick={() => activeTab = "mission"}>
-			<span class="material-icons">flag</span> Mission Statement
+			<span class="material-icons">flag</span> {$t("management.missionStatement")}
 		</button>
 		<button class="sop-tab" class:active={activeTab === "categories"} onclick={() => activeTab = "categories"}>
-			<span class="material-icons">folder</span> Categories & Sections
+			<span class="material-icons">folder</span> {$t("management.categoriesAndSections")}
 		</button>
 		<button class="sop-tab" class:active={activeTab === "intro"} onclick={() => activeTab = "intro"}>
-			<span class="material-icons">article</span> Introduction
+			<span class="material-icons">article</span> {$t("management.introduction")}
 		</button>
 		<button class="sop-tab" class:active={activeTab === "publish"} onclick={() => activeTab = "publish"}>
-			<span class="material-icons">publish</span> Publish
+			<span class="material-icons">publish</span> {$t("common.publish")}
 		</button>
 	</div>
 
 	<div class="sop-tab-content">
 		{#if activeTab === "mission"}
 			<div class="intro-tab">
-				<p class="intro-desc">The mission statement is displayed at the top of the SOP page and in the agreement overlay. Define your department's mission, values, and M.O.S. requirements.</p>
+				<p class="intro-desc">{$t("management.missionStatementDesc")}</p>
 				<div class="editor-container" bind:this={missionEditorEl}></div>
 				<div class="editor-actions">
 					<button class="btn-save" onclick={saveMission}>
-						<span class="material-icons">save</span> Save Mission Statement
+						<span class="material-icons">save</span> {$t("management.saveMissionStatement")}
 					</button>
 				</div>
 			</div>
@@ -334,22 +329,22 @@
 				<!-- Category List -->
 				<div class="cat-panel">
 					<div class="panel-header">
-						<h3>Categories</h3>
+						<h3>{$t("management.categories")}</h3>
 					</div>
 					<div class="cat-list">
 						{#each categories as cat}
 							{#if editingCategoryId === cat.id}
 								<div class="cat-edit-row">
-									<input type="text" bind:value={editCategoryTitle} placeholder="Category title" class="input-sm" />
+									<input type="text" bind:value={editCategoryTitle} placeholder={$t("management.categoryTitle")} class="input-sm" />
 									<select bind:value={editCategoryIcon} class="icon-select">
 										{#each ICON_OPTIONS as icon}
 											<option value={icon}>{icon}</option>
 										{/each}
 									</select>
-									<button class="btn-icon-sm" onclick={saveCategory} title="Save">
+									<button class="btn-icon-sm" onclick={saveCategory} title={$t("common.save")}>
 										<span class="material-icons">check</span>
 									</button>
-									<button class="btn-icon-sm cancel" onclick={() => editingCategoryId = null} title="Cancel">
+									<button class="btn-icon-sm cancel" onclick={() => editingCategoryId = null} title={$t("common.cancel")}>
 										<span class="material-icons">close</span>
 									</button>
 								</div>
@@ -364,10 +359,10 @@
 									<span class="material-icons cat-row-icon">{cat.icon || 'description'}</span>
 									<span class="cat-row-title">{cat.title}</span>
 									<span class="cat-row-count">{cat.sections.length}</span>
-									<button class="btn-icon-xs" onclick={(e) => { e.stopPropagation(); startEditCategory(cat); }} title="Edit">
+									<button class="btn-icon-xs" onclick={(e) => { e.stopPropagation(); startEditCategory(cat); }} title={$t("common.edit")}>
 										<span class="material-icons">edit</span>
 									</button>
-									<button class="btn-icon-xs danger" onclick={(e) => { e.stopPropagation(); deleteCategory(cat.id); }} title="Delete">
+									<button class="btn-icon-xs danger" onclick={(e) => { e.stopPropagation(); deleteCategory(cat.id); }} title={$t("common.delete")}>
 										<span class="material-icons">delete</span>
 									</button>
 								</div>
@@ -375,7 +370,7 @@
 						{/each}
 					</div>
 					<div class="add-row">
-						<input type="text" bind:value={newCategoryTitle} placeholder="New category..." class="input-sm" onkeydown={(e) => e.key === 'Enter' && createCategory()} />
+						<input type="text" bind:value={newCategoryTitle} placeholder={$t("management.newCategory")} class="input-sm" onkeydown={(e) => e.key === 'Enter' && createCategory()} />
 						<select bind:value={newCategoryIcon} class="icon-select">
 							{#each ICON_OPTIONS as icon}
 								<option value={icon}>{icon}</option>
@@ -392,7 +387,7 @@
 					{#if !selectedCategory}
 						<div class="panel-empty">
 							<span class="material-icons">arrow_back</span>
-							<p>Select a category to manage its sections</p>
+							<p>{$t("management.selectCategoryForSections")}</p>
 						</div>
 					{:else}
 						<div class="panel-header">
@@ -405,14 +400,14 @@
 						{#if editingSectionId}
 							<!-- Section Editor -->
 							<div class="section-editor">
-								<input type="text" bind:value={editSectionTitle} placeholder="Section title" class="input-full" />
+								<input type="text" bind:value={editSectionTitle} placeholder={$t("management.sectionTitle")} class="input-full" />
 								<div class="editor-container" bind:this={sectionEditorEl}></div>
 								<div class="editor-actions">
 									<button class="btn-save" onclick={saveSection}>
-										<span class="material-icons">check</span> Save Section
+										<span class="material-icons">check</span> {$t("management.saveSection")}
 									</button>
 									<button class="btn-cancel" onclick={cancelEditSection}>
-										<span class="material-icons">close</span> Cancel
+										<span class="material-icons">close</span> {$t("common.cancel")}
 									</button>
 								</div>
 							</div>
@@ -422,20 +417,20 @@
 									<div class="sec-row">
 										<span class="sec-num">{i + 1}.</span>
 										<span class="sec-title">{section.title}</span>
-										<button class="btn-icon-xs" onclick={() => startEditSection(section)} title="Edit">
+										<button class="btn-icon-xs" onclick={() => startEditSection(section)} title={$t("common.edit")}>
 											<span class="material-icons">edit</span>
 										</button>
-										<button class="btn-icon-xs danger" onclick={() => deleteSection(section.id)} title="Delete">
+										<button class="btn-icon-xs danger" onclick={() => deleteSection(section.id)} title={$t("common.delete")}>
 											<span class="material-icons">delete</span>
 										</button>
 									</div>
 								{/each}
 								{#if selectedCategory.sections.length === 0}
-									<div class="sec-empty">No sections yet. Add one below.</div>
+									<div class="sec-empty">{$t("management.noSectionsYet")}</div>
 								{/if}
 							</div>
 							<div class="add-row">
-								<input type="text" bind:value={newSectionTitle} placeholder="New section title..." class="input-sm" onkeydown={(e) => e.key === 'Enter' && createSection()} />
+								<input type="text" bind:value={newSectionTitle} placeholder={$t("management.newSectionTitle")} class="input-sm" onkeydown={(e) => e.key === 'Enter' && createSection()} />
 								<button class="btn-add" onclick={createSection} disabled={!newSectionTitle.trim()}>
 									<span class="material-icons">add</span>
 								</button>
@@ -447,11 +442,11 @@
 
 		{:else if activeTab === "intro"}
 			<div class="intro-tab">
-				<p class="intro-desc">This introduction is shown to officers when they are required to acknowledge the SOP. Use it to summarize key policies and expectations.</p>
+				<p class="intro-desc">{$t("management.introductionDesc")}</p>
 				<div class="editor-container" bind:this={introEditorEl}></div>
 				<div class="editor-actions">
 					<button class="btn-save" onclick={saveIntro}>
-						<span class="material-icons">save</span> Save Introduction
+						<span class="material-icons">save</span> {$t("management.saveIntroduction")}
 					</button>
 				</div>
 			</div>
@@ -460,26 +455,26 @@
 			<div class="publish-tab">
 				<div class="publish-card">
 					<span class="material-icons publish-icon">publish</span>
-					<h3>Publish SOP</h3>
-					<p class="publish-version">Current Version: <strong>{settings.version || 'Not published'}</strong></p>
+					<h3>{$t("management.publishSOP")}</h3>
+					<p class="publish-version">{$t("management.currentVersion")}: <strong>{settings.version || $t("management.notPublished")}</strong></p>
 					{#if settings.updated_by}
-						<p class="publish-meta">Last published by {settings.updated_by}</p>
+						<p class="publish-meta">{$t("management.lastPublishedBy")} {settings.updated_by}</p>
 					{/if}
 					<p class="publish-warning">
-						Publishing will increment the SOP version and <strong>require all officers to re-acknowledge</strong> the SOP before they can access the MDT.
+						{$t("management.publishWarning")}
 					</p>
 					{#if !confirmPublish}
 						<button class="btn-publish" onclick={() => confirmPublish = true}>
-							<span class="material-icons">publish</span> Publish New Version
+							<span class="material-icons">publish</span> {$t("management.publishNewVersion")}
 						</button>
 					{:else}
 						<div class="confirm-box">
-							<p>Are you sure? All officers will be required to re-acknowledge.</p>
+							<p>{$t("management.confirmPublish")}</p>
 							<div class="confirm-actions">
 								<button class="btn-confirm" onclick={publishSOP} disabled={publishing}>
-									{#if publishing}Publishing...{:else}Yes, Publish{/if}
+									{#if publishing}{$t("management.publishing")}{:else}{$t("management.yesPublish")}{/if}
 								</button>
-								<button class="btn-cancel-sm" onclick={() => confirmPublish = false}>Cancel</button>
+								<button class="btn-cancel-sm" onclick={() => confirmPublish = false}>{$t("common.cancel")}</button>
 							</div>
 						</div>
 					{/if}

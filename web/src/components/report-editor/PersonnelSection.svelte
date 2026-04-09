@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from "svelte";
+	import { t } from "../../stores/localeStore";
 
 	interface Props {
 		title: string;
@@ -16,9 +17,9 @@
 		<button
 			class="add-btn"
 			onclick={onAdd}
-			title="Add {title}"
-			aria-label="Add {title}"
-		>+ Add</button>
+			title={$t("common.add") ? $t("common.add") + " " + title : "Add " + title}
+			aria-label={$t("common.add") ? $t("common.add") + " " + title : "Add " + title}
+		>+ {$t("common.add") || "Add"}</button>
 	</div>
 	{@render children()}
 </div>

@@ -79,7 +79,7 @@ RegisterNUICallback('signOut', function(_, cb)
     PlayMDTSound('close')
     cb({})
     CloseMDT()
-    ps.notify('Signed out of MDT', 'success')
+    ps.notify(locale('mdt.signed_out'), 'success')
 end)
 
 RegisterNUICallback('toggleDuty', function(_, cb)
@@ -282,17 +282,17 @@ RegisterNUICallback("routeToDispatch", function(data, cb)
     local coords = data.coords or data.origin
     if not coords then
         cb('ok')
-        ps.notify('No location data for this dispatch', 'error')
+        ps.notify(locale('dispatch.no_location_data'), 'error')
         return
     end
     local x = tonumber(coords.x) or tonumber(coords[1])
     local y = tonumber(coords.y) or tonumber(coords[2])
     if not x or not y then
         cb('ok')
-        ps.notify('Invalid location data', 'error')
+        ps.notify(locale('dispatch.invalid_location_data'), 'error')
         return
     end
     SetNewWaypoint(x, y)
     cb('ok')
-    ps.notify('Set Route to Dispatch Location', 'success')
+    ps.notify(locale('dispatch.set_route_success'), 'success')
 end)

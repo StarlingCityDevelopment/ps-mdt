@@ -4,15 +4,14 @@
 	import { isEnvBrowser } from "../../utils/misc";
 	import { NUI_EVENTS } from "../../constants/nuiEvents";
 	import { globalNotifications } from "../../services/notificationService.svelte";
-	import type { createTabService } from "../../services/tabService.svelte";
 	import type { AuthService } from "../../services/authService.svelte";
+	import { t } from "../../stores/localeStore";
 
 	interface Props {
-		tabService: ReturnType<typeof createTabService>;
 		authService: AuthService;
 	}
 
-	let { tabService, authService }: Props = $props();
+	let { authService }: Props = $props();
 
 	type WarrantRequestStatus = "pending" | "approved" | "denied";
 
@@ -214,9 +213,9 @@
 		<div class="topbar">
 			<button class="back-btn" onclick={goBack}>
 				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-				Back to Requests
+				{$t('doj.back_to_warrants')}
 			</button>
-			<span class="topbar-case-number">Warrant Request #{selectedRequest.id}</span>
+			<span class="topbar-case-number">{$t('doj.warrant_request_number')} #{selectedRequest.id}</span>
 			<span class="pill {getStatusPillClass(selectedRequest.status)}">{formatLabel(selectedRequest.status)}</span>
 		</div>
 
@@ -224,45 +223,45 @@
 			<div class="detail-layout">
 				<div class="detail-main">
 					<div class="section">
-						<div class="section-title">Request Information</div>
+						<div class="section-title">{$t('doj.request_info')}</div>
 						<div class="field-row">
 							<div class="field-group">
-								<span class="field-label">Citizen</span>
+								<span class="field-label">{$t('doj.citizen')}</span>
 								<span class="field-value">{selectedRequest.citizen_name}</span>
 							</div>
 							<div class="field-group">
-								<span class="field-label">Citizen ID</span>
+								<span class="field-label">{$t('citizens.citizen_id')}</span>
 								<span class="field-value mono">{selectedRequest.citizenid}</span>
 							</div>
 							<div class="field-group">
-								<span class="field-label">Submitted</span>
+								<span class="field-label">{$t('doj.submitted')}</span>
 								<span class="field-value">{formatDateTimeValue(selectedRequest.created_at)}</span>
 							</div>
 						</div>
 					</div>
 
 					<div class="section">
-						<div class="section-title">Charges</div>
+						<div class="section-title">{$t('doj.charges')}</div>
 						<div class="charges-list">
 							{#each selectedRequest.charges as charge}
 								<span class="charge-chip">{charge}</span>
 							{/each}
 							{#if selectedRequest.charges.length === 0}
-								<span class="muted-text">No charges listed</span>
+								<span class="muted-text">{$t('doj.no_charges_listed')}</span>
 							{/if}
 						</div>
 					</div>
 
 					<div class="section">
-						<div class="section-title">Requesting Officer</div>
+						<div class="section-title">{$t('doj.requesting_officer')}</div>
 						<div class="field-row">
 							<div class="field-group">
-								<span class="field-label">Officer</span>
+								<span class="field-label">{$t('doj.requesting_officer')}</span>
 								<span class="field-value">{selectedRequest.requesting_officer}{selectedRequest.requesting_officer_badge ? ` (#${selectedRequest.requesting_officer_badge})` : ""}</span>
 							</div>
 							{#if selectedRequest.linked_report_id}
 								<div class="field-group">
-									<span class="field-label">Linked Report</span>
+									<span class="field-label">{$t('reports_page.report_id')}</span>
 									<span class="field-value link">#{selectedRequest.linked_report_id}</span>
 								</div>
 							{/if}
@@ -270,21 +269,21 @@
 					</div>
 
 					<div class="section">
-						<div class="section-title">Reason / Justification</div>
+						<div class="section-title">{$t('doj.justification')}</div>
 						<p class="summary-text">{selectedRequest.reason || "No reason provided."}</p>
 					</div>
 
 					{#if selectedRequest.review_reason}
 						<div class="section">
-							<div class="section-title">Review Decision</div>
+							<div class="section-title">{$t('doj.review_decision')}</div>
 							<p class="summary-text">{selectedRequest.review_reason}</p>
 							<div class="field-row">
 								<div class="field-group">
-									<span class="field-label">Reviewed By</span>
+									<span class="field-label">{$t('doj.reviewed_by')}</span>
 									<span class="field-value">{selectedRequest.reviewed_by || "-"}</span>
 								</div>
 								<div class="field-group">
-									<span class="field-label">Reviewed At</span>
+									<span class="field-label">{$t('doj.reviewed_at')}</span>
 									<span class="field-value">{formatDateTimeValue(selectedRequest.reviewed_at)}</span>
 								</div>
 							</div>
@@ -295,7 +294,7 @@
 				<div class="detail-side">
 					{#if canApprove && selectedRequest.status === "pending"}
 						<div class="section">
-							<div class="section-title">Judicial Review</div>
+							<div class="section-title">{$t('doj.judicial_review')}</div>
 							<div class="form-group">
 								<label class="form-label">Reason</label>
 								<textarea class="form-textarea" placeholder="Enter reason for approval or denial..." bind:value={reviewReason}></textarea>
@@ -303,11 +302,11 @@
 							<div class="review-actions">
 								<button class="approve-btn" disabled={!reviewReason.trim() || isLoading} onclick={() => handleReview("approved")}>
 									<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-									Approve
+									{$t('doj.approve')}
 								</button>
 								<button class="deny-btn" disabled={!reviewReason.trim() || isLoading} onclick={() => handleReview("denied")}>
 									<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-									Deny
+									{$t('doj.deny')}
 								</button>
 							</div>
 						</div>
@@ -331,7 +330,7 @@
 		<!-- LIST VIEW -->
 		<div class="topbar">
 			<div class="search-box">
-				<input type="text" placeholder="Search requests..." bind:value={searchQuery} />
+				<input type="text" placeholder={$t('doj.search_requests')} bind:value={searchQuery} />
 			</div>
 			<div class="filter-pills">
 				{#each statusOptions as opt}
@@ -342,7 +341,7 @@
 			</div>
 			<div class="topbar-actions">
 				<span class="result-count">{allFilteredRequests.length} request{allFilteredRequests.length !== 1 ? "s" : ""}</span>
-				<button class="action-btn" onclick={loadRequests} disabled={isLoading}>{isLoading ? "Loading..." : "Refresh"}</button>
+				<button class="action-btn" onclick={loadRequests} disabled={isLoading}>{isLoading ? $t('common.loading') : $t('common.refresh')}</button>
 			</div>
 		</div>
 
@@ -350,21 +349,21 @@
 			{#if isLoading && requests.length === 0}
 				<div class="center-state">
 					<div class="loading-spinner"></div>
-					<p>Loading warrant requests...</p>
+					<p>{$t('doj.loading_requests')}</p>
 				</div>
 			{:else if allFilteredRequests.length === 0}
 				<div class="center-state">
-					<h3>No Warrant Requests Found</h3>
-					<p>{searchQuery ? "No requests match your search criteria." : "No warrant requests available."}</p>
+					<h3>{$t('doj.no_warrant_requests_found')}</h3>
+					<p>{searchQuery ? $t('common.no_results') : $t('doj.no_warrant_requests')}</p>
 				</div>
 			{:else}
 				<div class="table-header">
-					<span>Citizen</span>
-					<span>Charges</span>
-					<span>Requesting Officer</span>
-					<span>Report</span>
-					<span>Status</span>
-					<span>Date</span>
+					<span>{$t('doj.citizen')}</span>
+					<span>{$t('doj.charges')}</span>
+					<span>{$t('doj.requesting_officer')}</span>
+					<span>{$t('reports_page.report_id')}</span>
+					<span>{$t('common.status')}</span>
+					<span>{$t('common.date')}</span>
 				</div>
 				<div class="table-body">
 					{#each allFilteredRequests as item}

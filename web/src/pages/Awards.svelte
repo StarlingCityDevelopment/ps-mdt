@@ -1,17 +1,16 @@
 <script lang="ts">
 	import { onMount } from "svelte";
+	import { t } from "../stores/localeStore";
 	import { fetchNui } from "../utils/fetchNui";
 	import { isEnvBrowser } from "../utils/misc";
 	import { NUI_EVENTS } from "../constants/nuiEvents";
-	import type { createTabService } from "../services/tabService.svelte";
 	import type { JobType } from "../interfaces/IUser";
 
 	interface Props {
-		tabService: ReturnType<typeof createTabService>;
 		jobType?: JobType;
 	}
 
-	let { tabService, jobType = 'leo' }: Props = $props();
+	let { jobType = 'leo' }: Props = $props();
 
 	type View = "stats" | "leaderboard";
 
@@ -93,7 +92,8 @@
 				stats: OfficerStats;
 				awards: Award[];
 				leaderboard: LeaderboardEntry[];
-			}>(NUI_EVENTS.AWARDS.GET_AWARDS_DATA, { jobType }, null);
+			} | null>(NUI_EVENTS.AWARDS.GET_AWARDS_DATA, { jobType }, null);
+			
 			if (data) {
 				myStats = data.stats || myStats;
 				awards = data.awards || [];
@@ -147,10 +147,10 @@
 	<div class="awards-topbar">
 		<div class="tab-buttons">
 			<button class="tab-btn" class:active={view === "stats"} onclick={() => (view = "stats")}>
-				My Stats & Awards
+				{$t('awards_page.my_stats')}
 			</button>
 			<button class="tab-btn" class:active={view === "leaderboard"} onclick={() => (view = "leaderboard")}>
-				Leaderboard
+				{$t('awards_page.leaderboard')}
 			</button>
 		</div>
 	</div>
@@ -158,7 +158,7 @@
 	{#if isLoading}
 		<div class="loading-state">
 			<div class="loading-spinner"></div>
-			<p>Loading...</p>
+			<p>{$t('common.loading')}</p>
 		</div>
 	{:else if view === "stats"}
 		<div class="stats-view">
@@ -166,49 +166,49 @@
 				<div class="stat-card">
 					<span class="material-icons stat-icon si-blue">description</span>
 					<span class="stat-value">{myStats.reports}</span>
-					<span class="stat-label">Reports</span>
+					<span class="stat-label">{$t('awards_page.reports')}</span>
 				</div>
 				<div class="stat-card">
 					<span class="material-icons stat-icon si-red">local_police</span>
 					<span class="stat-value">{myStats.arrests}</span>
-					<span class="stat-label">Arrests</span>
+					<span class="stat-label">{$t('awards_page.arrests')}</span>
 				</div>
 				<div class="stat-card">
 					<span class="material-icons stat-icon si-purple">folder</span>
 					<span class="stat-value">{myStats.cases}</span>
-					<span class="stat-label">Cases</span>
+					<span class="stat-label">{$t('awards_page.cases')}</span>
 				</div>
 				<div class="stat-card">
 					<span class="material-icons stat-icon si-cyan">inventory_2</span>
 					<span class="stat-value">{myStats.evidence}</span>
-					<span class="stat-label">Evidence</span>
+					<span class="stat-label">{$t('awards_page.evidence')}</span>
 				</div>
 				<div class="stat-card">
 					<span class="material-icons stat-icon si-orange">notification_important</span>
 					<span class="stat-value">{myStats.bolos}</span>
-					<span class="stat-label">BOLOs</span>
+					<span class="stat-label">{$t('awards_page.bolos')}</span>
 				</div>
 				<div class="stat-card">
 					<span class="material-icons stat-icon si-amber">gavel</span>
 					<span class="stat-value">{myStats.warrants}</span>
-					<span class="stat-label">Warrants</span>
+					<span class="stat-label">{$t('awards_page.warrants')}</span>
 				</div>
 				<div class="stat-card">
 					<span class="material-icons stat-icon si-green">payments</span>
 					<span class="stat-value">{formatMoney(myStats.totalFined)}</span>
-					<span class="stat-label">Fined</span>
+					<span class="stat-label">{$t('awards_page.fined')}</span>
 				</div>
 				<div class="stat-card">
 					<span class="material-icons stat-icon si-pink">schedule</span>
 					<span class="stat-value">{myStats.totalMonths.toLocaleString()}</span>
-					<span class="stat-label">Months Sentenced</span>
+					<span class="stat-label">{$t('awards_page.months_sentenced')}</span>
 				</div>
 			</div>
 
 			{#if earnedAwards.length > 0}
 				<div class="awards-section">
 					<div class="section-header">
-						<span class="section-title">Earned ({earnedAwards.length})</span>
+						<span class="section-title">{$t('awards_page.earned')} ({earnedAwards.length})</span>
 					</div>
 					<div class="awards-list">
 						{#each earnedAwards as award (award.id)}
@@ -232,7 +232,7 @@
 			{#if inProgressAwards.length > 0}
 				<div class="awards-section">
 					<div class="section-header">
-						<span class="section-title">In Progress ({inProgressAwards.length})</span>
+						<span class="section-title">{$t('awards_page.in_progress')} ({inProgressAwards.length})</span>
 					</div>
 					<div class="awards-list">
 						{#each inProgressAwards as award (award.id)}
@@ -256,7 +256,7 @@
 			{/if}
 
 			{#if awards.length === 0}
-				<div class="empty-state">No awards configured. Ask an admin to set some up in Settings.</div>
+				<div class="empty-state">{$t('awards_page.no_awards')}</div>
 			{/if}
 		</div>
 
@@ -265,12 +265,12 @@
 			<div class="leaderboard-controls">
 				<span class="sort-label">Sort by</span>
 				<select class="sort-select" bind:value={leaderboardSort}>
-					<option value="score">Overall</option>
-					<option value="reports">Reports</option>
-					<option value="arrests">Arrests</option>
-					<option value="warrants">Warrants</option>
-					<option value="totalFined">Fined</option>
-					<option value="totalMonths">Months</option>
+					<option value="score">{$t('awards_page.overall')}</option>
+					<option value="reports">{$t('awards_page.reports')}</option>
+					<option value="arrests">{$t('awards_page.arrests')}</option>
+					<option value="warrants">{$t('awards_page.warrants')}</option>
+					<option value="totalFined">{$t('awards_page.fined')}</option>
+					<option value="totalMonths">{$t('awards_page.months_sentenced')}</option>
 				</select>
 			</div>
 
@@ -279,12 +279,12 @@
 					<span class="col-rank">#</span>
 					<span class="col-name">Officer</span>
 					<span class="col-dept">Dept</span>
-					<span class="col-stat">Reports</span>
-					<span class="col-stat">Arrests</span>
-					<span class="col-stat">Cases</span>
-					<span class="col-stat">Warrants</span>
-					<span class="col-stat">Fined</span>
-					<span class="col-stat">Months</span>
+					<span class="col-stat">{$t('awards_page.reports')}</span>
+					<span class="col-stat">{$t('awards_page.arrests')}</span>
+					<span class="col-stat">{$t('awards_page.cases')}</span>
+					<span class="col-stat">{$t('awards_page.warrants')}</span>
+					<span class="col-stat">{$t('awards_page.fined')}</span>
+					<span class="col-stat">{$t('awards_page.months_sentenced')}</span>
 					<span class="col-score">Score</span>
 				</div>
 				{#each sortedLeaderboard as entry, i (entry.name)}
@@ -304,7 +304,7 @@
 						<span class="col-score">{entry.score.toLocaleString()}</span>
 					</div>
 				{:else}
-					<div class="empty-state">No leaderboard data.</div>
+					<div class="empty-state">{$t('awards_page.no_leaderboard')}</div>
 				{/each}
 			</div>
 		</div>

@@ -3,16 +3,16 @@
 	import PersonnelSection from "./PersonnelSection.svelte";
 	import PersonnelCard from "./PersonnelCard.svelte";
 	import { VICTIM_TYPES } from "../../constants";
+	import { t } from "../../stores/localeStore";
 
 	interface Props {
 		victims: Victim[];
 		onAdd: () => void;
 		onRemove: (id: string) => void;
 		onUpdate: (victim: Victim) => void;
-		title?: string;
 	}
 
-	let { victims, onAdd, onRemove, onUpdate, title = "Victims" }: Props = $props();
+	let { victims, onAdd, onRemove, onUpdate }: Props = $props();
 
 	function updateVictim(id: string, field: string, value: any) {
 		const victim = victims.find((v) => v.id === id);
@@ -23,7 +23,7 @@
 	}
 </script>
 
-<PersonnelSection {title} {onAdd}>
+<PersonnelSection title={$t("common.victims") || "Victims"} {onAdd}>
 	{#each victims as victim}
 		<PersonnelCard
 			id={victim.id}

@@ -7,6 +7,7 @@
 	import { NUI_EVENTS } from "../constants/nuiEvents";
 	import { globalNotifications } from "../services/notificationService.svelte";
 	import type { AuthService } from "../services/authService.svelte";
+	import { t } from "../stores/localeStore";
 
 	let { authService, tabService }: { authService?: AuthService; tabService?: any } = $props();
 
@@ -553,14 +554,14 @@
 	<div class="topbar">
 		<input
 			type="text"
-			placeholder="Search by callsign, name or rank..."
+			placeholder={$t('roster.search_placeholder')}
 			bind:value={searchQuery}
 			class="search-input"
 		/>
 		<div class="topbar-right">
-			<span class="result-count">{filteredOfficers.length} officer{filteredOfficers.length !== 1 ? "s" : ""}</span>
+			<span class="result-count">{filteredOfficers.length} {$t('common.officers').toLowerCase()}</span>
 			<button class="btn-secondary" onclick={refreshData} disabled={isLoading}>
-				{isLoading ? "Loading..." : "Refresh"}
+				{isLoading ? $t('common.loading') : $t('common.refresh')}
 			</button>
 		</div>
 	</div>
@@ -568,28 +569,28 @@
 	<div class="content-area">
 		<div class="list-panel">
 			<div class="table-header">
-				<button class="col-header sortable" onclick={() => handleSort("status")}>Status{getSortIndicator("status")}</button>
-				<button class="col-header sortable" onclick={() => handleSort("callsign")}>Call Sign{getSortIndicator("callsign")}</button>
-				<button class="col-header sortable" onclick={() => handleSort("name")}>Name{getSortIndicator("name")}</button>
-				<span class="col-header">Radio Ch.</span>
-				<button class="col-header sortable" onclick={() => handleSort("rank")}>Rank{getSortIndicator("rank")}</button>
-				<span class="col-header">Dept</span>
-				<span class="col-header">Certifications</span>
+				<button class="col-header sortable" onclick={() => handleSort("status")}>{$t('common.status')}{getSortIndicator("status")}</button>
+				<button class="col-header sortable" onclick={() => handleSort("callsign")}>{$t('roster.call_sign')}{getSortIndicator("callsign")}</button>
+				<button class="col-header sortable" onclick={() => handleSort("name")}>{$t('common.name')}{getSortIndicator("name")}</button>
+				<span class="col-header">{$t('roster.radio_ch')}</span>
+				<button class="col-header sortable" onclick={() => handleSort("rank")}>{$t('roster.rank')}{getSortIndicator("rank")}</button>
+				<span class="col-header">{$t('roster.dept')}</span>
+				<span class="col-header">{$t('roster.certifications')}</span>
 			</div>
 
 			<div class="table-body">
 				{#if isLoading}
 					<div class="empty-state">
 						<div class="loading-spinner"></div>
-						<p>Loading roster...</p>
+						<p>{$t('common.loading_roster')}</p>
 					</div>
 				{:else if filteredOfficers.length === 0}
 					<div class="empty-state">
-						<p class="empty-title">No Officers Found</p>
+						<p class="empty-title">{$t('roster.no_officers_found')}</p>
 						<p class="empty-sub">
 							{searchQuery
-								? "No officers match your search criteria."
-								: "No officers are currently in the roster."}
+								? $t('roster.no_officers_match')
+								: $t('common.no_officers')}
 						</p>
 					</div>
 				{:else}
@@ -632,12 +633,12 @@
 
 		<div class="units-panel">
 			<div class="units-header">
-				<span class="units-label">Active Units</span>
+				<span class="units-label">{$t('roster.active_units')}</span>
 				<span class="units-count">{activeUnits.length}</span>
 			</div>
 
 			{#if activeUnits.length === 0}
-				<div class="units-empty">No units active</div>
+				<div class="units-empty">{$t('roster.no_units_active')}</div>
 			{:else}
 				<div class="units-list">
 					{#each activeUnits as unit (unit.id)}
@@ -660,8 +661,8 @@
 		<div class="modal-container" onclick={(e) => e.stopPropagation()}>
 			<div class="modal-header">
 				<div class="modal-title-area">
-					<span class="modal-title">Manage Certifications</span>
-					<span class="modal-subtitle">{selectedOfficer.firstName} {selectedOfficer.lastName} - {selectedOfficer.callsign}</span>
+					<span class="modal-title">{$t('roster.manage_certifications')}</span>
+					<span class="modal-subtitle">{selectedOfficer.firstName} {selectedOfficer.callsign}</span>
 				</div>
 				<button class="modal-close" onclick={closeCertModal}>
 					<span class="material-icons">close</span>
@@ -672,8 +673,8 @@
 				{#if availableTags.length === 0}
 					<div class="no-tags">
 						<span class="material-icons no-tags-icon">label_off</span>
-						<p>No certifications available.</p>
-						<p class="no-tags-hint">Create officer tags in Management &gt; Tags</p>
+						<p>{$t('roster.no_certs')}</p>
+						<p class="no-tags-hint">{$t('roster.cert_tags_hint')}</p>
 					</div>
 				{:else}
 					<div class="cert-grid">
@@ -700,13 +701,13 @@
 			</div>
 
 			<div class="modal-footer">
-				<button class="btn-cancel" onclick={closeCertModal}>Cancel</button>
+				<button class="btn-cancel" onclick={closeCertModal}>{$t('common.cancel')}</button>
 				<button
 					class="btn-save"
 					onclick={saveCertifications}
 					disabled={isSavingCerts || availableTags.length === 0}
 				>
-					{isSavingCerts ? "Saving..." : "Save"}
+					{isSavingCerts ? $t('common.saving') : $t('common.save')}
 				</button>
 			</div>
 		</div>
@@ -721,7 +722,7 @@
 		<div class="boss-panel" onclick={(e) => e.stopPropagation()}>
 			<div class="modal-header">
 				<div class="modal-title-area">
-					<span class="modal-title">Officer Management</span>
+					<span class="modal-title">{$t('roster.officer_management')}</span>
 					<span class="modal-subtitle">{selectedOfficer.firstName} {selectedOfficer.lastName} &bull; {selectedOfficer.callsign} &bull; {selectedOfficer.rank}</span>
 				</div>
 				<button class="modal-close" onclick={closeBossPanel}>
@@ -732,16 +733,16 @@
 			<div class="boss-tabs">
 				<button class="boss-tab" class:active={bossPanelTab === "rank"} onclick={() => { bossPanelTab = "rank"; showFireConfirm = false; }}>
 					<span class="material-icons boss-tab-icon">military_tech</span>
-					Rank
+					{$t('roster.rank')}
 				</button>
 				<button class="boss-tab" class:active={bossPanelTab === "callsign"} onclick={() => { bossPanelTab = "callsign"; showFireConfirm = false; }}>
 					<span class="material-icons boss-tab-icon">badge</span>
-					Callsign
+					{$t('roster.call_sign')}
 				</button>
 				{#if canManageCerts}
 					<button class="boss-tab" class:active={bossPanelTab === "certs"} onclick={() => { bossPanelTab = "certs"; showFireConfirm = false; }}>
 						<span class="material-icons boss-tab-icon">verified</span>
-						Certifications
+						{$t('roster.certifications')}
 					</button>
 				{/if}
 				<button class="boss-tab" class:active={bossPanelTab === "ppr"} onclick={() => { bossPanelTab = "ppr"; showFireConfirm = false; loadOfficerPPR(); }}>
@@ -754,19 +755,19 @@
 				</button>
 				<button class="boss-tab" class:active={bossPanelTab === "ia_history"} onclick={() => { bossPanelTab = "ia_history"; showFireConfirm = false; loadIAHistory(); }}>
 					<span class="material-icons boss-tab-icon">shield</span>
-					IA History
+					{$t('roster.ia_history')}
 				</button>
 			</div>
 
 			<div class="boss-body">
 				{#if bossPanelTab === "rank"}
 					<div class="boss-section">
-						<label class="boss-label">Change Rank</label>
-						<p class="boss-hint">Select a new rank for this officer. Officer must be online.</p>
+						<label class="boss-label">{$t('roster.change_rank')}</label>
+						<p class="boss-hint">{$t('roster.rank_hint')}</p>
 						<div class="grade-grid">
 							{#if jobGrades.length === 0}
 								<div class="no-tags">
-									<p>No grades available for this department.</p>
+									<p>{$t('roster.no_grades')}</p>
 								</div>
 							{:else}
 								{#each jobGrades as grade (grade.grade)}
@@ -780,10 +781,10 @@
 										<span class="grade-number">{grade.grade}</span>
 										<span class="grade-name">{grade.name}</span>
 										{#if grade.name === selectedOfficer.rank}
-											<span class="grade-current">Current</span>
+											<span class="grade-current">{$t('roster.current')}</span>
 										{/if}
 										{#if grade.isBoss}
-											<span class="grade-boss-badge">Boss</span>
+											<span class="grade-boss-badge">{$t('roster.boss')}</span>
 										{/if}
 									</button>
 								{/each}
@@ -794,20 +795,20 @@
 					<div class="boss-divider"></div>
 
 					<div class="boss-section">
-						<label class="boss-label boss-label-danger">Terminate Officer</label>
-						<p class="boss-hint">Remove this officer from the department. This sets their job to unemployed.</p>
+						<label class="boss-label boss-label-danger">{$t('roster.terminate')}</label>
+						<p class="boss-hint">{$t('roster.terminate_hint')}</p>
 						{#if !showFireConfirm}
 							<button class="btn-fire" onclick={() => showFireConfirm = true}>
 								<span class="material-icons">person_remove</span>
-								Terminate Officer
+								{$t('roster.terminate')}
 							</button>
 						{:else}
 							<div class="fire-confirm">
-								<p class="fire-warning">Are you sure you want to terminate <strong>{selectedOfficer.firstName} {selectedOfficer.lastName}</strong>?</p>
+								<p class="fire-warning">{$t('roster.sure_terminate')}</p>
 								<div class="fire-actions">
-									<button class="btn-cancel" onclick={() => showFireConfirm = false}>Cancel</button>
+									<button class="btn-cancel" onclick={() => showFireConfirm = false}>{$t('common.cancel')}</button>
 									<button class="btn-fire-confirm" onclick={fireOfficer} disabled={isSavingBoss}>
-										{isSavingBoss ? "Processing..." : "Confirm Termination"}
+										{isSavingBoss ? $t('common.processing') : $t('roster.confirm_termination')}
 									</button>
 								</div>
 							</div>
@@ -816,14 +817,14 @@
 
 				{:else if bossPanelTab === "callsign"}
 					<div class="boss-section">
-						<label class="boss-label">Edit Callsign</label>
-						<p class="boss-hint">Update this officer's callsign/badge number. Officer must be online.</p>
+						<label class="boss-label">{$t('roster.edit_callsign')}</label>
+						<p class="boss-hint">{$t('roster.callsign_hint')}</p>
 						<div class="callsign-input-row">
 							<input
 								type="text"
 								class="callsign-input"
 								bind:value={editCallsign}
-								placeholder="Enter callsign..."
+								placeholder={$t('roster.enter_callsign')}
 								maxlength="10"
 							/>
 						</div>
@@ -831,12 +832,12 @@
 
 				{:else if bossPanelTab === "certs"}
 					<div class="boss-section">
-						<label class="boss-label">Manage Certifications</label>
+						<label class="boss-label">{$t('roster.manage_certifications')}</label>
 						{#if availableTags.length === 0}
 							<div class="no-tags">
 								<span class="material-icons no-tags-icon">label_off</span>
-								<p>No certifications available.</p>
-								<p class="no-tags-hint">Create officer tags in Management &gt; Tags</p>
+								<p>{$t('roster.no_certs')}</p>
+								<p class="no-tags-hint">{$t('roster.cert_tags_hint')}</p>
 							</div>
 						{:else}
 							<div class="cert-grid">
@@ -864,14 +865,14 @@
 
 				{:else if bossPanelTab === "ppr"}
 					<div class="boss-section">
-						<label class="boss-label">Performance Reviews</label>
-						<p class="boss-hint">Performance planning and review entries for this officer.</p>
+						<label class="boss-label">{$t('roster.performance_reviews')}</label>
+						<p class="boss-hint">{$t('roster.ppr_hint')}</p>
 						{#if pprHistoryLoading}
-							<p class="boss-hint">Loading...</p>
+							<p class="boss-hint">{$t('common.loading')}</p>
 						{:else if pprHistory.length === 0}
 							<div class="no-tags">
 								<span class="material-icons no-tags-icon">rate_review</span>
-								<p>No PPR entries found for this officer.</p>
+								<p>{$t('roster.no_ppr')}</p>
 							</div>
 						{:else}
 							<div class="ia-history-list">
@@ -896,14 +897,14 @@
 
 				{:else if bossPanelTab === "fto"}
 					<div class="boss-section">
-						<label class="boss-label">Field Training History</label>
-						<p class="boss-hint">FTO training assignments for this officer.</p>
+						<label class="boss-label">{$t('roster.field_training')}</label>
+						<p class="boss-hint">{$t('roster.fto_hint')}</p>
 						{#if ftoHistoryLoading}
-							<p class="boss-hint">Loading...</p>
+							<p class="boss-hint">{$t('common.loading')}</p>
 						{:else if ftoHistory.length === 0}
 							<div class="no-tags">
 								<span class="material-icons no-tags-icon">school</span>
-								<p>No FTO records found for this officer.</p>
+								<p>{$t('roster.no_fto')}</p>
 							</div>
 						{:else}
 							<div class="ia-history-list">
@@ -915,8 +916,8 @@
 										</div>
 										<div class="ia-history-meta">
 											<span style="flex:1;">
-												{record.trainee_name === selectedOfficer?.name ? 'Trainer' : 'Trainee'}:
-												{record.trainee_name === selectedOfficer?.name ? record.trainer_name : record.trainee_name}
+												{record.trainee_name === selectedOfficer?.firstName + ' ' + selectedOfficer?.lastName ? $t('roster.trainer') : $t('roster.trainee')}:
+												{record.trainee_name === selectedOfficer?.firstName + ' ' + selectedOfficer?.lastName ? record.trainer_name : record.trainee_name}
 											</span>
 											{#if record.phase_name}
 												<span style="color: rgba(255,255,255,0.5); font-size: 9px;">{record.phase_name}</span>
@@ -924,10 +925,10 @@
 										</div>
 										<div class="ia-history-meta">
 											{#if record.dor_count}
-												<span style="color: rgba(255,255,255,0.35); font-size: 9px;">{record.dor_count} DOR{record.dor_count !== 1 ? 's' : ''}</span>
+												<span style="color: rgba(255,255,255,0.35); font-size: 9px;">{record.dor_count} {$t('roster.dor_count')}{record.dor_count !== 1 ? 's' : ''}</span>
 											{/if}
 											{#if record.latest_rating}
-												<span style="color: rgba(255,255,255,0.5); font-size: 9px;">Rating: {record.latest_rating}/5</span>
+												<span style="color: rgba(255,255,255,0.5); font-size: 9px;">{$t('roster.rating')}: {record.latest_rating}/5</span>
 											{/if}
 											<span class="ia-history-date">{record.start_date || formatDateShort(record.created_at)}</span>
 										</div>
@@ -939,14 +940,14 @@
 
 				{:else if bossPanelTab === "ia_history"}
 					<div class="boss-section">
-						<label class="boss-label">IA Complaint History</label>
-						<p class="boss-hint">Internal affairs complaints involving this officer.</p>
+						<label class="boss-label">{$t('roster.ia_history')}</label>
+						<p class="boss-hint">{$t('roster.ia_hint')}</p>
 						{#if iaHistoryLoading}
-							<p class="boss-hint">Loading...</p>
+							<p class="boss-hint">{$t('common.loading')}</p>
 						{:else if iaHistory.length === 0}
 							<div class="no-tags">
 								<span class="material-icons no-tags-icon">verified_user</span>
-								<p>No IA complaints found for this officer.</p>
+								<p>{$t('roster.no_ia')}</p>
 							</div>
 						{:else}
 							<div class="ia-history-list">
@@ -969,14 +970,14 @@
 			</div>
 
 			<div class="modal-footer">
-				<button class="btn-cancel" onclick={closeBossPanel}>Close</button>
+				<button class="btn-cancel" onclick={closeBossPanel}>{$t('common.close')}</button>
 				{#if bossPanelTab === "rank" && selectedGrade !== null}
 					<button
 						class="btn-save"
 						onclick={promoteOfficer}
 						disabled={isSavingBoss}
 					>
-						{isSavingBoss ? "Saving..." : "Update Rank"}
+						{isSavingBoss ? $t('common.saving') : $t('roster.update_rank')}
 					</button>
 				{:else if bossPanelTab === "callsign"}
 					<button
@@ -984,7 +985,7 @@
 						onclick={saveCallsign}
 						disabled={isSavingBoss || !editCallsign.trim()}
 					>
-						{isSavingBoss ? "Saving..." : "Save Callsign"}
+						{isSavingBoss ? $t('common.saving') : $t('roster.save_callsign')}
 					</button>
 				{:else if bossPanelTab === "certs"}
 					<button
@@ -992,7 +993,7 @@
 						onclick={saveCertifications}
 						disabled={isSavingCerts || availableTags.length === 0}
 					>
-						{isSavingCerts ? "Saving..." : "Save Certifications"}
+						{isSavingCerts ? $t('common.saving') : $t('roster.save_certs')}
 					</button>
 				{/if}
 			</div>

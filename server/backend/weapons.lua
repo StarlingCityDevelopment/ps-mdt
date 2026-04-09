@@ -1,4 +1,3 @@
-
 local resourceName = tostring(GetCurrentResourceName())
 
 local class = {
@@ -434,6 +433,6 @@ AddEventHandler(resourceName .. ':server:selfRegisterWeapon', function(serial, i
     end)
 
     if success then
-        ps.notify(src, 'Weapon registered in police database', 'success')
+        ps.notify(src, locale('weapons.registered'), 'success')
     end
 end)

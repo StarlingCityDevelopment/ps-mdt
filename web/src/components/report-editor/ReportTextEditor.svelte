@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount, onDestroy } from "svelte";
+	import { onDestroy } from "svelte";
 	import { Editor } from "@tiptap/core";
 	import StarterKit from "@tiptap/starter-kit";
 	import Underline from "@tiptap/extension-underline";
@@ -244,5 +244,4 @@
 	:global(.editor::-webkit-scrollbar-thumb:hover) {
 		background: rgba(255, 255, 255, 0.1);
 	}
-
 </style>

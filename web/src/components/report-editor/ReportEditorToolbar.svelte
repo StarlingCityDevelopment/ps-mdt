@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Editor } from "@tiptap/core";
+	import { t } from "../../stores/localeStore";
 
 	interface Props {
 		editor: Editor;
@@ -11,7 +12,7 @@
 <div class="editor-toolbar">
 	<div class="toolbar-group">
 		<button
-			aria-label="Bold"
+			aria-label={$t("common.bold")}
 			class="toolbar-btn"
 			onclick={() => editor.chain().focus().toggleBold().run()}
 			class:active={editor.isActive("bold")}
@@ -25,7 +26,7 @@
 		</button>
 
 		<button
-			aria-label="Italic"
+			aria-label={$t("common.italic")}
 			class="toolbar-btn"
 			onclick={() => editor.chain().focus().toggleItalic().run()}
 			class:active={editor.isActive("italic")}
@@ -37,7 +38,7 @@
 		</button>
 
 		<button
-			aria-label="Underline"
+			aria-label={$t("common.underline")}
 			class="toolbar-btn"
 			onclick={() => editor.chain().focus().toggleUnderline().run()}
 			class:active={editor.isActive("underline")}
@@ -51,7 +52,7 @@
 		</button>
 
 		<button
-			aria-label="Highlight"
+			aria-label={$t("common.highlight")}
 			class="toolbar-btn"
 			onclick={() => editor.chain().focus().toggleHighlight().run()}
 			class:active={editor.isActive("highlight")}
@@ -67,7 +68,7 @@
 
 	<div class="toolbar-group">
 		<button
-			aria-label="Align Left"
+			aria-label={$t("common.align_left")}
 			class="toolbar-btn"
 			onclick={() => editor.chain().focus().setTextAlign("left").run()}
 			class:active={editor.isActive({ textAlign: "left" })}
@@ -81,7 +82,7 @@
 		</button>
 
 		<button
-			aria-label="Align Center"
+			aria-label={$t("common.align_center")}
 			class="toolbar-btn"
 			onclick={() => editor.chain().focus().setTextAlign("center").run()}
 			class:active={editor.isActive({ textAlign: "center" })}
@@ -95,7 +96,7 @@
 		</button>
 
 		<button
-			aria-label="Align Right"
+			aria-label={$t("common.align_right")}
 			class="toolbar-btn"
 			onclick={() => editor.chain().focus().setTextAlign("right").run()}
 			class:active={editor.isActive({ textAlign: "right" })}
@@ -111,7 +112,7 @@
 
 	<div class="toolbar-group">
 		<button
-			aria-label="Bullet List"
+			aria-label={$t("common.bullet_list")}
 			class="toolbar-btn"
 			onclick={() => editor.chain().focus().toggleBulletList().run()}
 			class:active={editor.isActive("bulletList")}
@@ -125,7 +126,7 @@
 		</button>
 
 		<button
-			aria-label="Numbered List"
+			aria-label={$t("common.numbered_list")}
 			class="toolbar-btn"
 			onclick={() => editor.chain().focus().toggleOrderedList().run()}
 			class:active={editor.isActive("orderedList")}
@@ -141,7 +142,7 @@
 
 	<div class="toolbar-group">
 		<button
-			aria-label="Heading 1"
+			aria-label={$t("common.heading_1")}
 			class="toolbar-btn"
 			onclick={() =>
 				editor.chain().focus().toggleHeading({ level: 1 }).run()}
@@ -152,7 +153,7 @@
 		</button>
 
 		<button
-			aria-label="Heading 2"
+			aria-label={$t("common.heading_2")}
 			class="toolbar-btn"
 			onclick={() =>
 				editor.chain().focus().toggleHeading({ level: 2 }).run()}
@@ -163,7 +164,7 @@
 		</button>
 
 		<button
-			aria-label="Heading 3"
+			aria-label={$t("common.heading_3")}
 			class="toolbar-btn"
 			onclick={() =>
 				editor.chain().focus().toggleHeading({ level: 3 }).run()}

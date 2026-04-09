@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { OFFICER_TYPES, VICTIM_TYPES } from "../../constants";
 	import type { Snippet } from "svelte";
+	import { t } from "../../stores/localeStore";
 	interface Props {
 		id: string;
 		fullName: string;
@@ -35,7 +36,7 @@
 		<button
 			class="remove-btn"
 			onclick={() => onRemove(id)}
-			aria-label="Remove person"
+			aria-label={$t("common.removePerson") || "Remove person"}
 		>
 			<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
 				<path
@@ -58,7 +59,7 @@
 		{/if}
 		{#if notes !== undefined}
 			<textarea
-				placeholder="Notes"
+				placeholder={$t("common.notes") || "Notes"}
 				value={notes}
 				oninput={(e) => onUpdate(id, "notes", e.currentTarget.value)}
 				class="notes-input"

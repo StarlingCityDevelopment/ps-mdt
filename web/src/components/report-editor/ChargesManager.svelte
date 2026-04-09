@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { ReportCharge, Suspect } from "../../interfaces/IReportEditor";
 	import type { Charge } from "../../interfaces/ICharges";
+	import { t } from "../../stores/localeStore";
 
 	interface Props {
 		charges: ReportCharge[];
@@ -37,12 +38,14 @@
 	let filteredPenalCodes = $derived.by(() => {
 		if (!chargeSearch.trim()) return penalCodes.slice(0, 20);
 		const q = chargeSearch.toLowerCase();
-		return penalCodes.filter(
-			(c) =>
-				(c.label || "").toLowerCase().includes(q) ||
-				(c.description || "").toLowerCase().includes(q) ||
-				(c.category || "").toLowerCase().includes(q),
-		).slice(0, 20);
+		return penalCodes
+			.filter(
+				(c) =>
+					(c.label || "").toLowerCase().includes(q) ||
+					(c.description || "").toLowerCase().includes(q) ||
+					(c.category || "").toLowerCase().includes(q),
+			)
+			.slice(0, 20);
 	});
 
 	// Group charges by suspect
@@ -57,8 +60,12 @@
 	});
 
 	// Totals
-	let totalFine = $derived(charges.reduce((sum, c) => sum + c.fine * c.count, 0));
-	let totalMonths = $derived(charges.reduce((sum, c) => sum + c.time * c.count, 0));
+	let totalFine = $derived(
+		charges.reduce((sum, c) => sum + c.fine * c.count, 0),
+	);
+	let totalMonths = $derived(
+		charges.reduce((sum, c) => sum + c.time * c.count, 0),
+	);
 
 	function getSuspectName(citizenid: string): string {
 		const suspect = suspects.find((s) => s.citizenid === citizenid);
@@ -66,11 +73,15 @@
 	}
 
 	function getSuspectTotalFine(citizenid: string): number {
-		return charges.filter((c) => c.citizenid === citizenid).reduce((sum, c) => sum + c.fine * c.count, 0);
+		return charges
+			.filter((c) => c.citizenid === citizenid)
+			.reduce((sum, c) => sum + c.fine * c.count, 0);
 	}
 
 	function getSuspectTotalMonths(citizenid: string): number {
-		return charges.filter((c) => c.citizenid === citizenid).reduce((sum, c) => sum + c.time * c.count, 0);
+		return charges
+			.filter((c) => c.citizenid === citizenid)
+			.reduce((sum, c) => sum + c.time * c.count, 0);
 	}
 
 	function getReducedFine(citizenid: string, percent: number): number {
@@ -140,20 +151,34 @@
 
 <div class="charges-section">
 	<div class="section-header">
-		<span class="section-label">CHARGES</span>
+		<span class="section-label">{$t("common.charges") || "CHARGES"}</span>
 		<div class="header-actions">
 			{#if suspects.length > 0}
 				<select class="suspect-select" bind:value={selectedSuspect}>
-					<option value="">Select suspect...</option>
+					<option value=""
+						>{$t("common.selectSuspect") ||
+							"Select suspect..."}</option
+					>
 					{#each suspects as suspect}
-						<option value={suspect.citizenid}>{suspect.fullName || suspect.citizenid}</option>
+						<option value={suspect.citizenid}
+							>{suspect.fullName || suspect.citizenid}</option
+						>
 					{/each}
 				</select>
-				<button class="add-btn" onclick={() => { if (selectedSuspect) showPicker = !showPicker; }} disabled={!selectedSuspect}>
-					+ Add Charge
+				<button
+					class="add-btn"
+					onclick={() => {
+						if (selectedSuspect) showPicker = !showPicker;
+					}}
+					disabled={!selectedSuspect}
+				>
+					+ {$t("common.addCharge") || "Add Charge"}
 				</button>
 			{:else}
-				<span class="hint-text">Add a suspect first</span>
+				<span class="hint-text"
+					>{$t("common.addSuspectFirst") ||
+						"Add a suspect first"}</span
+				>
 			{/if}
 		</div>
 	</div>
@@ -164,27 +189,35 @@
 			<input
 				type="text"
 				class="picker-search"
-				placeholder="Search charges..."
+				placeholder={$t("common.searchCharges") || "Search charges..."}
 				bind:value={chargeSearch}
 			/>
 			<div class="picker-list">
 				{#each filteredPenalCodes as penal}
-					<button class="picker-item" onclick={() => addChargeFromPenal(penal)}>
+					<button
+						class="picker-item"
+						onclick={() => addChargeFromPenal(penal)}
+					>
 						<div class="picker-item-top">
 							<span class="picker-label">{penal.label}</span>
-							<span class="picker-type type-{penal.type}">{penal.type}</span>
+							<span class="picker-type type-{penal.type}"
+								>{penal.type}</span
+							>
 						</div>
 						<div class="picker-item-bottom">
 							<span class="picker-meta">{penal.category}</span>
 							<span class="picker-values">
 								{#if penal.time > 0}{penal.time}mo{/if}
-								{#if penal.fine && penal.fine > 0} ${penal.fine.toLocaleString()}{/if}
+								{#if penal.fine && penal.fine > 0}
+									${penal.fine.toLocaleString()}{/if}
 							</span>
 						</div>
 					</button>
 				{/each}
 				{#if filteredPenalCodes.length === 0}
-					<p class="no-results">No charges found.</p>
+					<p class="no-results">
+						{$t("common.noChargesFound") || "No charges found."}
+					</p>
 				{/if}
 			</div>
 		</div>
@@ -192,30 +225,60 @@
 
 	<!-- Charges grouped by suspect -->
 	{#if charges.length === 0}
-		<p class="empty-text">No charges added.</p>
+		<p class="empty-text">
+			{$t("common.noChargesAdded") || "No charges added."}
+		</p>
 	{:else}
 		{#each [...chargesBySuspect.entries()] as [citizenid, suspectCharges]}
 			<div class="suspect-group">
 				<div class="suspect-header">
-					<span class="suspect-name">{getSuspectName(citizenid)}</span>
+					<span class="suspect-name">{getSuspectName(citizenid)}</span
+					>
 					<span class="suspect-id">{citizenid}</span>
 				</div>
 				<div class="charge-list">
 					{#each suspectCharges as charge}
 						<div class="charge-item">
 							<div class="charge-info">
-								<span class="charge-label">{charge.charge}</span>
+								<span class="charge-label">{charge.charge}</span
+								>
 								<div class="charge-values">
-									<span class="charge-time">{charge.time * charge.count}mo</span>
-									<span class="charge-fine">${(charge.fine * charge.count).toLocaleString()}</span>
+									<span class="charge-time"
+										>{charge.time * charge.count}mo</span
+									>
+									<span class="charge-fine"
+										>${(
+											charge.fine * charge.count
+										).toLocaleString()}</span
+									>
 								</div>
 							</div>
 							<div class="charge-controls">
-								<button class="count-btn" onclick={() => updateCount(charge, -1)}>-</button>
+								<button
+									class="count-btn"
+									onclick={() => updateCount(charge, -1)}
+									>-</button
+								>
 								<span class="count-value">x{charge.count}</span>
-								<button class="count-btn" onclick={() => updateCount(charge, 1)}>+</button>
-								<button class="remove-charge-btn" onclick={() => onRemoveCharge(charge.id)} aria-label="Remove charge">
-									<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+								<button
+									class="count-btn"
+									onclick={() => updateCount(charge, 1)}
+									>+</button
+								>
+								<button
+									class="remove-charge-btn"
+									onclick={() => onRemoveCharge(charge.id)}
+									aria-label={$t("charges_page.remove_charge")}
+								>
+									<svg
+										width="10"
+										height="10"
+										viewBox="0 0 24 24"
+										fill="currentColor"
+										><path
+											d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+										/></svg
+									>
 								</button>
 							</div>
 						</div>
@@ -224,31 +287,50 @@
 				<!-- Per-suspect totals and actions -->
 				<div class="suspect-footer">
 					<div class="suspect-totals">
-						<span class="total-item">{getSuspectTotalMonths(citizenid)} months</span>
-						<span class="total-item">${getSuspectTotalFine(citizenid).toLocaleString()}</span>
+						<span class="total-item"
+							>{getSuspectTotalMonths(citizenid)}
+							{$t("common.months") || "months"}</span
+						>
+						<span class="total-item"
+							>${getSuspectTotalFine(
+								citizenid,
+							).toLocaleString()}</span
+						>
 					</div>
 					<div class="suspect-actions">
 						<button
 							class="action-btn jail-btn"
-							onclick={() => onSendToJail(citizenid, getSuspectTotalMonths(citizenid))}
-							disabled={!citizenid || getSuspectTotalMonths(citizenid) <= 0}
+							onclick={() =>
+								onSendToJail(
+									citizenid,
+									getSuspectTotalMonths(citizenid),
+								)}
+							disabled={!citizenid ||
+								getSuspectTotalMonths(citizenid) <= 0}
 						>
-							Send to Jail
+							{$t("common.sendToJail") || "Send to Jail"}
 						</button>
 						<button
 							class="action-btn fine-btn"
-							onclick={() => onGiveCitation(citizenid, getSuspectTotalFine(citizenid))}
-							disabled={!citizenid || getSuspectTotalFine(citizenid) <= 0}
+							onclick={() =>
+								onGiveCitation(
+									citizenid,
+									getSuspectTotalFine(citizenid),
+								)}
+							disabled={!citizenid ||
+								getSuspectTotalFine(citizenid) <= 0}
 						>
-							Issue Fine
+							{$t("common.issueFine") || "Issue Fine"}
 						</button>
 						{#if reductionOffers.length > 0}
 							<button
 								class="action-btn reduction-btn"
 								onclick={() => openReduction(citizenid)}
-								disabled={!citizenid || (getSuspectTotalFine(citizenid) <= 0 && getSuspectTotalMonths(citizenid) <= 0)}
+								disabled={!citizenid ||
+									(getSuspectTotalFine(citizenid) <= 0 &&
+										getSuspectTotalMonths(citizenid) <= 0)}
 							>
-								Reduction
+								{$t("common.reduction") || "Reduction"}
 							</button>
 						{/if}
 					</div>
@@ -258,9 +340,23 @@
 				{#if reductionTarget === citizenid}
 					<div class="reduction-panel">
 						<div class="reduction-header">
-							<span class="reduction-title">Offer Reduction</span>
-							<button class="reduction-close" onclick={closeReduction}>
-								<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+							<span class="reduction-title"
+								>{$t("common.offerReduction") ||
+									"Offer Reduction"}</span
+							>
+							<button
+								class="reduction-close"
+								onclick={closeReduction}
+							>
+								<svg
+									width="10"
+									height="10"
+									viewBox="0 0 24 24"
+									fill="currentColor"
+									><path
+										d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+									/></svg
+								>
 							</button>
 						</div>
 
@@ -269,7 +365,7 @@
 								<button
 									class="reduction-option"
 									class:selected={selectedReduction === pct}
-									onclick={() => selectedReduction = pct}
+									onclick={() => (selectedReduction = pct)}
 								>
 									{pct}% off
 								</button>
@@ -280,17 +376,49 @@
 							<div class="reduction-preview">
 								<div class="reduction-preview-row">
 									<span class="preview-label">Jail</span>
-									<span class="preview-original">{getSuspectTotalMonths(citizenid)}mo</span>
+									<span class="preview-original"
+										>{getSuspectTotalMonths(
+											citizenid,
+										)}mo</span
+									>
 									<span class="preview-arrow">→</span>
-									<span class="preview-reduced">{getReducedMonths(citizenid, selectedReduction)}mo</span>
-									<span class="preview-saved">(-{getSuspectTotalMonths(citizenid) - getReducedMonths(citizenid, selectedReduction)}mo)</span>
+									<span class="preview-reduced"
+										>{getReducedMonths(
+											citizenid,
+											selectedReduction,
+										)}mo</span
+									>
+									<span class="preview-saved"
+										>(-{getSuspectTotalMonths(citizenid) -
+											getReducedMonths(
+												citizenid,
+												selectedReduction,
+											)}mo)</span
+									>
 								</div>
 								<div class="reduction-preview-row">
 									<span class="preview-label">Fine</span>
-									<span class="preview-original">${getSuspectTotalFine(citizenid).toLocaleString()}</span>
+									<span class="preview-original"
+										>${getSuspectTotalFine(
+											citizenid,
+										).toLocaleString()}</span
+									>
 									<span class="preview-arrow">→</span>
-									<span class="preview-reduced">${getReducedFine(citizenid, selectedReduction).toLocaleString()}</span>
-									<span class="preview-saved">(-${(getSuspectTotalFine(citizenid) - getReducedFine(citizenid, selectedReduction)).toLocaleString()})</span>
+									<span class="preview-reduced"
+										>${getReducedFine(
+											citizenid,
+											selectedReduction,
+										).toLocaleString()}</span
+									>
+									<span class="preview-saved"
+										>(-${(
+											getSuspectTotalFine(citizenid) -
+											getReducedFine(
+												citizenid,
+												selectedReduction,
+											)
+										).toLocaleString()})</span
+									>
 								</div>
 							</div>
 
@@ -298,23 +426,35 @@
 								<button
 									class="action-btn jail-btn"
 									onclick={applyReductionJail}
-									disabled={getSuspectTotalMonths(citizenid) <= 0}
+									disabled={getSuspectTotalMonths(
+										citizenid,
+									) <= 0}
 								>
-									Jail ({getReducedMonths(citizenid, selectedReduction)}mo)
+									{$t("common.jail") || "Jail"} ({getReducedMonths(
+										citizenid,
+										selectedReduction,
+									)}mo)
 								</button>
 								<button
 									class="action-btn fine-btn"
 									onclick={applyReductionFine}
-									disabled={getSuspectTotalFine(citizenid) <= 0}
+									disabled={getSuspectTotalFine(citizenid) <=
+										0}
 								>
-									Fine (${getReducedFine(citizenid, selectedReduction).toLocaleString()})
+									{$t("common.fine") || "Fine"} (${getReducedFine(
+										citizenid,
+										selectedReduction,
+									).toLocaleString()})
 								</button>
 								<button
 									class="action-btn both-btn"
 									onclick={applyReductionBoth}
-									disabled={getSuspectTotalMonths(citizenid) <= 0 && getSuspectTotalFine(citizenid) <= 0}
+									disabled={getSuspectTotalMonths(
+										citizenid,
+									) <= 0 &&
+										getSuspectTotalFine(citizenid) <= 0}
 								>
-									Jail & Fine
+									{$t("common.jailAndFine") || "Jail & Fine"}
 								</button>
 							</div>
 						{/if}
@@ -326,11 +466,17 @@
 		<!-- Grand totals -->
 		<div class="grand-totals">
 			<div class="grand-total-item">
-				<span class="grand-label">Total Jail Time</span>
-				<span class="grand-value">{totalMonths} months</span>
+				<span class="grand-label"
+					>{$t("common.totalJailTime") || "Total Jail Time"}</span
+				>
+				<span class="grand-value"
+					>{totalMonths} {$t("common.months") || "months"}</span
+				>
 			</div>
 			<div class="grand-total-item">
-				<span class="grand-label">Total Fines</span>
+				<span class="grand-label"
+					>{$t("common.totalFines") || "Total Fines"}</span
+				>
 				<span class="grand-value">${totalFine.toLocaleString()}</span>
 			</div>
 		</div>

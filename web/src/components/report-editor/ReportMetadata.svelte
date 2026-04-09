@@ -9,6 +9,7 @@
 	import { untrack } from "svelte";
 	import { getReportTypesForJob } from "../../constants/index";
 	import type { JobType } from "../../interfaces/IUser";
+	import { t } from "../../stores/localeStore";
 
 	interface Props {
 		title: string;
@@ -16,7 +17,6 @@
 		officer: string;
 		type: string;
 		created: number;
-		lastUpdated: number;
 		onTitleChange: (title: string) => void;
 		onTypeChange: (type: string) => void;
 		onInsertTemplate?: () => void;
@@ -32,7 +32,6 @@
 		officer,
 		type,
 		created,
-		lastUpdated,
 		onTitleChange,
 		onTypeChange,
 		onInsertTemplate,
@@ -82,7 +81,7 @@
 <div class="report-info">
 	<input
 		type="text"
-		placeholder="Report Title"
+		placeholder={$t("common.reportTitle") || "Report Title"}
 		bind:value={localTitle}
 		oninput={handleTitleInput}
 		class="title-input"
@@ -90,11 +89,11 @@
 
 	<div class="metadata-row">
 		<div class="metadata-item">
-			<span class="metadata-label">ID</span>
+			<span class="metadata-label">{$t("common.id") || "ID"}</span>
 			<span class="metadata-value">{reportId}</span>
 		</div>
 		<div class="metadata-item">
-			<span class="metadata-label">Officer</span>
+			<span class="metadata-label">{$t("common.officer") || "Officer"}</span>
 			<span class="metadata-value officer-value">
 				{#if officer.startsWith('NO CALLSIGN')}
 					<span class="officer-badge no-callsign">NO CALLSIGN</span>
@@ -108,7 +107,7 @@
 			</span>
 		</div>
 		<div class="metadata-item">
-			<label for="type-select" class="metadata-label">Type</label>
+			<label for="type-select" class="metadata-label">{$t("common.type") || "Type"}</label>
 			<select
 				id="type-select"
 				bind:value={localType}
@@ -122,11 +121,11 @@
 		</div>
 		{#if onInsertTemplate && matchingTemplates.length > 0}
 			<div class="metadata-item template-item">
-				<span class="metadata-label">Template</span>
+				<span class="metadata-label">{$t("common.template") || "Template"}</span>
 				<div class="template-wrapper">
 					<button class="template-btn" onclick={onInsertTemplate} type="button">
 						<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-						{matchingTemplates.length === 1 ? "Insert" : "Insert..."}
+						{matchingTemplates.length === 1 ? ($t("common.insert") || "Insert") : ($t("common.insert") || "Insert") + "..."}
 					</button>
 					{#if showTemplateMenu && matchingTemplates.length > 1 && onSelectTemplate}
 						<div class="template-dropdown">
@@ -141,7 +140,7 @@
 			</div>
 		{/if}
 		<div class="metadata-item">
-			<span class="metadata-label">Created</span>
+			<span class="metadata-label">{$t("common.created") || "Created"}</span>
 			<span class="metadata-value">
 				{formatDate(created)} {formatTime(created)}
 			</span>

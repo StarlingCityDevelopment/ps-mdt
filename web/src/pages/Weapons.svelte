@@ -4,6 +4,7 @@
 	import { isEnvBrowser } from "../utils/misc";
 	import { NUI_EVENTS } from "../constants/nuiEvents";
 	import { globalNotifications } from "../services/notificationService.svelte";
+	import { t } from "../stores/localeStore";
 	import Pagination from "../components/Pagination.svelte";
 
 	interface Weapon {
@@ -249,28 +250,28 @@
 		<div class="topbar">
 			<div class="search-box">
 				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-				<input type="text" bind:value={searchQuery} placeholder="Search by name, serial, owner, class, tint or type..." />
+				<input type="text" bind:value={searchQuery} placeholder={$t('weapons_page.search_placeholder')} />
 			</div>
 			<button class="refresh-btn" onclick={refreshWeapons} disabled={loading}>
-				{loading ? "Loading..." : "Refresh"}
+				{loading ? $t('common.loading') : $t('common.refresh')}
 			</button>
 		</div>
 
 		<div class="list-panel">
 			<div class="list-header">
-				<span class="col-name">Weapon</span>
-				<span class="col-serial">Serial</span>
-				<span class="col-owner">Owner</span>
-				<span class="col-class">Class</span>
-				<span class="col-type">Type</span>
-				<span class="col-tint">Tint</span>
-				<span class="col-flags">Flags</span>
+				<span class="col-name">{$t('common.name')}</span>
+				<span class="col-serial">{$t('weapons_page.serial')}</span>
+				<span class="col-owner">{$t('weapons_page.owner')}</span>
+				<span class="col-class">{$t('weapons_page.class')}</span>
+				<span class="col-type">{$t('common.type')}</span>
+				<span class="col-tint">{$t('weapons_page.tint')}</span>
+				<span class="col-flags">{$t('weapons_page.flags')}</span>
 			</div>
 			<div class="list-body">
 				{#if loading}
-					<div class="empty-state">Loading weapons...</div>
+					<div class="empty-state">{$t('weapons_page.loading_weapons')}</div>
 				{:else if filteredWeapons.length === 0}
-					<div class="empty-state">{searchQuery ? "No weapons match your search." : "No weapons found."}</div>
+					<div class="empty-state">{searchQuery ? $t('weapons_page.no_weapons_match') : $t('common.no_weapons')}</div>
 				{:else}
 					{#each filteredWeapons as weapon}
 						<button class="weapon-row" onclick={() => viewWeapon(weapon.id)}>

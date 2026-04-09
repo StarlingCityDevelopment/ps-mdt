@@ -7,7 +7,6 @@ local resourceName = tostring(GetCurrentResourceName())
 local mugshotCam = nil
 local mugshotActive = false
 local mugshotPromise = nil
-local mugshotCitizenId = nil
 local mugshotCfg = Config.MugshotCamera or {}
 local currentFov = mugshotCfg.DefaultFov or 50.0
 local targetFov = mugshotCfg.DefaultFov or 50.0
@@ -33,7 +32,6 @@ end
 local function createMugshotCamera()
     local ped = PlayerPedId()
     local pedCoords = GetEntityCoords(ped)
-    local pedHeading = GetEntityHeading(ped)
     local forwardVector = GetEntityForwardVector(ped)
 
     -- Create camera slightly in front of and above the player's position
@@ -97,7 +95,7 @@ function CaptureMugshot(citizenid)
 
     local sbState = GetResourceState('screenshot-basic')
     if sbState ~= 'started' then
-        ps.notify('screenshot-basic is not running', 'error')
+        ps.notify(locale('mugshot.screenshot_basic_not_running'), 'error')
         return nil
     end
 

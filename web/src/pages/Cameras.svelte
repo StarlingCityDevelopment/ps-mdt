@@ -1,9 +1,10 @@
 <script lang="ts">
-	import { onMount, untrack } from "svelte";
+	import { onMount } from "svelte";
 	import { fetchNui } from "../utils/fetchNui";
 	import { isEnvBrowser } from "../utils/misc";
 	import { NUI_EVENTS } from "../constants/nuiEvents";
 	import { globalNotifications } from "../services/notificationService.svelte";
+	import { t } from "../stores/localeStore";
 
 	let cameras = $state<Camera[]>([]);
 	let isLoading = $state(false);
@@ -213,18 +214,18 @@
 	<div class="topbar">
 		<input
 			type="text"
-			placeholder="Search cameras..."
+			placeholder={$t('cameras.search_placeholder')}
 			bind:value={searchQuery}
 			class="search-input"
 		/>
 		<div class="topbar-right">
-			<span class="result-count">{filteredCameras.length} camera{filteredCameras.length !== 1 ? "s" : ""}</span>
+			<span class="result-count">{filteredCameras.length} {filteredCameras.length !== 1 ? $t('cameras.cameras') : $t('cameras.camera')}</span>
 			<button
 				class="btn-secondary"
 				onclick={loadCameras}
 				disabled={isLoading}
 			>
-				{isLoading ? "Loading..." : "Refresh"}
+				{isLoading ? $t('common.loading') : $t('common.refresh')}
 			</button>
 		</div>
 	</div>
@@ -233,15 +234,15 @@
 		{#if isLoading && cameras.length === 0}
 			<div class="empty-state">
 				<div class="loading-spinner"></div>
-				<p>Loading cameras...</p>
+				<p>{$t('cameras.loading')}</p>
 			</div>
 		{:else if filteredCameras.length === 0}
 			<div class="empty-state">
-				<p class="empty-title">No Cameras Found</p>
+				<p class="empty-title">{$t('cameras.no_cameras_found')}</p>
 				<p class="empty-sub">
 					{searchQuery
-						? "No cameras match your search criteria."
-						: "No cameras have been loaded yet."}
+						? $t('common.no_results')
+						: $t('cameras.no_cameras_loaded')}
 				</p>
 			</div>
 		{:else}
@@ -260,10 +261,10 @@
 					</div>
 					{#if !collapsedSections[type]}
 						<div class="table-header">
-							<span class="col-id">ID</span>
-							<span class="col-label">Camera</span>
-							<span class="col-status">Status</span>
-							<span class="col-viewers">Viewers</span>
+							<span class="col-id">{$t('common.id')}</span>
+							<span class="col-label">{$t('cameras.camera')}</span>
+							<span class="col-status">{$t('common.status')}</span>
+							<span class="col-viewers">{$t('cameras.viewers')}</span>
 							<span class="col-action"></span>
 						</div>
 						{#each typeCameras as camera (camera.id)}
@@ -274,9 +275,9 @@
 								<span class="col-label">{camera.label}</span>
 								<span class="col-status">
 									{#if camera.isOnline}
-										<span class="pill pill-green">Online</span>
+										<span class="pill pill-green">{$t('common.online')}</span>
 									{:else}
-										<span class="pill pill-grey">Offline</span>
+										<span class="pill pill-grey">{$t('common.offline')}</span>
 									{/if}
 								</span>
 								<span class="col-viewers">
@@ -290,7 +291,7 @@
 									{#if camera.isOnline}
 										<button class="view-btn" onclick={() => viewCamera(camera)}>
 											<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-											View
+											{$t('common.view')}
 										</button>
 									{/if}
 								</span>

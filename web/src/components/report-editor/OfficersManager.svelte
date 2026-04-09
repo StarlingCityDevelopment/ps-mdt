@@ -3,6 +3,7 @@
 	import PersonnelSection from "./PersonnelSection.svelte";
 	import PersonnelCard from "./PersonnelCard.svelte";
 	import { OFFICER_TYPES } from "../../constants";
+	import { t } from "../../stores/localeStore";
 
 	interface Props {
 		officers: Officer[];
@@ -23,7 +24,7 @@
 	}
 </script>
 
-<PersonnelSection {title} {onAdd}>
+<PersonnelSection title={$t("common.officers") || "Officers"} {onAdd}>
 	{#each officers as officer}
 		<PersonnelCard
 			id={officer.id}

@@ -13,5 +13,5 @@ function GetRecentDispatch()
 end
 
 AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
-    local check = ps.callback('ps-mdt:hasProfile')
+    ps.callback('ps-mdt:hasProfile')
 end)

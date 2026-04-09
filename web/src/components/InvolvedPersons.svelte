@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { VICTIM_TYPES, OFFICER_TYPES } from "../constants";
 	import type { Report } from "../interfaces/IReportEditor";
+	import { t } from "../stores/localeStore";
 
 	export let report: Report;
 	export let onRemoveSuspect: (index: number) => void;
@@ -36,7 +36,7 @@
 	}
 </script>
 
-<section class="involved-persons" aria-label="Involved persons">
+<section class="involved-persons" aria-label={$t("persons_page.involved_persons")}>
 	<h3 class="section-title">Involved Persons</h3>
 
 	<!-- Suspects Section -->
@@ -61,7 +61,7 @@
 				id="suspect-search"
 				class="search-container"
 				role="region"
-				aria-label="Add suspect"
+				aria-label={$t("persons_page.add_suspect")}
 			>
 				<!-- Search component would go here -->
 				<p class="search-placeholder">Suspect search interface</p>
@@ -69,7 +69,7 @@
 		{/if}
 
 		{#if report.involved.suspects.length > 0}
-			<div class="persons-list" role="list" aria-label="Suspects">
+			<div class="persons-list" role="list" aria-label={$t("persons_page.suspects")}>
 				{#each report.involved.suspects as suspect, index}
 					<div class="person-item" role="listitem">
 						<div class="person-info">
@@ -82,7 +82,7 @@
 							type="button"
 							on:click={() => onRemoveSuspect(index)}
 							class="remove-person-btn"
-							aria-label="Remove suspect {suspect.fullName}"
+							aria-label={$t("persons_page.remove_suspect") + " " + suspect.fullName}
 						>
 							Remove
 						</button>
@@ -124,7 +124,7 @@
 		{/if}
 
 		{#if report.involved.victims.length > 0}
-			<div class="persons-list" role="list" aria-label="Victims">
+			<div class="persons-list" role="list" aria-label={$t("persons_page.victims")}>
 				{#each report.involved.victims as victim, index}
 					<div class="person-item" role="listitem">
 						<div class="person-info">
@@ -137,7 +137,7 @@
 							type="button"
 							on:click={() => onRemoveVictim(index)}
 							class="remove-person-btn"
-							aria-label="Remove victim {victim.fullName}"
+							aria-label={$t("persons_page.remove_victim") + " " + victim.fullName}
 						>
 							Remove
 						</button>
@@ -171,7 +171,7 @@
 				id="officer-search"
 				class="search-container"
 				role="region"
-				aria-label="Add officer"
+				aria-label={$t("persons_page.add_officer")}
 			>
 				<!-- Search component would go here -->
 				<p class="search-placeholder">Officer search interface</p>
@@ -179,7 +179,7 @@
 		{/if}
 
 		{#if report.involved.officers.length > 0}
-			<div class="persons-list" role="list" aria-label="Officers">
+			<div class="persons-list" role="list" aria-label={$t("persons_page.officers")}>
 				{#each report.involved.officers as officer, index}
 					<div class="person-item" role="listitem">
 						<div class="person-info">
@@ -192,7 +192,7 @@
 							type="button"
 							on:click={() => onRemoveOfficer(index)}
 							class="remove-person-btn"
-							aria-label="Remove officer {officer.fullName}"
+							aria-label={$t("persons_page.remove_officer") + " " + officer.fullName}
 						>
 							Remove
 						</button>

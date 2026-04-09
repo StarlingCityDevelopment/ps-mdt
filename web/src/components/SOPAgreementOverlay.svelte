@@ -11,7 +11,12 @@
 		missionStatement?: string;
 	}
 
-	let { authService, onAcknowledged, introduction, missionStatement = "" }: Props = $props();
+	let {
+		authService,
+		onAcknowledged,
+		introduction,
+		missionStatement = "",
+	}: Props = $props();
 
 	let agreed = $state(false);
 	let submitting = $state(false);
@@ -49,7 +54,9 @@
 		<!-- Title area -->
 		<div class="sop-header">
 			<h2 class="sop-title">Standard Operating Procedures</h2>
-			<p class="sop-subtitle">Review the following before accessing the terminal</p>
+			<p class="sop-subtitle">
+				Review the following before accessing the terminal
+			</p>
 		</div>
 
 		<!-- Scrollable content -->
@@ -88,7 +95,13 @@
 					</div>
 					<div class="section-card intro-card">
 						<div class="section-content">
-							<p>The Standard Operating Procedures have been updated. By acknowledging below, you confirm that you have read, understand, and agree to comply with all department policies and procedures.</p>
+							<p>
+								The Standard Operating Procedures have been
+								updated. By acknowledging below, you confirm
+								that you have read, understand, and agree to
+								comply with all department policies and
+								procedures.
+							</p>
 						</div>
 					</div>
 				</div>
@@ -98,8 +111,15 @@
 		<!-- Fixed bottom -->
 		<div class="sop-footer">
 			<label class="sop-agree-row">
-				<input type="checkbox" bind:checked={agreed} class="sop-checkbox" />
-				<span class="agree-text">I have read, understand, and agree to abide by the Standard Operating Procedures</span>
+				<input
+					type="checkbox"
+					bind:checked={agreed}
+					class="sop-checkbox"
+				/>
+				<span class="agree-text"
+					>I have read, understand, and agree to abide by the Standard
+					Operating Procedures</span
+				>
 			</label>
 
 			<button
@@ -362,17 +382,31 @@
 	}
 
 	@keyframes fadeIn {
-		0% { opacity: 0; }
-		100% { opacity: 1; }
+		0% {
+			opacity: 0;
+		}
+		100% {
+			opacity: 1;
+		}
 	}
 
 	@keyframes slideUp {
-		0% { opacity: 0; transform: translateY(16px); }
-		100% { opacity: 1; transform: translateY(0); }
+		0% {
+			opacity: 0;
+			transform: translateY(16px);
+		}
+		100% {
+			opacity: 1;
+			transform: translateY(0);
+		}
 	}
 
 	@keyframes spin {
-		0% { transform: rotate(0deg); }
-		100% { transform: rotate(360deg); }
+		0% {
+			transform: rotate(0deg);
+		}
+		100% {
+			transform: rotate(360deg);
+		}
 	}
 </style>

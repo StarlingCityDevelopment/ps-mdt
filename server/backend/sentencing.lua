@@ -41,7 +41,7 @@ ps.registerCallback(resourceName .. ':server:sendToJail', function(source, paylo
         ['date'] = currentDate
     })
     TriggerClientEvent('police:client:SendToJail', targetSource, sentence)
-    ps.notify(src, 'Sent to jail for ' .. sentence .. ' months', 'success')
+    ps.notify(src, locale('sentencing.sent_to_jail', sentence), 'success')
 
     if ps.auditLog then
         ps.auditLog(src, 'sent_to_jail', 'citizen', citizenId, {
@@ -83,8 +83,8 @@ ps.registerCallback(resourceName .. ':server:giveCitation', function(source, pay
         return { success = false, message = 'Could not deduct fine (insufficient funds)' }
     end
 
-    ps.notify(playerSrc, '$' .. fine .. ' fine deducted from your bank account', 'error')
-    ps.notify(src, '$' .. fine .. ' fine issued successfully', 'success')
+    ps.notify(playerSrc, locale('sentencing.fine_deducted_civilian', fine), 'error')
+    ps.notify(src, locale('sentencing.fine_issued', fine), 'success')
 
     if ps.auditLog then
         local officerName = ps.getPlayerName(src) or 'Unknown Officer'
